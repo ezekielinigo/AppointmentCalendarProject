@@ -1,5 +1,5 @@
 import './App.css';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import axios from "axios";
@@ -19,50 +19,48 @@ function App() {
         alignItems: "center",
         height: "50vh",
     }
-    const [eventName, setEventName] = useState('');
+    const [eventTitle, setEventTitle] = useState('');
     const [eventDate, setEventDate] = useState('');
     const [events, setEvents] = useState([]);
 
-    // display appointment data from the database to the calendar
-    const [appointments, setAppointments] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
-    const getAppointments = async () => {
-        try {
-            const response = await axios.get("http://localhost:5000/appointments");
-            setAppointments(response.data);
-            setLoading(false);
-        } catch (error) {
-            setError(error);
-            setLoading(false);
-        }
-    }
-
-
-
-
+    useEffect(() => { // this will fetch all events from backend and display them on the calendar
+    axios.get('http://localhost:8000/api/appointments/')
+        .then(res => {
+            setEvents(res.data.map(appointment => ({
+                title: appointment.title,
+                start: new Date(appointment.date),
+                allDay: true
+            })));
+        })
+        .catch(err => console.log(err));
+    }, []);
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        if (eventName === '' || eventDate === '') {
+        if (eventTitle === '' || eventDate === '') {
             alert('Please fill in all fields');
         } else {
-            setEvents([...events, { title: eventName, date: eventDate }]);
-            setEventName('');
-            setEventDate('');
+            const newEvent = {title: eventTitle, date: eventDate}; // this will create an "event" object
+            axios.post('http://localhost:8000/api/appointments/', newEvent) // this will add that event to backend
+                .then(res => {
+                    setEvents([...events, res.data ]); // this will display the event on the calendar
+                    setEventTitle(''); // these two will clear input fields after submit
+                    setEventDate('');
+                })
+                .catch(err => console.log(err));
         }
     }
 
     return (
         <section className="flex flex-col justify-center items-center px-16 py-12 min-h-screen">
             <form className="flex flex-col items-center space-y-4" onSubmit={handleSubmit}>
-                <FormInput type="text" placeholder="Event Name" name="eventName" className="w-[369px]" value={eventName} onChange={(e) => setEventName(e.target.value)} />
+                <FormInput type="text" placeholder="Event Name" name="eventTitle" className="w-[369px]" value={eventTitle} onChange={(e) => setEventTitle(e.target.value)} />
                 <FormInput type="date" placeholder="Event Date" name="eventDate" className="w-[369px]" value={eventDate} onChange={(e) => setEventDate(e.target.value)} />
                 <button type="submit" className="px-4 py-1 bg-black text-white rounded">SUBMIT</button>
             </form>
             <FullCalendar
                 plugins={[ dayGridPlugin ]}
-                initialView="dayGridWeek"
+                initialView="dayGridMonth"
                 headerToolbar={{
                     left: 'prev,next today',
                     center: 'title',
