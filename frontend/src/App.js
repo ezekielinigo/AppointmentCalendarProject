@@ -2,6 +2,7 @@ import './App.css';
 import React, { useState } from 'react';
 import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
+import axios from "axios";
 
 // Reusable Input Component
 const FormInput = ({type, name, placeholder, className, value, onChange}) => (
@@ -21,6 +22,25 @@ function App() {
     const [eventName, setEventName] = useState('');
     const [eventDate, setEventDate] = useState('');
     const [events, setEvents] = useState([]);
+
+    // display appointment data from the database to the calendar
+    const [appointments, setAppointments] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+    const getAppointments = async () => {
+        try {
+            const response = await axios.get("http://localhost:5000/appointments");
+            setAppointments(response.data);
+            setLoading(false);
+        } catch (error) {
+            setError(error);
+            setLoading(false);
+        }
+    }
+
+
+
+
 
     const handleSubmit = (e) => {
         e.preventDefault();
