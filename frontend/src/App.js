@@ -63,7 +63,11 @@ function App() {
             <FullCalendar
                 plugins={[ dayGridPlugin ]}
                 initialView="dayGridWeek"
-                aspectRatio={3}
+                headerToolbar={{
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: 'dayGridMonth,dayGridWeek',
+                }}
                 events={events}
             />
         </section>
