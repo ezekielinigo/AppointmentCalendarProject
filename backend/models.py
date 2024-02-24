@@ -9,3 +9,7 @@ class Appointment(models.Model):
 
     def _str_(self):
         return self.title
+
+class Doctor(models.Model):
+    name = models.CharField(max_length=120)
+    
