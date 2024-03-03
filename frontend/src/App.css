@@ -2,6 +2,22 @@
   text-align: center;
 }
 
+.login-page {
+  width: 100px;
+  height: 100px;
+    
+  position: absolute;
+  top:0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+    
+  margin: auto;
+  padding: 10px;
+  border: 2px solid black;
+}
+
+
 .App-logo {
   height: 40vmin;
   pointer-events: none;
@@ -21,7 +37,7 @@
   align-items: center;
   justify-content: center;
   font-size: calc(10px + 2vmin);
-  color: white;
+  color: white;;
 }
 
 .App-link {
@@ -35,4 +51,15 @@
   to {
     transform: rotate(360deg);
   }
+}
+
+/* calendar div - style of main calendar will be changed here */
+
+.calendar {
+  width: 80%;
+  margin: 50px auto;
+  border: 2px solid black;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  padding: 10px;
 }

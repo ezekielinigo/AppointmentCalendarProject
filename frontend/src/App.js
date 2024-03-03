@@ -3,14 +3,15 @@ import React, { useState, useEffect } from 'react';
 import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import axios from "axios";
+import FormInput from './FormInput';
 
-// Reusable Input Component
+/*// Reusable Input Component
 const FormInput = ({type, name, placeholder, className, value, onChange}) => (
   <div className={className}>
     <label htmlFor={name} className="sr-only">{placeholder}</label>
     <input type={type} id={name} name={name} placeholder={placeholder} className="p-2.5 w-full" value={value} onChange={onChange} />
   </div>
-);
+); // Refactored to FormInput.js*/
 
 function App() {
     const centered = {
@@ -67,18 +68,25 @@ function App() {
                 <FormInput type="date" placeholder="Event Date" name="eventDate" className="w-[369px]" value={eventDate} onChange={(e) => setEventDate(e.target.value)} />
                 <button type="submit" className="px-4 py-1 bg-black text-white rounded">SUBMIT</button>
                 <button type="button" className="px-4 py-1 bg-red-500 text-white rounded" onClick={() => setEvents([])}>CLEAR</button>
-        
             </form>
-            <FullCalendar
+            
+            <div class = "calendar"> 
+                <FullCalendar
                 plugins={[ dayGridPlugin ]}
                 initialView="dayGridMonth"
+    
+                style={centered}
+                
                 headerToolbar={{
                     left: 'prev,next today',
                     center: 'title',
                     right: 'dayGridMonth,dayGridWeek',
+                    
                 }}
                 events={events}
             />
+            </div>
+            
         </section>
     );
 }
