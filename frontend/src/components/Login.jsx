@@ -3,19 +3,19 @@ import React, { useState, useEffect } from 'react';
 import axios from "axios";
 import FormInput from './FormInput'; // Import the FormInput component
 import SignUp from './SignUp';
-
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import PathConstants from '../PathConstants';
+import {Link} from 'react-router-dom';
 
 function Login() {
 
     const handleSignUp = () => {
-    
+
 
     }
 
     return (
         <>
-        <Router>
+        
             <div className="login-header">
                 <img src={require("../assets/hospital-logo.png")} alt="Hospital Logo" className="hospital-logo" />
             </div>
@@ -29,11 +29,13 @@ function Login() {
                     <div className="button-container">
                         <button type="submit" className="login-button">LOGIN</button>
                         <h3 style={{ marginTop: '20px' }}> Don't have an account? </h3>
+                        <Link to ={PathConstants.SIGNUP}>
                         <button type="button" className="sign-up-button" onClick={handleSignUp}>SIGN UP</button>
+                        </Link>
                     </div>
                 </form>
             </div>
-        </Router>
+    
         </>
     );
 }
