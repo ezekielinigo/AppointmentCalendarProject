@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import axios from "axios";
-import FormInput from './FormInput'; // Import the FormInput component without the file extension
+import FormInput from './FormInput';
 
 function SignUp() {
     

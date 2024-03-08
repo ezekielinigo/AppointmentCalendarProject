@@ -17,7 +17,7 @@ function Login() {
         <>
         <Router>
             <div className="login-header">
-                <img src={require("./assets/hospital-logo.png")} alt="Hospital Logo" className="hospital-logo" />
+                <img src={require("../assets/hospital-logo.png")} alt="Hospital Logo" className="hospital-logo" />
             </div>
             <h1 className="login-title">Department of ______ Appointment System</h1>
             <div className="login-pane">

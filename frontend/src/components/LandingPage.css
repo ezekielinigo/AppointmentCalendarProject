@@ -1,0 +1,45 @@
+.LandingPage {  
+    background-image: url(../assets/rmc-bg.jpg);
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-size: fill;
+}
+
+.btn {
+    width: 300px;
+    margin: 10px 0;
+    height: 300px;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    background-color: #282c34;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.3s ease-in-out;
+    font-size: 40px;
+    flex-direction: row;
+}
+
+.title {
+    font-size: 50px;
+    color: rgb(0, 0, 0);
+    text-align: center;
+}
+
+.body {
+    font-size: 20px;
+    color: rgb(0, 0, 0);
+    text-align: center;
+}
+
+.footer {
+    font-size: 20px;
+    color: rgb(0, 0, 0);
+    text-align: center;
+    margin: 30px;
+}
+
+.button-container {
+    display: flex;
+    justify-content: space-between;
+}
