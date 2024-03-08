@@ -16,8 +16,8 @@ migrate.py runserver
 http://localhost:3000/
 ```
 cd frontend
+npm install react-scripts
+npm install react-bootstrap
 npm start
 
-if prompted for "react-scripts not found....",
-npm install react-scripts
 ```
