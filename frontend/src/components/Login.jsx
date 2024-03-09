@@ -6,17 +6,22 @@ import FormInput from './FormInput'; // Import the FormInput component
 import SignUp from './SignUp';
 import PathConstants from '../PathConstants';
 import {Link} from 'react-router-dom';
+import Modal from 'react-bootstrap/Modal';
 
 function Login() {
 
+
+    const [show, setShow] = useState(true);
+
     const handleSignUp = () => {
-            
+
 
     }
 
+
+
     return (
         <>
-        
             <div className="login-header">
                 <img src={require("../assets/hospital-logo.png")} alt="Hospital Logo" className="hospital-logo" />
             </div>
@@ -32,7 +37,7 @@ function Login() {
                     </div>
                 </form>
             </div>
-    
+        
         </>
     );
 }
