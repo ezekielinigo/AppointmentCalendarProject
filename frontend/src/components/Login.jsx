@@ -10,7 +10,7 @@ import {Link} from 'react-router-dom';
 function Login() {
 
     const handleSignUp = () => {
-
+            
 
     }
 
@@ -29,10 +29,6 @@ function Login() {
                     <FormInput type="password" placeholder="Password" name="password" className="password-field" />
                     <div className="button-container">
                         <button type="submit" className="login-button">LOGIN</button>
-                        <h3 style={{ marginTop: '20px' }}> Don't have an account? </h3>
-                        <Link to ={PathConstants.SIGNUP}>
-                        <button type="button" className="sign-up-button" onClick={handleSignUp}>SIGN UP</button>
-                        </Link>
                     </div>
                 </form>
             </div>

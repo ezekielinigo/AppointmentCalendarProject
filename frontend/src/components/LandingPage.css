@@ -1,8 +1,10 @@
-.LandingPage {  
-    background-image: url(../assets/rmc-bg.jpg);
-    background-repeat: no-repeat;
-    background-attachment: fixed;
-    background-size: fill;
+.LandingPage {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    background-color: #f8f9fa;
 }
 
 .btn {
@@ -21,9 +23,10 @@
 }
 
 .title {
-    font-size: 50px;
+    font-size: 40px;
     color: rgb(0, 0, 0);
     text-align: center;
+    margin: 30px;
 }
 
 .body {
