@@ -38,7 +38,7 @@ function Login() {
             <div className="login-header">
                 <img src={require("../assets/hospital-logo.png")} alt="Hospital Logo" className="hospital-logo" />
             </div>
-            <h1 className="login-title">Department of ______ Appointment System</h1>
+            <h1 className="login-title">Patient's Login</h1>
             <div className="login-pane">
                 <form className="login-form">
                     <h3 className="login-title">Username or Email</h3>
@@ -49,8 +49,7 @@ function Login() {
                         <button type="submit" className="login-button">LOGIN</button>
                     </div>
                 </form>
-                    <h3 className="login-title">Don't have an account? <Link to={PathConstants.SIGNUP}> Sign up here </Link> </h3> 
-                    <p1> Back? <Link to={PathConstants.LANDING}> Click here </Link> </p1>
+                    <h3> Don't have an account? | <Link to={PathConstants.SIGNUPPATIENT}> Sign up here </Link> </h3> 
             </div>
             </div>
         </Modal>
