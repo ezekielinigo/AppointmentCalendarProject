@@ -19,6 +19,7 @@ cd frontend
 npm install react-scripts (if not yet installed, write this line. otherwise, skip.)
 npm install react-bootstrap (if not yet installed, write this line. otherwise, skip.)
 npm install @types/react-transition-group (if not yet installed, write this line. otherwise, skip.)
+npm install react-pro-sidebar (if not yet installed, write this line. otherwise, skip.)
 
 npm start
 
