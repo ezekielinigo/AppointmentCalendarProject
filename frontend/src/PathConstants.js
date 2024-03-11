@@ -1,11 +1,12 @@
 
 const PathConstants = {
     LOGINDOCTOR: '/login/doctor',
-    LOGINPATIENT: '/login/patient',
+    LOGINPATIENT: '/login/patient/signin',
+    SIGNUPPATIENT: '/login/patient/signup',
+    LANDINGASKER: '/login/patient/',
     LANDING: '/',
     CALENDAR: '/calendar',
-    SIGNUP: '/signup'
-
+    
 }
 
 export default PathConstants;

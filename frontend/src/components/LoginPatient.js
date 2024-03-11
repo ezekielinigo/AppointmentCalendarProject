@@ -49,6 +49,8 @@ function Login() {
                         <button type="submit" className="login-button">LOGIN</button>
                     </div>
                 </form>
+                    <h3 className="login-title">Don't have an account? <Link to={PathConstants.SIGNUP}> Sign up here </Link> </h3> 
+                    <p1> Back? <Link to={PathConstants.LANDING}> Click here </Link> </p1>
             </div>
             </div>
         </Modal>

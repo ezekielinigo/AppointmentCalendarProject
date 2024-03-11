@@ -56,14 +56,14 @@ function LandingPage() {
                 <Modal.Body class='body'>
                     Please choose from the following:</Modal.Body>
                 <Modal.Footer class='footer'>
-                    <Link to={PathConstants.LANDINGASKER}>
+                    <Link to={PathConstants.SIGNUPPATIENT}>
                         <Button className='btn' size='lg' variant="primary" onClick={patientHandler}>
-                            I am a patient
+                            I am a first-time user
                         </Button> </Link>
                     
-                        <Link to = {PathConstants.LOGINDOCTOR}>
+                        <Link to = {PathConstants.LOGINPATIENT}>
                         <Button className='btn' size='lg' variant="primary" onClick={doctorHandler}>
-                            I am a physician
+                            I have an account
                         </Button>
                    </Link>
 

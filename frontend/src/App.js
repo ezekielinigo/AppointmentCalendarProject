@@ -15,6 +15,7 @@ import { RouterProvider, createBrowserRouter } from 'react-router-dom';
 import LoginDoctor from './components/LoginDoctor';
 import LoginPatient from './components/LoginPatient';
 import LandingPage from './components/LandingPage';
+import LandingAsker from './components/LandingAsker';
 import SignUp from './components/SignUp';
 
 function App() {
@@ -33,6 +34,11 @@ function App() {
 
         {
             path: '/login/patient',
+            element: <LandingAsker />
+        },
+
+        {
+            path: '/login/patient/signin',
             element: <LoginPatient />
         },
 
@@ -42,7 +48,7 @@ function App() {
         },
 
         { 
-            path: '/signup',
+            path: 'login/patient/signup',
             element: <SignUp />
         }
 
