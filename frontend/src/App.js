@@ -12,7 +12,8 @@ import './App.css';
 import React, { useState, useEffect } from 'react';
 import Calendar from './components/Calendar';
 import { RouterProvider, createBrowserRouter } from 'react-router-dom';
-import Login from './components/Login';
+import LoginDoctor from './components/LoginDoctor';
+import LoginPatient from './components/LoginPatient';
 import LandingPage from './components/LandingPage';
 import SignUp from './components/SignUp';
 
@@ -26,8 +27,13 @@ function App() {
         },
         
         {
-            path: '/login',
-            element: <Login />
+            path: '/login/doctor',
+            element: <LoginDoctor />
+        },
+
+        {
+            path: '/login/patient',
+            element: <LoginPatient />
         },
 
         {

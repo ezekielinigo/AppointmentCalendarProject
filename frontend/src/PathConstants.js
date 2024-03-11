@@ -1,7 +1,8 @@
 
 const PathConstants = {
-    LOGIN: '/login',
-    LANDING: '/landing',
+    LOGINDOCTOR: '/login/doctor',
+    LOGINPATIENT: '/login/patient',
+    LANDING: '/',
     CALENDAR: '/calendar',
     SIGNUP: '/signup'
 

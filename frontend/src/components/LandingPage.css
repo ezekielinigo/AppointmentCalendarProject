@@ -33,11 +33,11 @@
 }
 
 .title {
-    font-size: 30px;
+    font-size: 40px;
     color: rgb(0, 0, 0);
     text-align: center;
-    margin: 30px;
-    flex-direction: row;
+    margin: 10px;
+    flex-wrap: wrap;
 }
 
 .body {
@@ -57,4 +57,10 @@
 .button-container {
     display: flex;
     justify-content: space-between;
+}
+
+.LandingPage {
+    background-image: url('../assets/rmc-bg.jpg');
+    background-size: cover;
+    background-position: center;
 }
