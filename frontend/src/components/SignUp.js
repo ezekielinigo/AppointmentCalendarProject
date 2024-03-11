@@ -17,13 +17,16 @@ function SignUp() {
                 <FormInput type="text" placeholder="Username" name="username" className="user-field" />
                 <h3 className="login-title">Email</h3>
                 <FormInput type="text" placeholder="Email" name="email" className="user-field" />
+                <h3 className="login-title">Birthday</h3>
+                <FormInput type="date" placeholder="Email" name="date" className="user-field" />
                 <h3 className="login-title">Password</h3>
+
                 <FormInput type="password" placeholder="Password" name="password" className="password-field" />
                 <h3 className="login-title">Confirm Password</h3>
                 <FormInput type="password" placeholder="Re-enter Password" name="password" className="password-field" />
                 <h3 className="login-title">Cellphone Number</h3>
                 <FormInput
-                    type="text"
+                    type="number"
                     placeholder="Cellphone Number"
                     name="cellphoneNumber"
                     className="number-field"
