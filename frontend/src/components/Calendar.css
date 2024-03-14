@@ -1,14 +1,18 @@
-.container {
 
-    
-
+.calendar .fc-view-harness {
+    flex-flow: column;
+    max-height: 80vh;
+    justify-content: center;
 }
 
-.calendar {
+.fc-event{
+    font-size: 10px;
+}
+
+.fc-event-time {
+    display: none;
+}
+
+.fc-timegrid-more-link {
     width: 100%;
-    margin: auto;
-}
-
-.fc-event-title {
-    font-size: 9px;
 }

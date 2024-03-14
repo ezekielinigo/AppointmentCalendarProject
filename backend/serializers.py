@@ -2,20 +2,7 @@ from rest_framework import serializers
 from .models import *
 
 
-class AppointmentSerializer(serializers.ModelSerializer):
-    patient = serializers.StringRelatedField()
-    class Meta:
-        model = Appointment
-        fields = (
-            'patient',
-            'date',
-            'time',
-            'followup',
-            'referral',
-            'newPatient',
-            'remarks',
-            'appointmentNumber'
-        )
+
 
 class PatientSerializer(serializers.ModelSerializer):
     class Meta:
@@ -28,4 +15,21 @@ class PatientSerializer(serializers.ModelSerializer):
             'birthdate',
             'contact',
             'email'
+        )
+
+class AppointmentSerializer(serializers.ModelSerializer):
+    patient = PatientSerializer(read_only=True)
+    label = serializers.StringRelatedField(source='patient')
+    class Meta:
+        model = Appointment
+        fields = (
+            'label',
+            'patient',
+            'date',
+            'time',
+            'followup',
+            'referral',
+            'newPatient',
+            'remarks',
+            'appointmentNumber'
         )
