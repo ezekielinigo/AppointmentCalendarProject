@@ -5,13 +5,21 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="5305e2d0-640b-4868-8c71-90a2aa692920" name="Changes" comment="initial commit">
-      <change afterPath="$PROJECT_DIR$/backend/migrations/0002_alter_appointment_description.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/backend/migrations/0004_patient.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/backend/migrations/0005_alter_patient_contact.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/backend/migrations/0006_delete_doctor_rename_description_appointment_remarks_and_more.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/backend/migrations/0007_alter_appointment_appointmentnumber_and_more.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AppointmentCalendarProject/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/AppointmentCalendarProject/urls.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/admin.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/admin.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/backend/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/models.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/serializers.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/serializers.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/backend/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/views.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/db.sqlite3" beforeDir="false" afterPath="$PROJECT_DIR$/db.sqlite3" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/db.sqlite3" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/package-lock.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/frontend/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/App.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/App.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/Calendar.css" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/Calendar.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/Calendar.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/Calendar.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -59,9 +67,11 @@
   </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
+    "Django Server.AppointmentCalendarProject.executor": "Run",
     "RunOnceActivity.OpenDjangoStructureViewOnStart": "true",
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.pycharm.django.structure.promotion.once.per.project": "true",
     "git-widget-placeholder": "main",
     "last_opened_file_path": "C:/Users/Ezekiel2/PycharmProjects/appointmentProject",
     "node.js.detected.package.eslint": "true",
@@ -82,6 +92,7 @@
       <option name="PARENT_ENVS" value="true" />
       <envs>
         <env name="PYTHONUNBUFFERED" value="1" />
+        <env name="DJANGO_SETTINGS_MODULE" value="AppointmentCalendarProject.settings" />
       </envs>
       <option name="SDK_HOME" value="" />
       <option name="WORKING_DIRECTORY" value="" />
@@ -103,7 +114,7 @@
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-python-sdk-5a2391486177-2887949eec09-com.jetbrains.pycharm.pro.sharedIndexes.bundled-PY-233.13763.11" />
+        <option value="bundled-python-sdk-d68999036c7f-b11f5e8da5ad-com.jetbrains.pycharm.pro.sharedIndexes.bundled-PY-233.14475.56" />
       </set>
     </attachedChunks>
   </component>
@@ -117,6 +128,7 @@
       <updated>1708665126415</updated>
       <workItem from="1708665138645" duration="3259000" />
       <workItem from="1708668409329" duration="3024000" />
+      <workItem from="1710329778379" duration="20204000" />
     </task>
     <task id="LOCAL-00001" summary="initial commit">
       <option name="closed" value="true" />

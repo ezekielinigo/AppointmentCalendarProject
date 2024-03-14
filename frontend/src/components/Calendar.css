@@ -3,3 +3,12 @@
     
 
 }
+
+.calendar {
+    width: 100%;
+    margin: auto;
+}
+
+.fc-event-title {
+    font-size: 9px;
+}

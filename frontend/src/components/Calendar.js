@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
+import timeGridPlugin from '@fullcalendar/timegrid';
 import axios from "axios";
 import FormInput from './FormInput';
 import bootstrap from 'bootstrap';
@@ -22,39 +23,51 @@ function Calendar() {
     useEffect(() => { // this will fetch all events from backend and display them on the calendar
     axios.get('http://localhost:8000/api/appointments/')
         .then(res => {
-            setEvents(res.data.map(appointment => ({
-                title: appointment.title,
-                start: new Date(appointment.date),
-                allDay: true
-            })));
+            setEvents(res.data.map(appointment => {
+                const dateTime = new Date(appointment.date + 'T' + appointment.time);
+                return {
+                    title: appointment.patient,
+                    date: dateTime,
+                    allDay: false
+                };
+            }));
         })
         .catch(err => console.log(err));
     }, []);
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        if (eventTitle === '' || eventDate === '') {
-            alert('Please fill in all fields');
-        } else {
-            const newEvent = {title: eventTitle, date: eventDate}; // this will create an "event" object
-            alert('Event added successfully!')
-            axios.post('http://localhost:8000/api/appointments/', newEvent) // this will add that event to backend
-                .then(res => {
-                    setEvents([...events, res.data ]); // this will display the event on the calendar
-                    setEventTitle(''); // these two will clear input fields after submit
-                    setEventDate('');
-                })
-                .catch(err => console.log(err));
-        }
-    }
 
-    const handleDelete = (id) => {
-        axios.delete(`http://localhost:8000/api/appointments/${id}`)
+    const handleSubmit = (e) => {
+    e.preventDefault();
+    if (eventTitle === '' || eventDate === '') {
+        alert('Please fill in all fields');
+    } else {
+        const newEvent = {
+            patient: eventTitle, // Assuming eventTitle is the patient
+            date: eventDate.split('T')[0], // Extract date from datetime
+            time: eventDate.split('T')[1] // Extract time from datetime
+        };
+        axios.post('http://localhost:8000/api/appointments/', newEvent)
             .then(res => {
-                setEvents(events.filter(event => event._id !== id));
+                setEvents([...events, {
+                    title: res.data.patient,
+                    date: new Date(res.data.date + 'T' + res.data.time),
+                    allDay: false
+                }]);
+                setEventTitle('');
+                setEventDate('');
             })
             .catch(err => console.log(err));
     }
+}
+
+const handleDelete = (id) => {
+    axios.delete(`http://localhost:8000/api/appointments/${id}`)
+        .then(res => {
+            setEvents(events.filter(event => event.id !== id)); // Assuming each event has an id property
+        })
+        .catch(err => console.log(err));
+}
+
 
    return (
 
@@ -69,20 +82,24 @@ function Calendar() {
                </form>
                <div className="calendar">
                    <FullCalendar
-                       plugins={[dayGridPlugin]}
+                       plugins={[dayGridPlugin, timeGridPlugin]}
                        initialView="dayGridMonth"
                        style={centered}
                        headerToolbar={{
                            left: 'prev,next today',
                            center: 'title',
-                           right: 'dayGridMonth,dayGridWeek',
+                           right: 'dayGridMonth,timeGridWeek,timeGridDay',
                        }}
-                       events={events} />
+                       slotDuration='01:00:00'
+                       slotEventOverlap={false}
+                       dayMaxEventRows={0}
+                       events={events}
+                       displayEventTime={false}
+                   />
                </div>
            </section></div></>
             );
-                        }
-        
+}
 
 export default Calendar;
 
