@@ -33,7 +33,7 @@ const Calendar = () => {
             const appointments = response.data.map(appointment => {
                 const dateTime = new Date(`${appointment.date}T${appointment.time}`);
                 return {
-                    title: appointment.label,
+                    title: appointment.appointmentNumber.substring(10,) + ' : ' + appointment.patient.nameLast + ', ' + appointment.patient.nameFirst[0] + '.',
                     date: dateTime,
                     allDay: false,
                     extendedProps: {
@@ -46,7 +46,14 @@ const Calendar = () => {
                         email: appointment.patient.email,
                         contact: appointment.patient.contact,
                         appointmentNumber: appointment.appointmentNumber,
-                        followup: appointment.followup
+                        facebookName: appointment.patient.facebookName,
+                        followup: appointment.followup,
+                        address: appointment.patient.address,
+                        age: appointment.patient.age,
+                        sex: appointment.patient.sex,
+                        civilStatus: appointment.patient.civilStatus,
+                        dateLabel: appointment.date,
+                        timeLabel: appointment.time
                     }
                 };
             });
@@ -108,7 +115,7 @@ const Calendar = () => {
                         }
                     }
                 }}
-                moreLinkContent={({num}) => `${num} appointments`}
+                moreLinkContent={({num}) => `${num}/6`}
                 slotDuration='01:00:00'
                 slotEventOverlap={false}
                 eventMaxStack={0}

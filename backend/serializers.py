@@ -11,10 +11,15 @@ class PatientSerializer(serializers.ModelSerializer):
             'nameFirst',
             'nameMiddle',
             'nameLast',
-            'hospitalNumber',
             'birthdate',
+            'age',
+            'sex',
+            'civilStatus',
+            'hospitalNumber',
             'contact',
-            'email'
+            'email',
+            'facebookName',
+            'address'
         )
 
 class AppointmentSerializer(serializers.ModelSerializer):
@@ -23,13 +28,13 @@ class AppointmentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Appointment
         fields = (
-            'label',
+            'appointmentNumber',
             'patient',
+            'label',
             'date',
             'time',
-            'followup',
-            'referral',
-            'newPatient',
             'remarks',
-            'appointmentNumber'
+            'followup',
+            'referralDoctor',
+            'newPatient'
         )

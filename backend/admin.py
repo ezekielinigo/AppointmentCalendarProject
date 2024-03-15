@@ -5,14 +5,11 @@ from .models import *
 # Register your models here.
 
 class AppointmentAdmin(admin.ModelAdmin):
-    list_display = ('patient', 'date', 'time', 'followup', 'newPatient', 'appointmentNumber')
-    search_fields = ('patient', 'date', 'time', 'followup', 'newPatient', 'appointmentNumber')
-    list_filter = ('date', 'time', 'followup', 'newPatient', 'appointmentNumber')
-
+    list_display = ('appointmentNumber', 'patient', 'date', 'time', 'followup', 'referralDoctor', 'newPatient')
+    search_fields = ('appointmentNumber', 'patient', 'date', 'time', 'followup', 'referralDoctor', 'newPatient')
 class PatientAdmin(admin.ModelAdmin):
-    list_display = ('nameLast', 'nameFirst', 'nameMiddle', 'hospitalNumber', 'birthdate', 'contact', 'email')
-    search_fields = ('nameLast', 'nameFirst', 'nameMiddle', 'hospitalNumber', 'birthdate', 'contact', 'email')
-    list_filter = ('hospitalNumber', 'nameLast')
+    list_display = ('nameLast', 'nameFirst', 'birthdate', 'age', 'sex', 'civilStatus', 'hospitalNumber', 'contact', 'email', 'facebookName')
+    search_fields = ('nameLast', 'nameFirst', 'birthdate', 'age', 'sex', 'civilStatus', 'hospitalNumber', 'contact', 'email', 'facebookName')
 
 admin.site.register(Appointment, AppointmentAdmin)
 admin.site.register(Patient, PatientAdmin)

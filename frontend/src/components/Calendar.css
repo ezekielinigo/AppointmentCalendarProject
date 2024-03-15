@@ -41,7 +41,28 @@ a:hover {
 .fc-button-primary:hover, .fc-button-primary:focus, .fc-button-primary:active {
     background-color: #056839 !important;
     border-color: #056839 !important;
-    box-shadow: 0 0 0 0.2rem rgba(5, 104, 57, 0.5) !important;
+    box-shadow: 0 0 0 0 !important;
+}
+
+.form-check-input, .form-check{
+    white-space: nowrap;
+    margin: 1px;
+}
+
+.AppointmentInfoModal, .form-control, .form-label {
+    font-size: 10px;
+    margin: 1px;
+    column-gap: 10px;
+}
+
+.row {
+    margin-right: -5px;
+    margin-left: -5px;
+}
+
+.row > [class^="col-"] {
+    padding-right: 5px;
+    padding-left: 5px;
 }
 
 :root {
