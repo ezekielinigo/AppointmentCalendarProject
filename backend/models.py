@@ -55,6 +55,7 @@ class Patient(models.Model):
     nameMiddle = models.CharField(max_length=120, null=True, blank=True)
     nameLast = models.CharField(max_length=120, null=True, blank=True)
 
+    # auto-capitalization of names
     def save(self, *args, **kwargs):
         if self.nameFirst is not None:
             self.nameFirst = self.nameFirst.upper()

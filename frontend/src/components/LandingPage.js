@@ -57,12 +57,12 @@ function LandingPage() {
                     Please choose from the following:</Modal.Body>
                 <Modal.Footer class='footer'>
                     <Link to={PathConstants.LANDINGASKER}>
-                        <Button className='btn' size='lg' variant="primary" onClick={patientHandler}>
+                        <Button className='landing-btn' size='lg' variant="primary" onClick={patientHandler}>
                             I am a patient
                         </Button> </Link>
                     
                         <Link to = {PathConstants.LOGINDOCTOR}>
-                        <Button className='btn' size='lg' variant="primary" onClick={doctorHandler}>
+                        <Button className='landing-btn' size='lg' variant="primary" onClick={doctorHandler}>
                             I am a physician
                         </Button>
                    </Link>

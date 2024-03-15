@@ -13,7 +13,14 @@ const Calendar = () => {
     const [showModal, setShowModal] = useState(false);
     const [selectedAppointment, setSelectedAppointment] = useState(null);
     const calendarRef = useRef(null);
-    const handleClose = () => setShowModal(false);
+    const [editLock, setEditLock] = useState(true);
+    const handleEditLock = () => {
+        setEditLock(!editLock);
+    }
+    const handleClose = () => {
+        setShowModal(false);
+        setEditLock(false);
+    }
     const handleDateClick = (info) => {
         setSelectedAppointment(info.event);
         setShowModal(true);
@@ -115,6 +122,8 @@ const Calendar = () => {
                 show={showModal}
                 handleClose={handleClose}
                 appointment={selectedAppointment}
+                editLock={editLock}
+                handleEditLock={handleEditLock}
             />
         </div>
     );

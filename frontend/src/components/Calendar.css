@@ -1,3 +1,12 @@
+/* RMC COLOR PALETTE
+text green: #056839
+dark green: #108942
+green: #3ab149
+light green: #72b844
+yellow green: #b5d333
+white: #faf3ddd
+ */
+
 
 .calendar .fc-view-harness {
     flex-flow: column;
@@ -15,4 +24,35 @@
 
 .fc-timegrid-more-link {
     width: 100%;
+}
+
+a{
+    color: #056839;
+}
+a:hover {
+    color: #056839;
+}
+
+.fc-button-primary{
+    background-color: #108942;
+    border-color: #108942;
+}
+
+.fc-button-primary:hover, .fc-button-primary:focus, .fc-button-primary:active {
+    background-color: #056839 !important;
+    border-color: #056839 !important;
+    box-shadow: 0 0 0 0.2rem rgba(5, 104, 57, 0.5) !important;
+}
+
+:root {
+    --fc-button-active-bg-color: #056839;
+    --fc-button-active-border-color: #056839;
+    --fc-button-hover-bg-color: #056839;
+    --fc-button-hover-border-color: #056839;
+    --fc-button-bg-color: #108942;
+    --fc-button-border-color: #108942;
+    --fc-event-bg-color: #108942;
+    --fc-event-border-color: #108942;
+    --fc-text-event-color: #faf3ddd;
+    --white: #faf3ddd;
 }
