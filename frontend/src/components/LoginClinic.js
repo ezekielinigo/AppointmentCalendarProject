@@ -13,9 +13,12 @@ function Login() {
 
     const [show, setShow] = useState(true);
 
+    const [clinicid, setClinicID] = useState('');
+    const [clinicpassword, setClinicPassword] = useState('');
+
     const handleLogin = (event) => {
         event.preventDefault(); // para 'di magshow 'yung mga ilalagay na information sa URL
-        
+        alert('Clinic ID: ' + clinicid + '\nPassword: ' + clinicpassword);
 
 
     }
@@ -41,9 +44,26 @@ function Login() {
             <div className="login-pane">
                 <form className="login-form">
                     <h3 className="login-title">Clinic ID</h3>
-                    <FormInput type="number" placeholder="Clinic ID" name="clinic-id" className="user-field" />
+                    
+                    <FormInput 
+                    type="number" 
+                    placeholder="Clinic ID" 
+                    name="clinic-id" 
+                    className="user-field" 
+                    value = {clinicid}
+                    onChange={(e) => setClinicID(e.target.value)}/>
+
                     <h3 className="login-title">Password</h3>
-                    <FormInput type="password" placeholder="Password" name="password" className="password-field" />
+
+                    <FormInput 
+                    type="password" 
+                    placeholder="Password" 
+                    name="password" 
+                    className="password-field" 
+                    value = {clinicpassword}
+                    onChange={(e) => setClinicPassword(e.target.value)}
+                    />
+
                     <div className="button-container">
                         <button type="submit" className="login-button" onClick={handleLogin}>LOGIN</button>
                     </div>
