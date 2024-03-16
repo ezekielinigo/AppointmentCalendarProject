@@ -13,13 +13,10 @@ function LandingPage() {
 
     const doctorHandler = () => {
         setShow(false);
-      
     }
 
     const patientHandler = () => {
         setShow(false);
-        
-        
 
     }
 
@@ -57,12 +54,12 @@ function LandingPage() {
                 <Modal.Footer class='footer'>
                     <Link to={PathConstants.SIGNUPPATIENT}>
                         <Button className='asker-btn' size='lg' variant="primary" onClick={patientHandler}>
-                            I am a first-time user
+                            I would like to book an appointment
                         </Button> </Link>
                     
                         <Link to = {PathConstants.LOGINPATIENT}>
                         <Button className='asker-btn' size='lg' variant="primary" onClick={doctorHandler}>
-                            I have an account
+                            I have an existing appointment
                         </Button>
                    </Link>
                 

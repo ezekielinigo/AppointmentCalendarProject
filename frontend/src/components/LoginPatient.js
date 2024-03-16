@@ -38,18 +38,25 @@ function Login() {
             <div className="login-header">
                 <img src={require("../assets/hospital-logo.png")} alt="Hospital Logo" className="hospital-logo" />
             </div>
-            <h1 className="login-title">Patient's Login</h1>
+            <h1 className="login-title">Please enter the following:</h1>
             <div className="login-pane">
                 <form className="login-form">
-                    <h3 className="login-title">Username or Email</h3>
-                    <FormInput type="text" placeholder="Username or Email" name="usernameOrEmail" className="user-field" />
-                    <h3 className="login-title">Password</h3>
-                    <FormInput type="password" placeholder="Password" name="password" className="password-field" />
+                   
+                    <h3 className="login-title">Full Name</h3>
+                   
+                    <div class = 'name-div'> 
+                   
+                    <FormInput type="text" placeholder="First Name" name="first-name" className="user-field" />
+                    <FormInput type="text" placeholder="Last Name" name="last-name" className="user-field" />
+                    </div>
+                    <h3 className="login-title">Appointment Code</h3>
+                    <FormInput type="text" placeholder="Appointment Code" name="appointment-code" className="user-field" />
+
                     <div className="button-container">
-                        <button type="submit" className="login-button">LOGIN</button>
+                        <button type="submit" className="login-button">Validate</button>
                     </div>
                 </form>
-                    <h3> Don't have an account? | <Link to={PathConstants.SIGNUPPATIENT}> Sign up here </Link> </h3> 
+                    <h3> Don't have an appointment? | <Link to={PathConstants.SIGNUPPATIENT}> Book here </Link> </h3> 
             </div>
             </div>
         </Modal>
