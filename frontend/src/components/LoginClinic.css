@@ -113,3 +113,7 @@
     flex-direction: column;
     transition:cubic-bezier(1, 0, 0, 1);
   }
+
+  .back-btn {
+    text-align: center;
+  }

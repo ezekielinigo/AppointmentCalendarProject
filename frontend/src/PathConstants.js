@@ -1,6 +1,6 @@
 
 const PathConstants = {
-    LOGINDOCTOR: '/login/doctor',
+    LOGINCLINIC: '/login/clinic',
     LOGINPATIENT: '/login/patient/signin',
     SIGNUPPATIENT: '/login/patient/signup',
     LANDINGASKER: '/login/patient/',

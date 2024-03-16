@@ -3,9 +3,8 @@ import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import background from '../assets/rmc-bg.jpg';
 import Logo from '../assets/hospital-logo.png';
-import Login from './LoginDoctor';
-import { Routes, Route, Link} from 'react-router-dom';
-import './LandingPage.css';
+import {Link} from 'react-router-dom';
+import './LandingAsker.css';
 import PathConstants from '../PathConstants';
 import FormInput from './FormInput';
 
@@ -37,7 +36,7 @@ function LandingPage() {
         
         <div class='LandingPage'>
 
-            <Modal class = 'landing' size='lg' aria-labelledby='contained-modal-title-vcenter' centered='true' backdrop='static' show={show} onHide={() => setShow(false)} keyboard={false}>
+            <Modal class = 'asker' size='lg' aria-labelledby='contained-modal-title-vcenter' centered='true' backdrop='static' show={show} onHide={() => setShow(false)} keyboard={false}>
                 <Modal.Header closeButton={false} class = 'header'>
 
     
@@ -51,24 +50,24 @@ function LandingPage() {
 
                 }} />
                     
-                   <marquee scrollamount = '10'> Welcome to RMC Clinic Appointment Calendar </marquee> </Modal.Title> 
+                 Welcome to RMC Clinic Appointment Calendar </Modal.Title> 
                 </Modal.Header>
                 <Modal.Body class='body'>
-                    Please choose from the following:</Modal.Body>
+                    Good day, patient! Please choose from the following:</Modal.Body>
                 <Modal.Footer class='footer'>
                     <Link to={PathConstants.SIGNUPPATIENT}>
-                        <Button className='btn' size='lg' variant="primary" onClick={patientHandler}>
+                        <Button className='asker-btn' size='lg' variant="primary" onClick={patientHandler}>
                             I am a first-time user
                         </Button> </Link>
                     
                         <Link to = {PathConstants.LOGINPATIENT}>
-                        <Button className='btn' size='lg' variant="primary" onClick={doctorHandler}>
+                        <Button className='asker-btn' size='lg' variant="primary" onClick={doctorHandler}>
                             I have an account
                         </Button>
                    </Link>
-
-
+                
                 </Modal.Footer>
+                <p1 class = 'back-btn'> Back? <Link to={PathConstants.LANDING}> Click here </Link> </p1>
             </Modal>
 
             

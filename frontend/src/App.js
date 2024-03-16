@@ -12,7 +12,7 @@ import './App.css';
 import React, { useState, useEffect } from 'react';
 import Calendar from './components/Calendar';
 import { RouterProvider, createBrowserRouter } from 'react-router-dom';
-import LoginDoctor from './components/LoginDoctor';
+import LoginClinic from './components/LoginClinic';
 import LoginPatient from './components/LoginPatient';
 import LandingPage from './components/LandingPage';
 import LandingAsker from './components/LandingAsker';
@@ -28,8 +28,8 @@ function App() {
         },
         
         {
-            path: '/login/doctor',
-            element: <LoginDoctor />
+            path: '/login/clinic',
+            element: <LoginClinic />
         },
 
         {

@@ -3,7 +3,7 @@ import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import background from '../assets/rmc-bg.jpg';
 import Logo from '../assets/hospital-logo.png';
-import Login from './LoginDoctor';
+import Login from './LoginClinic';
 import { Routes, Route, Link} from 'react-router-dom';
 import './LandingPage.css';
 import PathConstants from '../PathConstants';
@@ -51,7 +51,7 @@ function LandingPage() {
 
                 }} />
                     
-                   <marquee scrollamount = '10'> Welcome to RMC Clinic Appointment Calendar </marquee> </Modal.Title> 
+                   Welcome to RMC Clinic Appointment Calendar </Modal.Title> 
                 </Modal.Header>
                 <Modal.Body class='body'>
                     Please choose from the following:</Modal.Body>
@@ -61,7 +61,7 @@ function LandingPage() {
                             I am a patient
                         </Button> </Link>
                     
-                        <Link to = {PathConstants.LOGINDOCTOR}>
+                        <Link to = {PathConstants.LOGINCLINIC}>
                         <Button className='landing-btn' size='lg' variant="primary" onClick={doctorHandler}>
                             I am a physician
                         </Button>

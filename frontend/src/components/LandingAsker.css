@@ -17,7 +17,7 @@
     transition:cubic-bezier(1, 0, 0, 1)
 }
 
-.btn {
+.asker-btn {
     width: 300px;
     margin: 10px 0;
     height: 300px;
@@ -52,6 +52,8 @@
     color: rgb(0, 0, 0);
     text-align: center;
     margin: 30px;
+    flex-direction: row;
+
 }
 
 .button-container {
@@ -63,4 +65,10 @@
     background-image: url('../assets/rmc-bg.jpg');
     background-size: cover;
     background-position: center;
+}
+
+.back-btn {
+    text-align: center;
+    margin-bottom: 10px;
+    font-size: 20px;
 }
