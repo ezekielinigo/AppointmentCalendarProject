@@ -3,7 +3,6 @@ import './LoginPatient.css';
 import React, { useState, useEffect } from 'react';
 import axios from "axios";
 import FormInput from './FormInput'; // Import the FormInput component
-import SignUp from './SignUp';
 import PathConstants from '../PathConstants';
 import {Link} from 'react-router-dom';
 import Modal from 'react-bootstrap/Modal';
@@ -13,8 +12,13 @@ function Login() {
 
 
     const [show, setShow] = useState(true);
+    const [firstName, setFirstName] = useState('');
+    const [lastName, setLastName] = useState('');
+    const [appointmentCode, setAppointmentCode] = useState('');
 
-    const handleSignUp = () => {
+    const handleValidation= (event) => {
+        event.preventDefault(); // para 'di magshow 'yung mga ilalagay na information sa URL
+        alert('First Name: ' + firstName + '\nLast Name: ' + lastName + '\nAppointment Code: ' + appointmentCode);
 
 
     }
@@ -46,14 +50,22 @@ function Login() {
                    
                     <div class = 'name-div'> 
                    
-                    <FormInput type="text" placeholder="First Name" name="first-name" className="user-field" />
-                    <FormInput type="text" placeholder="Last Name" name="last-name" className="user-field" />
+                    <FormInput type="text" placeholder="First Name" name="first-name" className="user-field"
+                    value = {firstName} // set ung variable firstName, tas setFirstName ung function na magse-set ng value
+                    onChange={(e) => setFirstName(e.target.value)} /> 
+
+                    <FormInput type="text" placeholder="Last Name" name="last-name" className="user-field" 
+                    value = {lastName}
+                    onChange={(e) => setLastName(e.target.value)}/>
                     </div>
+
                     <h3 className="login-title">Appointment Code</h3>
-                    <FormInput type="text" placeholder="Appointment Code" name="appointment-code" className="user-field" />
+                    <FormInput type="text" placeholder="Appointment Code" name="appointment-code" className="user-field" 
+                    value = {appointmentCode}
+                    onChange={(e) => setAppointmentCode(e.target.value)}/>
 
                     <div className="button-container">
-                        <button type="submit" className="login-button">Validate</button>
+                        <button type="submit" className="login-button" onClick = {handleValidation}>Validate</button>
                     </div>
                 </form>
                     <h3> Don't have an appointment? | <Link to={PathConstants.SIGNUPPATIENT}> Book here </Link> </h3> 

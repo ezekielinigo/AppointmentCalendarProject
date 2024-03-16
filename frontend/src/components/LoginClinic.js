@@ -19,8 +19,6 @@ function Login() {
     const handleLogin = (event) => {
         event.preventDefault(); // para 'di magshow 'yung mga ilalagay na information sa URL
         alert('Clinic ID: ' + clinicid + '\nPassword: ' + clinicpassword);
-
-
     }
 
     return (
