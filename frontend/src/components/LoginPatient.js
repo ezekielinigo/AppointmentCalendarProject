@@ -18,12 +18,8 @@ function Login() {
 
     const handleValidation= (event) => {
         event.preventDefault(); // para 'di magshow 'yung mga ilalagay na information sa URL
-        alert('First Name: ' + firstName + '\nLast Name: ' + lastName + '\nAppointment Code: ' + appointmentCode);
-
-
+        alert('First Name: ' + firstName + '\nLast Name: ' + lastName + '\nAppointment Code: ' + appointmentCode); // for testing purposes lang
     }
-
-
 
     return (
         <>
@@ -46,7 +42,7 @@ function Login() {
             <div className="login-pane">
                 <form className="login-form">
                    
-                    <h3 className="login-title">Full Name</h3>
+                    <h3 className="login-title">Name</h3>
                    
                     <div class = 'name-div'> 
                    

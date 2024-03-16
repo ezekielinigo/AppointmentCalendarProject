@@ -16,7 +16,33 @@ import LoginClinic from './components/LoginClinic';
 import LoginPatient from './components/LoginPatient';
 import LandingPage from './components/LandingPage';
 import LandingAsker from './components/LandingAsker';
+import ReceptionistPage from './components/ReceptionistPage';
 import SignUp from './components/SignUp';
+
+import Sidebar from "./components/sidebar/Sidebar";
+import {
+    BrowserRouter as Router,
+    Routes,
+    Route,
+} from "react-router-dom";
+import {
+    AboutUs,
+    OurAim,
+    OurVision,
+} from "./components/sidebar/AboutUs";
+import {
+    Services,
+    ServicesOne,
+    ServicesTwo,
+    ServicesThree,
+} from "./components/sidebar/Services";
+import {
+    Events,
+    EventsOne,
+    EventsTwo,
+} from "./components/sidebar/Events";
+import Contact from "./components/sidebar/ContactUs";
+import Support from "./components/sidebar/Support";
 
 function App() {
 
@@ -50,12 +76,71 @@ function App() {
         { 
             path: 'login/patient/signup',
             element: <SignUp />
+        },
+
+        {
+            path: 'admin/clinic-view',
+            element: <ReceptionistPage />
+        },
+
+        // Start Receptionist Page Routes
+        {
+            path: "/about-us",
+            element: <AboutUs />
+        },
+
+        {
+            path: "/about-us/aim",
+            element: <OurAim />
+        },
+
+        {
+            path: "/about-us/vision",
+            element: <OurVision />
+        },
+
+        {
+            path: "/services",
+            element: <Services />
+        },
+        {
+            path: "/services/services1",
+            element: <ServicesOne />
+        },
+        {
+            path: "/services/services2",
+            element: <ServicesTwo />
+        },
+        {
+            path: "/services/services3",
+            element: <ServicesThree />
+        },
+        {
+            path: "/contact",
+            element: <Contact />
+        },
+        {
+            path: "/events",
+            element: <Events />
+        },
+        {
+            path: "/events/events1",
+            element: <EventsOne />
+        },
+        {
+            path: "/events/events2",
+            element: <EventsTwo />
+        },
+        {
+            path: "/support",
+            element: <Support />
         }
 
     ])
     
     return (
-        <RouterProvider router={router}></RouterProvider>
+        <><RouterProvider router={router}></RouterProvider></>
+
     );
 }
 

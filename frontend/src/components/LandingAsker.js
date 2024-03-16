@@ -36,11 +36,14 @@ function LandingPage() {
             <Modal class = 'asker' size='lg' aria-labelledby='contained-modal-title-vcenter' centered='true' backdrop='static' show={show} onHide={() => setShow(false)} keyboard={false}>
                 <Modal.Header closeButton={false} class = 'header'>
 
-    
-
                     <Modal.Title class='title'> 
                     
-                    <img src={Logo} alt='Logo' className='bg' style={{ 
+                    <img 
+                    
+                    src={Logo} 
+                    alt='Logo' 
+                    className='bg' 
+                    style={{ 
                     width: '80%', 
                     height: '80%',
                     flexDirection: 'row',
