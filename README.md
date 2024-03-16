@@ -11,9 +11,9 @@ If not yet installed,
 python -m pip install Pillow
 
 Otherwise,
-migrate.py makemigrations
-migrate.py migrate
-migrate.py runserver
+python manage.py makemigrations
+python manage.py migrate
+python manage.py runserver
 
 ```
 
