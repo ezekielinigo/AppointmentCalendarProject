@@ -13,7 +13,8 @@ function Login() {
     const [show, setShow] = useState(true);
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
-    const [appointmentCode, setAppointmentCode] = useState('');
+    const [hospitalNumber, sethospitalNumber] = useState('');
+    const [birthDate, setbirthDate] = useState('');
 
     const fetchEvents = async () => {
         try {
@@ -24,7 +25,8 @@ function Login() {
                     extendedProps: {
                         nameFirst: appointment.patient.nameFirst,
                         nameLast: appointment.patient.nameLast,
-                        appointmentNumber: appointment.appointmentNumber,
+                        birthdate: appointment.patient.birthdate,
+                        hospitalNumber: appointment.patient.hospitalNumber,
                     }
                 };
             });
@@ -41,13 +43,32 @@ function Login() {
     const handleValidation= (event) => {
         event.preventDefault(); // para 'di magshow 'yung mga ilalagay na information sa URL
        
-        if (firstName === '' || lastName === '' || appointmentCode === '') {
+        if (firstName === '' || lastName === '' || birthDate === '' || hospitalNumber === '') {
             alert('Please fill in all fields.');
         } 
 
         else {
+            
+            /* for debugging purposes - ending, mali yung syntax sa for loop... extendedProps.hospitalNumberr xd
+            alert('s' + events[2].extendedProps.nameFirst); 
+            alert(firstName);
+
+            alert('s' + events[2].extendedProps.nameLast);
+            alert(lastName);
+
+            alert('s' + events[2].extendedProps.hospitalNumber); 
+            alert(hospitalNumber);
+            
+            alert('s' + events[2].extendedProps.birthdate);
+            alert(birthDate); */
+
+            
             for (let i = 0; i < events.length; i++) {
-                if (events[i].extendedProps.nameFirst === firstName && events[i].extendedProps.nameLast === lastName && events[i].extendedProps.appointmentNumber === appointmentCode) {
+                if (events[i].extendedProps.nameFirst === firstName && 
+                    events[i].extendedProps.nameLast === lastName && 
+                    events[i].extendedProps.birthdate === birthDate &&
+                    events[i].extendedProps.hospitalNumber === hospitalNumber) {
+
                     alert('Validation successful!');
                     return; // exit the loop and the function if a match is found
                 }
@@ -92,10 +113,15 @@ function Login() {
                     onChange={(e) => setLastName(e.target.value)}/>
                     </div>
 
-                    <h3 className="login-title">Appointment Code</h3>
-                    <FormInput type="text" placeholder="Appointment Code" name="appointment-code" className="user-field" 
-                    value = {appointmentCode}
-                    onChange={(e) => setAppointmentCode(e.target.value)}/>
+                    <h3 className="login-title">Birthday</h3>
+                    <FormInput type="date" placeholder="Birthday" name="birthday" className="user-field" 
+                    value = {birthDate}
+                    onChange={(e) => setbirthDate(e.target.value)}/>
+
+                    <h3 className="login-title">Hospital Number</h3>
+                    <FormInput type="text" placeholder="Hospital Number" name="hospital-number" className="user-field" 
+                    value = {hospitalNumber}
+                    onChange={(e) => sethospitalNumber(e.target.value)}/>
 
                     <div className="button-container">
                         <button type="submit" className="login-button" onClick = {handleValidation}>Validate</button>
