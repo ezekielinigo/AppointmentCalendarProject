@@ -15,7 +15,6 @@ import { RouterProvider, createBrowserRouter } from 'react-router-dom';
 import LoginClinic from './components/LoginClinic';
 import LoginPatient from './components/LoginPatient';
 import LandingPage from './components/LandingPage';
-import LandingAsker from './components/LandingAsker';
 import ReceptionistPage from './components/ReceptionistPage';
 import SignUp from './components/SignUp';
 
@@ -56,11 +55,6 @@ function App() {
         {
             path: '/login/clinic',
             element: <LoginClinic />
-        },
-
-        {
-            path: '/login/patient',
-            element: <LandingAsker />
         },
 
         {

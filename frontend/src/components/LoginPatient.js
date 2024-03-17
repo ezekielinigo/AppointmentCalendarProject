@@ -127,7 +127,7 @@ function Login() {
                         <button type="submit" className="login-button" onClick = {handleValidation}>Validate</button>
                     </div>
                 </form>
-                    <h3> Don't have an appointment? | <Link to={PathConstants.SIGNUPPATIENT}> Book here </Link> </h3> 
+                    <h3> Are you a new patient? </h3> 
             </div>
             </div>
         </Modal>
