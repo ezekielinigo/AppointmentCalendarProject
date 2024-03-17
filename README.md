@@ -28,6 +28,7 @@ npm install react-bootstrap
 npm install @mui/x-date-pickers
 npm install dayjs
 npm install react-icons
+npm install @mui/material @emotion/react @emotion/styled
 
 Otherwise,
 npm start
