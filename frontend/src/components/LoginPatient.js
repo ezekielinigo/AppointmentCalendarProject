@@ -1,4 +1,3 @@
-
 import './LoginPatient.css';
 import React, { useState, useEffect } from 'react';
 import axios from "axios";
@@ -10,15 +9,53 @@ import background from '../assets/rmc-bg.jpg';
 
 function Login() {
 
-
+    const [events, setEvents] = useState([]);
     const [show, setShow] = useState(true);
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
     const [appointmentCode, setAppointmentCode] = useState('');
 
+    const fetchEvents = async () => {
+        try {
+            const response = await axios.get('http://localhost:8000/api/appointments/');
+            const appointments = response.data.map(appointment => {
+                return {
+                    title: appointment.appointmentNumber.substring(10,) + ' : ' + appointment.patient.nameLast + ', ' + appointment.patient.nameFirst[0] + '.',
+                    extendedProps: {
+                        nameFirst: appointment.patient.nameFirst,
+                        nameLast: appointment.patient.nameLast,
+                        appointmentNumber: appointment.appointmentNumber,
+                    }
+                };
+            });
+            setEvents(appointments);
+        } catch (error) {
+            console.error(error);
+        }
+    };
+    
+    useEffect(() => {
+            fetchEvents();
+        }, []);
+
     const handleValidation= (event) => {
         event.preventDefault(); // para 'di magshow 'yung mga ilalagay na information sa URL
-        alert('First Name: ' + firstName + '\nLast Name: ' + lastName + '\nAppointment Code: ' + appointmentCode); // for testing purposes lang
+       
+        if (firstName === '' || lastName === '' || appointmentCode === '') {
+            alert('Please fill in all fields.');
+        } 
+
+        else {
+            for (let i = 0; i < events.length; i++) {
+                if (events[i].extendedProps.nameFirst === firstName && events[i].extendedProps.nameLast === lastName && events[i].extendedProps.appointmentNumber === appointmentCode) {
+                    alert('Validation successful!');
+                    return; // exit the loop and the function if a match is found
+                }
+            }
+
+            alert('Validation failed. Please check your information.');
+
+        }
     }
 
     return (

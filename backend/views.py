@@ -4,7 +4,6 @@ from rest_framework.response import Response
 from .serializers import *
 from .models import *
 
-
 # Create your views here.
 class AppointmentView(viewsets.ModelViewSet):
     serializer_class = AppointmentSerializer
