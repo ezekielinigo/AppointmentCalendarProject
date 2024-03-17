@@ -13,7 +13,8 @@ const Calendar = () => {
     const [showModal, setShowModal] = useState(false);
     const [selectedAppointment, setSelectedAppointment] = useState(null);
     const calendarRef = useRef(null);
-    const [editLock, setEditLock] = useState(true);
+    const [editLock, setEditLock] = useState(false);
+    const [tempData, setTempData] = useState({});
     const handleEditLock = () => {
         setEditLock(!editLock);
     }
@@ -25,6 +26,23 @@ const Calendar = () => {
         setSelectedAppointment(info.event);
         setShowModal(true);
     }
+    const handleSave = async () => {
+        try {
+            /*
+            tempData has the data of calendarmodals.js' appointment.extendedProps.nameFirst for example
+            goal is to change this form into something that can be used to update the database
+            find way to update a specific value in the api/appointments/ url ?
+             */
+            const response = await axios.get('http://localhost:8000/api/appointments/');
+            const idx = response.data.findIndex(appointment => { return appointment.appointmentNumber === selectedAppointment.extendedProps.appointmentNumber });
+            console.log('idx: '+idx);
+            await axios.put(`http://localhost:8000/api/appointments/${idx+1}/`, tempData);
+
+            fetchEvents();
+        } catch (error) {
+            console.error(error);
+        }
+    };
 
     // This fetches events from the database and puts it in the state
     const fetchEvents = async () => {
@@ -40,20 +58,22 @@ const Calendar = () => {
                         nameFirst: appointment.patient.nameFirst,
                         nameMiddle: appointment.patient.nameMiddle,
                         nameLast: appointment.patient.nameLast,
-                        remarks: appointment.remarks,
                         birthdate: appointment.patient.birthdate,
                         hospitalNumber: appointment.patient.hospitalNumber,
                         email: appointment.patient.email,
                         contact: appointment.patient.contact,
-                        appointmentNumber: appointment.appointmentNumber,
                         facebookName: appointment.patient.facebookName,
-                        followup: appointment.followup,
                         address: appointment.patient.address,
                         age: appointment.patient.age,
                         sex: appointment.patient.sex,
                         civilStatus: appointment.patient.civilStatus,
+
+                        appointmentNumber: appointment.appointmentNumber,
                         dateLabel: appointment.date,
-                        timeLabel: appointment.time
+                        timeLabel: appointment.time,
+                        remarks: appointment.remarks,
+                        followup: appointment.followup,
+                        referralDoctor: appointment.referralDoctor
                     }
                 };
             });
@@ -131,6 +151,9 @@ const Calendar = () => {
                 appointment={selectedAppointment}
                 editLock={editLock}
                 handleEditLock={handleEditLock}
+                tempData={tempData}
+                setTempData={setTempData}
+                handleSave={handleSave}
             />
         </div>
     );

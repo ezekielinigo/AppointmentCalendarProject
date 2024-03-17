@@ -5,16 +5,12 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="5305e2d0-640b-4868-8c71-90a2aa692920" name="Changes" comment="calendar view revisions">
-      <change afterPath="$PROJECT_DIR$/backend/migrations/0008_remove_appointment_newpatient_and_more.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/backend/migrations/0009_remove_appointment_referral_appointment_newpatient_and_more.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/backend/migrations/0010_alter_patient_age.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/copilot/chatSessions/00000000000.xd" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/copilot/chatSessions/00000000000.xd" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/AppointmentCalendarProject.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/AppointmentCalendarProject.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/copilot/chatSessions/xd.lck" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/copilot/chatSessions/xd.lck" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/admin.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/admin.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/backend/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/models.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/serializers.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/serializers.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/db.sqlite3" beforeDir="false" afterPath="$PROJECT_DIR$/db.sqlite3" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/components/Calendar.css" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/Calendar.css" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/frontend/src/components/Calendar.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/Calendar.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/frontend/src/components/CalendarModals.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/CalendarModals.js" afterDir="false" />
     </list>
@@ -79,7 +75,7 @@
     "node.js.selected.package.eslint": "(autodetect)",
     "node.js.selected.package.tslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "reference.settings.ide.settings.new.ui",
+    "settings.editor.selected.configurable": "preferences.lookFeel",
     "ts.external.directory.path": "/Applications/PyCharm.app/Contents/plugins/javascript-impl/jsLanguageServicesImpl/external",
     "vue.rearranger.settings.migration": "true"
   }
@@ -123,7 +119,7 @@
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-python-sdk-5a2391486177-2887949eec09-com.jetbrains.pycharm.pro.sharedIndexes.bundled-PY-233.13763.11" />
+        <option value="bundled-python-sdk-d68999036c7f-b11f5e8da5ad-com.jetbrains.pycharm.pro.sharedIndexes.bundled-PY-233.14475.56" />
       </set>
     </attachedChunks>
   </component>
@@ -139,6 +135,7 @@
       <workItem from="1708668409329" duration="3024000" />
       <workItem from="1710329778379" duration="20204000" />
       <workItem from="1710489082148" duration="5923000" />
+      <workItem from="1710643814395" duration="13820000" />
     </task>
     <task id="LOCAL-00001" summary="initial commit">
       <option name="closed" value="true" />

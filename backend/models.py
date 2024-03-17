@@ -62,7 +62,7 @@ class Patient(models.Model):
     nameLast = models.CharField(max_length=120, null=True)
 
     birthdate = models.DateField(default=datetime.date.today)
-    age = models.PositiveIntegerField(null=True, blank=True, editable=False)
+    age = models.PositiveIntegerField(default=0, blank=True, editable=False)
     sex = models.CharField(
         max_length=6,
         choices=(
@@ -84,16 +84,17 @@ class Patient(models.Model):
     hospitalNumber = models.CharField(
         validators=[RegexValidator(r'^\d{6}$', message='Format: 123456')],
         max_length=6,
-        unique=True, null=True, blank=True
+        unique=True,
+        blank=True
     )
     contact = models.CharField(
         validators=[RegexValidator(r'^\d{1,11}$', message='Format: 09123123123')],
         max_length=11,
-        null=True, blank=True
+        blank=True
     )
-    email = models.EmailField(null=True)
-    facebookName = models.CharField(max_length=120, null=True, blank=True)
-    address = models.TextField(null=True, blank=True)
+    email = models.EmailField()
+    facebookName = models.CharField(default="", max_length=120, blank=True)
+    address = models.TextField(default="", blank=True)
 
     def save(self, *args, **kwargs):
         if self.birthdate:
