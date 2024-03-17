@@ -7,10 +7,13 @@ import {Link} from 'react-router-dom';
 import Modal from 'react-bootstrap/Modal';
 import background from '../assets/rmc-bg.jpg';
 
+import Checkbox from '@mui/material/Checkbox';
+
 function Login() {
 
     const [events, setEvents] = useState([]);
     const [show, setShow] = useState(true);
+    const [hospitalNumberInput, setHospitalNumberInput] = useState(false);
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
     const [hospitalNumber, sethospitalNumber] = useState('');
@@ -79,6 +82,10 @@ function Login() {
         }
     }
 
+    const handleHospitalBox = (event) => {
+        setHospitalNumberInput(event.target.checked); // basically returns a boolean value to check kung nakacheck ba ung box.
+    };
+
     return (
         <>
         <img src={background} alt='background' className='bg' style={{ 
@@ -97,9 +104,11 @@ function Login() {
                 <img src={require("../assets/hospital-logo.png")} alt="Hospital Logo" className="hospital-logo" />
             </div>
             <h1 className="login-title">Please enter the following:</h1>
+             
             <div className="login-pane">
                 <form className="login-form">
-                   
+                <h3> Are you a new patient? <Checkbox 
+                onChange={handleHospitalBox}> </Checkbox></h3>
                     <h3 className="login-title">Name</h3>
                    
                     <div class = 'name-div'> 
@@ -120,14 +129,17 @@ function Login() {
 
                     <h3 className="login-title">Hospital Number</h3>
                     <FormInput type="text" placeholder="Hospital Number" name="hospital-number" className="user-field" 
-                    value = {hospitalNumber}
-                    onChange={(e) => sethospitalNumber(e.target.value)}/>
-
+                    value={hospitalNumber}
+                    onChange={(e) => sethospitalNumber(e.target.value)}
+                    disabled={hospitalNumberInput}
+                    
+                     />
+                    
                     <div className="button-container">
-                        <button type="submit" className="login-button" onClick = {handleValidation}>Validate</button>
+                        <button type="submit" className="login-button" onClick = {handleValidation}>Proceed</button>
                     </div>
                 </form>
-                    <h3> Are you a new patient? </h3> 
+                
             </div>
             </div>
         </Modal>
