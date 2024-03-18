@@ -46,6 +46,87 @@ function Login() {
     const handleValidation= (event) => {
         event.preventDefault(); // para 'di magshow 'yung mga ilalagay na information sa URL
     
+    if (!hospitalNumberInput) {
+        if (firstName === '' || lastName === '' || birthDate === '' || hospitalNumber === '') {
+            alert("Please fill in all the fields.");
+        } 
+
+        else {
+            for (let i = 0; i < events.length; i++) {
+
+                //alert(events[i].extendedProps.nameFirst + " " + events[i].extendedProps.nameLast + " " + events[i].extendedProps.birthdate + " " + events[i].extendedProps.hospitalNumber)
+                //alert(firstName + " " + lastName + " " + birthDate + " " + hospitalNumber)
+
+                if (events[i].extendedProps.nameFirst === firstName && 
+                    events[i].extendedProps.nameLast === lastName && 
+                    events[i].extendedProps.birthdate === birthDate && 
+                    events[i].extendedProps.hospitalNumber === hospitalNumber) {
+                    alert('Patient found! Redirecting to patient page...');
+                    return;
+                } 
+
+                else if (events[i].extendedProps.nameFirst === firstName && 
+                    events[i].extendedProps.nameLast === lastName && 
+                    events[i].extendedProps.birthdate === birthDate && 
+                    events[i].extendedProps.hospitalNumber !== hospitalNumber) {
+                    alert('Patient found! Hospital number does not match. Please check your inputs.');
+                    return;
+                } 
+            }
+
+            if (window.confirm("Patient not found. Do you want to register as a new patient?")) {
+                alert("Redirecting to patient registration page...");
+                return;
+            }
+
+        }
+        
+        
+        /*
+        else {
+            const patient = {
+                nameFirst: firstName,
+                nameLast: lastName,
+                birthdate: birthDate,
+                hospitalNumber: hospitalNumber
+            };
+            axios.post(PathConstants.PATIENTS, patient)
+                .then(response => {
+                    console.log(response);
+                })
+                .catch(error => {
+                    console.error(error);
+                });
+            setShow(false);
+        } */ // tokenizing principle
+    }
+
+    else if (hospitalNumberInput) {
+        if (firstName === '' || lastName === '' || birthDate === '') {
+            alert("Please fill in all the fields.");
+        } 
+
+        else {
+            for (let i = 0; i < events.length; i++) {
+
+                //alert(events[i].extendedProps.nameFirst + " " + events[i].extendedProps.nameLast + " " + events[i].extendedProps.birthdate + " " + events[i].extendedProps.hospitalNumber)
+                //alert(firstName + " " + lastName + " " + birthDate + " " + hospitalNumber)
+
+                if (events[i].extendedProps.nameFirst === firstName && 
+                    events[i].extendedProps.nameLast === lastName && 
+                    events[i].extendedProps.birthdate === birthDate) {
+                    alert('Patient found! You might already have a hospital number. Please check your inputs.');
+                    return;
+                } 
+            }
+
+            if (window.confirm("Do you want to register as a new patient?")) {
+                alert("Redirecting to patient registration page...");
+                return;
+            }
+
+        }
+    }
         
     }
 
