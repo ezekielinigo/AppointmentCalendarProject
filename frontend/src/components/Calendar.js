@@ -67,7 +67,6 @@ const Calendar = () => {
                         age: appointment.patient.age,
                         sex: appointment.patient.sex,
                         civilStatus: appointment.patient.civilStatus,
-
                         appointmentNumber: appointment.appointmentNumber,
                         dateLabel: appointment.date,
                         timeLabel: appointment.time,

@@ -7,13 +7,14 @@ import {Link} from 'react-router-dom';
 import Modal from 'react-bootstrap/Modal';
 import background from '../assets/rmc-bg.jpg';
 
-import Checkbox from '@mui/material/Checkbox';
+import Checkbox, { checkboxClasses } from '@mui/material/Checkbox';
 
 function Login() {
 
     const [events, setEvents] = useState([]);
     const [show, setShow] = useState(true);
     const [hospitalNumberInput, setHospitalNumberInput] = useState(false);
+    const [checked, setChecked] = useState(false); // for checkbox
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
     const [hospitalNumber, sethospitalNumber] = useState('');
@@ -115,7 +116,9 @@ function Login() {
                 if (events[i].extendedProps.nameFirst === firstName && 
                     events[i].extendedProps.nameLast === lastName && 
                     events[i].extendedProps.birthdate === birthDate) {
-                    alert('Patient found! You might already have a hospital number. Please check your inputs.');
+                    alert('You already have a record on our database. Please input your hospital number.');
+                    setChecked(false); // pang uncheck
+                    setHospitalNumberInput(false); // pang enable ng text box
                     return;
                 } 
             }
@@ -132,6 +135,7 @@ function Login() {
 
     const handleHospitalBox = (event) => {
         setHospitalNumberInput(event.target.checked); // basically returns a boolean value to check kung nakacheck ba ung box.
+        setChecked(event.target.checked); // for checkbox
     };
 
     return (
@@ -155,8 +159,9 @@ function Login() {
              
             <div className="login-pane">
                 <form className="login-form">
-                <h3> Are you a new patient? <Checkbox 
-                onChange={handleHospitalBox}> </Checkbox></h3>
+                <h3> Are you a new patient? <Checkbox  
+                onChange={handleHospitalBox}
+                checked={checked}> </Checkbox></h3>
                     <h3 className="login-title">Name</h3>
                    
                     <div class = 'name-div'> 
