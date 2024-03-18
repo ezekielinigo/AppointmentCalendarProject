@@ -45,41 +45,8 @@ function Login() {
 
     const handleValidation= (event) => {
         event.preventDefault(); // para 'di magshow 'yung mga ilalagay na information sa URL
-       
-        if (firstName === '' || lastName === '' || birthDate === '' || hospitalNumber === '') {
-            alert('Please fill in all fields.');
-        } 
-
-        else {
-            
-            /* for debugging purposes - ending, mali yung syntax sa for loop... extendedProps.hospitalNumberr xd
-            alert('s' + events[2].extendedProps.nameFirst); 
-            alert(firstName);
-
-            alert('s' + events[2].extendedProps.nameLast);
-            alert(lastName);
-
-            alert('s' + events[2].extendedProps.hospitalNumber); 
-            alert(hospitalNumber);
-            
-            alert('s' + events[2].extendedProps.birthdate);
-            alert(birthDate); */
-
-            
-            for (let i = 0; i < events.length; i++) {
-                if (events[i].extendedProps.nameFirst === firstName && 
-                    events[i].extendedProps.nameLast === lastName && 
-                    events[i].extendedProps.birthdate === birthDate &&
-                    events[i].extendedProps.hospitalNumber === hospitalNumber) {
-
-                    alert('Validation successful!');
-                    return; // exit the loop and the function if a match is found
-                }
-            }
-
-            alert('Validation failed. Please check your information.');
-
-        }
+    
+        
     }
 
     const handleHospitalBox = (event) => {

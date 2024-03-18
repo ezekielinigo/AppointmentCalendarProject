@@ -1,0 +1,130 @@
+// if name.matches && birthdate.matches && hospitalNumber.matches
+    // then proceed
+
+    /*for (let i = 0; i < events.length; i++) {
+        if (events[i].extendedProps.nameFirst === firstName && 
+            events[i].extendedProps.nameLast === lastName && 
+            events[i].extendedProps.birthdate === birthDate &&
+            events[i].extendedProps.hospitalNumber === hospitalNumber) {
+
+            alert('Validation successful!');
+            return; // exit the loop and the function if a match is found
+        }
+
+    // if name.matches && birthdate.matches && !hospitalNumber.matches
+    // then 'error wrong hospital number'
+
+        else if (events[i].extendedProps.nameFirst === firstName &&
+                events[i].extendedProps.nameLast === lastName &&
+                events[i].extendedProps.birthdate === birthDate) {
+
+
+            if ((events[i].extendedProps.hospitalNumber !== hospitalNumber) && !hospitalNumberInput) {
+                alert('Error: Wrong hospital number. Please enter the correct hospital number.');
+                return;
+            }
+
+            else if (hospitalNumberInput && events[i].extendedProps.hospitalNumber === '') {
+                alert('Error: Patient already registered. Please enter your hospital number.');
+                return;
+                }
+            else {
+                return;
+            }
+            }
+
+        // if name.matches && birthdate.matches && hospitalNumber.blank
+        // then 'error patient already registered, please enter hospital number'
+
+        else if (events[i].extendedProps.nameFirst !== firstName &&
+                events[i].extendedProps.nameLast !== lastName &&
+                events[i].extendedProps.birthdate !== birthDate) {
+
+                if (hospitalNumberInput) {
+                    alert('You are a new patient.');
+                    return;
+                }
+
+                else if (!hospitalNumberInput && events[i].extendedProps.hospitalNumber !== hospitalNumber) {
+                alert('Error: Patient not found in our database. Are you a new patient?');
+                return;
+                }
+
+                else {
+                    return;
+                }
+            }
+
+        else if (events[i].extendedProps.nameFirst === '' || 
+                events[i].extendedProps.nameLast === '' ||
+                events[i].extendedProps.birthdate === '') {
+            alert('Please input all fields');
+            return;
+        }
+
+        else {
+            
+        }
+
+        //alert('Validation failed. Please check your information.');
+        
+    // if (!name.matches || !birthdate.matches) && hospitalNumber.blank
+    // then proceed 
+
+
+    if (hospitalNumberInput) {
+        for (let i = 0; i < events.length; i++) {
+            if (events[i].extendedProps.nameFirst === firstName &&
+                events[i].extendedProps.nameLast === lastName &&
+                events[i].extendedProps.birthdate === birthDate) {
+
+                if (events[i].extendedProps.hospitalNumber === '') {
+                    alert('Error: Patient already registered. Please enter your hospital number.');
+                    return;
+                }
+
+                else {
+                    alert('You are a new patient.');
+                    return;
+                }
+            }
+        }
+    }
+        
+    for (let i = 0; i < events.length; i++) {
+
+            else if (events[i].extendedProps.nameFirst === '' || 
+                    events[i].extendedProps.nameLast === '' ||
+                    events[i].extendedProps.birthdate === '') {
+                alert('Please input all fields');
+                return;
+            }
+
+            else if (events[i].extendedProps.nameFirst === firstName && 
+                    events[i].extendedProps.nameLast === lastName &&
+                    events[i].extendedProps.birthdate === birthDate &&
+                    events[i].extendedProps.hospitalNumber === hospitalNumber) {
+                alert('Validation successful.');
+                return;
+            }
+
+            else {
+                alert('Error: Patient not found in our database. Are you a new patient?');
+                return;
+            }
+        }
+    
+
+    // if (check if newPatient.checkbox is checked) {
+        // if name.matches && birthdate.matches
+        // then 'error patient already registered, please enter hospital number'
+        // else if !name.matches || !birthdate.matches
+        // then proceed
+    // else
+        // if name.matches && birthdate.matches && hospitalNumber.matches
+        // then proceed
+        // else if name.matches && birthdate.matches && !hospitalNumber.matches
+        // then 'error wrong hospital number'
+        // else if !name.matches || !birthdate.matches
+        // then 'error patient not found in our database'
+    */
