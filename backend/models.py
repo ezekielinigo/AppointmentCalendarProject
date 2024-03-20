@@ -21,11 +21,12 @@ TIME_CHOICES = (
 
 # Create your models here.
 class Appointment(models.Model):
-    # basic details to be displayed in calendar thumbnail
+    id = models.AutoField(primary_key=True)
+
     # one appointment is to one patient
     patient = models.ForeignKey('Patient', related_name='appointment', on_delete=models.CASCADE, null=True)
     date = models.DateField(default=datetime.date.today)
-    time = models.CharField(max_length=8, choices=TIME_CHOICES, default='07:00 AM')
+    time = models.CharField(max_length=8, choices=TIME_CHOICES, default='07:00:00')
 
     # followup details are optional, requires referral pic
     followup = models.BooleanField(default=False)
@@ -38,17 +39,18 @@ class Appointment(models.Model):
     # appointment number is auto-generated in format: MMDDYY-TTTT-XX, ex: 123124-01PM-01
     appointmentNumber = models.CharField(max_length=14, editable=False)
     def save(self, *args, **kwargs):
-        if not self.appointmentNumber:
-            # convert the time to 12-hour format and extract the hour and period
-            time_12h = datetime.datetime.strptime(self.time, "%H:%M:%S").strftime("%I:%M %p")
-            hour, period = time_12h.split(':')
-            period = period[-2:]
+        # Get the hour and period (AM/PM) from the time formatted as (HH:MM:SS)
+        hour = self.time[0:2]
+        period = 'AM' if int(hour) < 12 else 'PM'
 
-            # Count the number of appointments for the specific date and time
-            count = Appointment.objects.filter(date=self.date, time=self.time).count()
+        # Count the number of appointments for the specific date and time
+        count = Appointment.objects.filter(date=self.date, time=self.time).count()
 
-            # Generate the appointment number
-            self.appointmentNumber = 'FM' + self.date.strftime("%m%d%y") + '-' + hour + period + '-' + str(count + 1).zfill(2)
+        # Generate the appointment number
+        self.appointmentNumber = 'FM' + self.date.strftime("%m%d%y") + '-' + hour + period + '-' + str(count + 1).zfill(2)
+
+        if not self.patient.hospitalNumber:
+            self.newPatient = True
         super(Appointment, self).save(*args, **kwargs)
 
     def __str__(self):
@@ -56,6 +58,8 @@ class Appointment(models.Model):
             return self.appointmentNumber + ' : ' + self.patient.nameLast + ', ' + self.patient.nameFirst[0] + '.'
 
 class Patient(models.Model):
+    id = models.AutoField(primary_key=True)
+
     # in form fill-up, name is split and should be CAPITALIZED
     nameFirst = models.CharField(max_length=120, null=True)
     nameMiddle = models.CharField(max_length=120, null=True, blank=True)
@@ -84,16 +88,17 @@ class Patient(models.Model):
     hospitalNumber = models.CharField(
         validators=[RegexValidator(r'^\d{6}$', message='Format: 123456')],
         max_length=6,
-        unique=True,
+        default="",
         blank=True
     )
     contact = models.CharField(
         validators=[RegexValidator(r'^\d{1,11}$', message='Format: 09123123123')],
         max_length=11,
+        null=True,
         blank=True
     )
     email = models.EmailField()
-    facebookName = models.CharField(default="", max_length=120, blank=True)
+    facebookName = models.CharField(default="", max_length=50, blank=True)
     address = models.TextField(default="", blank=True)
 
     def save(self, *args, **kwargs):

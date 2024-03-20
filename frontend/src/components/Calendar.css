@@ -66,6 +66,12 @@ a:hover {
     padding-left: 5px;
 }
 
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
 :root {
     --fc-button-active-bg-color: #056839;
     --fc-button-active-border-color: #056839;

@@ -8,16 +8,13 @@ import './Calendar.css';
 import { FiLock, FiUnlock, FiSave } from 'react-icons/fi';
 // icon library here -> https://circumicons.com/icons
 
-const AppointmentInfoModal = ({show, handleClose, appointment, editLock, handleEditLock, handleSave, tempData, setTempData}) => {
+const AppointmentInfoModal = ({show, handleClose, appointment, setAppointment, editLock, handleEditLock, handleSave}) => {
 
     // creating the date label for the forms
-    const date = appointment ? appointment.extendedProps.appointmentNumber : '';
+    const date = appointment ? appointment.appointmentNumber : '';
     const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
     const monthString = months[parseInt(date.substring(2,4), 10) - 1];
     const dateLabel = monthString + " " +  date.substring(4,6) + ", " + date.substring(9,13);
-
-    // temporary appointment state
-    //let tempNameFirst = appointment ? appointment.extendedProps.nameFirst : '';
 
 
     return (
@@ -33,8 +30,7 @@ const AppointmentInfoModal = ({show, handleClose, appointment, editLock, handleE
             </Button>
             <Button
                 className="fc-button-primary"
-                onClick={handleSave}
-                >
+                onClick={handleSave}>
                 <FiSave />
             </Button>
             </Modal.Header>
@@ -46,25 +42,27 @@ const AppointmentInfoModal = ({show, handleClose, appointment, editLock, handleE
                             <Form.Control
                                 className="form-control form-control-sm"
                                 type="text"
+                                required
                                 readOnly={!editLock}
-                                defaultValue={appointment ? appointment.extendedProps.nameFirst : ''}
-                                onChange={e => setTempData({...tempData, nameFirst: e.target.value})}
+                                defaultValue={appointment ? appointment.patient.nameFirst : ''}
+                                onChange={e => setAppointment({...appointment, patient: {...appointment.patient, nameFirst: e.target.value}})}
                             />
                             <Form.Label>Middle Name</Form.Label>
                             <Form.Control
                                 className="form-control form-control-sm"
                                 type="text"
                                 readOnly={!editLock}
-                                //value={tempData.nameMiddle || ''}
-                                //onChange={e => setTempData({...tempData, nameMiddle: e.target.value})}
+                                defaultValue={appointment ? appointment.patient.nameMiddle : ''}
+                                onChange={e => setAppointment({...appointment, patient: {...appointment.patient, nameMiddle: e.target.value}})}
                             />
                             <Form.Label>Last Name</Form.Label>
                             <Form.Control
                                 className="form-control form-control-sm"
                                 type="text"
+                                required
                                 readOnly={!editLock}
-                                //value={tempData.nameLast || ''}
-                                //onChange={e => setTempData({...tempData, nameLast: e.target.value})}
+                                defaultValue={appointment ? appointment.patient.nameLast : ''}
+                                onChange={e => setAppointment({...appointment, patient: {...appointment.patient, nameLast: e.target.value}})}
                             />
                             <Row>
                                 <Col md={9}>
@@ -72,9 +70,13 @@ const AppointmentInfoModal = ({show, handleClose, appointment, editLock, handleE
                                     <Form.Control
                                         className="form-control form-control-sm"
                                         type="date"
+                                        required
                                         readOnly={!editLock}
-                                        //value={tempData.birthdate || ''}
-                                        //onChange={e => setTempData({...tempData, birthdate: e.target.value})}
+                                        defaultValue={appointment ? appointment.patient.birthdate : ''}
+                                        onChange={e => {
+                                            const newAge = new Date().getFullYear() - new Date(e.target.value).getFullYear();
+                                            setAppointment({...appointment, patient: {...appointment.patient, birthdate: e.target.value, age: newAge}});
+                                        }}
                                     />
                                 </Col>
                                 <Col md={3}>
@@ -83,8 +85,7 @@ const AppointmentInfoModal = ({show, handleClose, appointment, editLock, handleE
                                         className="form-control form-control-sm"
                                         type="text"
                                         readOnly={true}
-                                        //value={tempData.age || ''}
-                                        //onChange={e => setTempData({...tempData, age: e.target.value})}
+                                        value={appointment ? appointment.patient.age : ''}
                                     />
                                 </Col>
                             </Row>
@@ -94,8 +95,8 @@ const AppointmentInfoModal = ({show, handleClose, appointment, editLock, handleE
                                     <Form.Select
                                         className="form-control form-control-sm"
                                         disabled={!editLock}
-                                        //value={tempData.sex || ''}
-                                        //onChange={e => setTempData({...tempData, sex: e.target.value})}
+                                        defaultValue={appointment ? appointment.patient.sex : ''}
+                                        onChange={e => setAppointment({...appointment, patient: {...appointment.patient, sex: e.target.value}})}
                                     >
                                         <option value="MALE">MALE</option>
                                         <option value="FEMALE">FEMALE</option>
@@ -106,8 +107,8 @@ const AppointmentInfoModal = ({show, handleClose, appointment, editLock, handleE
                                     <Form.Select
                                         className="form-control form-control-sm"
                                         disabled={!editLock}
-                                        //value={tempData.civilStatus || ''}
-                                        //onChange={e => setTempData({...tempData, civilStatus: e.target.value})}
+                                        defaultValue={appointment ? appointment.patient.civilStatus : ''}
+                                        onChange={e => setAppointment({...appointment, patient: {...appointment.patient, civilStatus: e.target.value}})}
                                     >
                                         <option value="SINGLE">SINGLE</option>
                                         <option value="MARRIED">MARRIED</option>
@@ -119,9 +120,11 @@ const AppointmentInfoModal = ({show, handleClose, appointment, editLock, handleE
                             <Form.Label>Email</Form.Label>
                             <Form.Control
                                 className="form-control form-control-sm"
-                                type="text" readOnly={!editLock}
-                                //value={tempData.email || ''}
-                                //onChange={e => setTempData({...tempData, email: e.target.value})}
+                                type="text"
+                                required
+                                readOnly={!editLock}
+                                defaultValue={appointment ? appointment.patient.email : ''}
+                                onChange={e => setAppointment({...appointment, patient: {...appointment.patient, email: e.target.value}})}
                             />
                             <Row>
                                 <Col md={6}>
@@ -129,9 +132,10 @@ const AppointmentInfoModal = ({show, handleClose, appointment, editLock, handleE
                                     <Form.Control
                                         className="form-control form-control-sm"
                                         type="text"
+                                        required
                                         readOnly={!editLock}
-                                        //value={tempData.facebookName || ''}
-                                        //onChange={e => setTempData({...tempData, facebookName: e.target.value})}
+                                        defaultValue={appointment ? appointment.patient.facebookName : ''}
+                                        onChange={e => setAppointment({...appointment, patient: {...appointment.patient, facebookName: e.target.value}})}
                                     />
                                 </Col>
                                 <Col md={6}>
@@ -140,8 +144,20 @@ const AppointmentInfoModal = ({show, handleClose, appointment, editLock, handleE
                                         className="form-control form-control-sm"
                                         type="text"
                                         readOnly={!editLock}
-                                        //value={tempData.contact || ''}
-                                        //onChange={e => setTempData({...tempData, contact: e.target.value})}
+                                        minLength={11}
+                                        maxLength={11}
+                                        defaultValue={appointment ? appointment.patient.contact : ''}
+                                        onChange={e => {
+                                            const isValid = /^\d{11}$/.test(e.target.value) || e.target.value === '';
+                                            if (!isValid) {
+                                                setAppointment({
+                                                    ...appointment,
+                                                    patient: {...appointment.patient, contact: e.target.value}
+                                                })
+                                            }
+                                        }}
+
+
                                     />
                                 </Col>
                             </Row>
@@ -149,10 +165,11 @@ const AppointmentInfoModal = ({show, handleClose, appointment, editLock, handleE
                             <Form.Control
                                 className="form-control form-control-sm"
                                 as="textarea"
+                                required
                                 readOnly={!editLock}
                                 rows={2}
-                                //value={tempData.address || ''}
-                                //onChange={e => setTempData({...tempData, address: e.target.value})}
+                                defaultValue={appointment ? appointment.patient.address : ''}
+                                onChange={e => setAppointment({...appointment, patient: {...appointment.patient, address: e.target.value}})}
                             />
                         </Form.Group>
                     </Col>
@@ -165,34 +182,35 @@ const AppointmentInfoModal = ({show, handleClose, appointment, editLock, handleE
                                         className="form-control form-control-sm"
                                         type="text"
                                         readOnly={true}
-                                        //value={tempData.appointmentNumber || ''}
-                                        //onChange={e=> setTempData({...tempData, appointmentNumber: e.target.value})}
+                                        defaultValue={appointment ? appointment.appointmentNumber : ''}
                                     />
                                     <Form.Check
                                         className="form-check form-check-inline"
                                         type="checkbox"
                                         label="New Patient"
                                         disabled={!editLock}
-                                        //checked={tempData.followup || false}
-                                        //onChange={e => setTempData({...tempData, followup: e.target.value})}
+                                        defaultValue={appointment ? appointment.newPatient : ''}
                                     />
                                     <Form.Check
                                         className="form-check form-check-inline"
                                         type="checkbox"
                                         label="Follow-up"
                                         disabled={!editLock}
-                                        //checked={tempData.followup || false}
-                                        //onChange={e => setTempData({...tempData, followup: e.target.value})}
+                                        checked={appointment ? appointment.followup : ''}
+                                        onChange={e => setAppointment({...appointment, followup: e.target.checked})}
                                     />
                                 </Col>
                                 <Col md={4}>
                                     <Form.Label>Hospital No.</Form.Label>
                                     <Form.Control
                                         className="form-control form-control-sm"
-                                        type="text"
+                                        type="number"
                                         readOnly={!editLock}
-                                        //value={tempData.hospitalNumber || ""}
-                                        //onChange={e => setTempData({...tempData, hospitalNumber: e.target.value})}
+                                        defaultValue={appointment ? appointment.patient.hospitalNumber : ''}
+                                        onChange={e => {
+                                            const isBlank = !e.target.value || e.target.value.trim() === '';
+                                            setAppointment({...appointment, newPatient: true, patient: {...appointment.patient, hospitalNumber: e.target.value, newPatient: isBlank}})
+                                        }}
                                     />
                                 </Col>
                             </Row>
@@ -200,9 +218,10 @@ const AppointmentInfoModal = ({show, handleClose, appointment, editLock, handleE
                             <Form.Control
                                 className="form-control form-control-sm"
                                 type="text"
+                                maxLength={50}
                                 readOnly={!editLock}
-                                //value={tempData.referralDoctor || ""}
-                                //onChange={e => setTempData({...tempData, referralDoctor: e.target.value})}
+                                defaultValue={appointment ? appointment.referralDoctor : ''}
+                                onChange={e => setAppointment({...appointment, referralDoctor: e.target.value, followup: true})}
                             ></Form.Control>
                             <Form.Label>Remarks</Form.Label>
                             <Form.Control
@@ -210,8 +229,8 @@ const AppointmentInfoModal = ({show, handleClose, appointment, editLock, handleE
                                 as="textarea"
                                 readOnly={!editLock}
                                 rows={14}
-                                //value={tempData.remarks || ""}
-                                //onChange={e => setTempData({...tempData, remarks: e.target.value})}
+                                defaultValue={appointment ? appointment.remarks : ''}
+                                onChange={e => setAppointment({...appointment, remarks: e.target.value})}
                             />
                         </Form.Group>
                     </Col>

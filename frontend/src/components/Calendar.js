@@ -14,7 +14,7 @@ const Calendar = () => {
     const [selectedAppointment, setSelectedAppointment] = useState(null);
     const calendarRef = useRef(null);
     const [editLock, setEditLock] = useState(false);
-    const [tempData, setTempData] = useState({});
+    //const [tempData, setTempData] = useState({});
     const handleEditLock = () => {
         setEditLock(!editLock);
     }
@@ -23,21 +23,49 @@ const Calendar = () => {
         setEditLock(false);
     }
     const handleDateClick = (info) => {
-        setSelectedAppointment(info.event);
+        // when a date is clicked, the appointment info is stored in selectedAppointment state
+        // selectedAppointment is then passed to the modal where it can be modified
+        // after saving (thru handleSave), the info of selectedAppointment will be used to update the database
+
+        setSelectedAppointment({
+            id: info.event.extendedProps.appointmentId,
+            appointmentNumber: info.event.extendedProps.appointmentNumber,
+            patient: {
+                id: info.event.extendedProps.patientId,
+                nameFirst: info.event.extendedProps.nameFirst,
+                nameMiddle: info.event.extendedProps.nameMiddle,
+                nameLast: info.event.extendedProps.nameLast,
+                birthdate: info.event.extendedProps.birthdate,
+                age: info.event.extendedProps.age,
+                sex: info.event.extendedProps.sex,
+                civilStatus: info.event.extendedProps.civilStatus,
+                hospitalNumber: info.event.extendedProps.hospitalNumber,
+                contact: info.event.extendedProps.contact,
+                email: info.event.extendedProps.email,
+                facebookName: info.event.extendedProps.facebookName,
+                address: info.event.extendedProps.address,
+            },
+            label: info.event.title.substring(9,),
+            date: info.event.startStr.substring(0,10),
+            time: info.event.startStr.substring(11,19),
+            remarks: info.event.extendedProps.remarks,
+            followup: info.event.extendedProps.followup,
+            referralDoctor: info.event.extendedProps.referralDoctor,
+            newPatient: info.event.extendedProps.newPatient
+        });
         setShowModal(true);
     }
     const handleSave = async () => {
         try {
-            /*
-            tempData has the data of calendarmodals.js' appointment.extendedProps.nameFirst for example
-            goal is to change this form into something that can be used to update the database
-            find way to update a specific value in the api/appointments/ url ?
-             */
-            const response = await axios.get('http://localhost:8000/api/appointments/');
-            const idx = response.data.findIndex(appointment => { return appointment.appointmentNumber === selectedAppointment.extendedProps.appointmentNumber });
-            console.log('idx: '+idx);
-            await axios.put(`http://localhost:8000/api/appointments/${idx+1}/`, tempData);
+            await axios
+            .put(`http://localhost:8000/api/patients/${selectedAppointment.patient.id}/`, selectedAppointment.patient)
+            .then(response => {console.log(response);});
 
+            await axios
+                .put(`http://localhost:8000/api/appointments/${selectedAppointment.id}/`, selectedAppointment)
+                .then(response => {console.log(response);});
+
+            handleClose();
             fetchEvents();
         } catch (error) {
             console.error(error);
@@ -49,12 +77,13 @@ const Calendar = () => {
         try {
             const response = await axios.get('http://localhost:8000/api/appointments/');
             const appointments = response.data.map(appointment => {
-                const dateTime = new Date(`${appointment.date}T${appointment.time}`);
                 return {
-                    title: appointment.appointmentNumber.substring(10,) + ' : ' + appointment.patient.nameLast + ', ' + appointment.patient.nameFirst[0] + '.',
-                    date: dateTime,
+                    title: appointment.appointmentNumber.substring(9,) + ' : ' + appointment.label,
+                    date: new Date(`${appointment.date}T${appointment.time}`),
                     allDay: false,
                     extendedProps: {
+                        appointmentId: appointment.id,
+                        patientId: appointment.patient.id,
                         nameFirst: appointment.patient.nameFirst,
                         nameMiddle: appointment.patient.nameMiddle,
                         nameLast: appointment.patient.nameLast,
@@ -68,11 +97,10 @@ const Calendar = () => {
                         sex: appointment.patient.sex,
                         civilStatus: appointment.patient.civilStatus,
                         appointmentNumber: appointment.appointmentNumber,
-                        dateLabel: appointment.date,
-                        timeLabel: appointment.time,
                         remarks: appointment.remarks,
                         followup: appointment.followup,
-                        referralDoctor: appointment.referralDoctor
+                        referralDoctor: appointment.referralDoctor,
+                        newPatient: appointment.newPatient
                     }
                 };
             });
@@ -148,10 +176,9 @@ const Calendar = () => {
                 show={showModal}
                 handleClose={handleClose}
                 appointment={selectedAppointment}
+                setAppointment={setSelectedAppointment}
                 editLock={editLock}
                 handleEditLock={handleEditLock}
-                tempData={tempData}
-                setTempData={setTempData}
                 handleSave={handleSave}
             />
         </div>
