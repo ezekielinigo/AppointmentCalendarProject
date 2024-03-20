@@ -14,54 +14,25 @@ import { FaUserDoctor } from "react-icons/fa6";
 export const SidebarData = [
 	{
 		title: "Calendar",
-		path: "/about-us",
+		path: "/admin-calendar-view",
 		icon: <FaCalendar />,
 		//iconClosed: <RiIcons.RiArrowDownSFill />,
 		//iconOpened: <RiIcons.RiArrowUpSFill />,
 
-		subNav: [
-			{
-				title: "Our Aim",
-				path: "/about-us/aim",
-				icon: <IoIcons.IoIosPaper />,
-			},
-			{
-				title: "Our Vision",
-				path: "/about-us/vision",
-				icon: <IoIcons.IoIosPaper />,
-			},
-		],
+		
 	},
 	{
 		title: "Appointments",
-		path: "/services",
+		path: "/admin-appointments",
 		icon: <FaTableList />,
 		//iconClosed: <RiIcons.RiArrowDownSFill />,
 		//iconOpened: <RiIcons.RiArrowUpSFill />,
 
-		subNav: [
-			{
-				title: "Service 1",
-				path: "/services/services1",
-				icon: <IoIcons.IoIosPaper />,
-				cName: "sub-nav",
-			},
-			{
-				title: "Service 2",
-				path: "/services/services2",
-				icon: <IoIcons.IoIosPaper />,
-				cName: "sub-nav",
-			},
-			{
-				title: "Service 3",
-				path: "/services/services3",
-				icon: <IoIcons.IoIosPaper />,
-			},
-		],
+		
 	},
 	{
 		title: "Patients",
-		path: "/contact",
+		path: "/admin-patients",
 		icon: <FaPersonCirclePlus />,
 	},
 	{

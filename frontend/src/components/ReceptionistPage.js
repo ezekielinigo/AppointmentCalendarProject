@@ -20,6 +20,7 @@ import Patients from './Patients';
 
 
 import Sidebar from "./sidebar/Sidebar";
+import Calendar from './Calendar';
 
 function ReceptionistPage() {
     return (
@@ -28,7 +29,8 @@ function ReceptionistPage() {
             
 
         <div class = "receptionist-page">
-            <Patients />
+            
+            <Calendar />
             
              </div>
         </>

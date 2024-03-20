@@ -19,28 +19,22 @@ import ReceptionistPage from './components/ReceptionistPage';
 import SignUp from './components/SignUp';
 
 import Sidebar from "./components/sidebar/Sidebar";
+
 import {
-    BrowserRouter as Router,
-    Routes,
-    Route,
-} from "react-router-dom";
-import {
-    AboutUs,
-    OurAim,
-    OurVision,
-} from "./components/sidebar/AboutUs";
+    CalendarView,
+} from "./components/sidebar/AdminCalendar";
 import {
     Services,
     ServicesOne,
     ServicesTwo,
     ServicesThree,
-} from "./components/sidebar/Services";
+} from "./components/sidebar/AdminAppointments";
 import {
     Events,
     EventsOne,
     EventsTwo,
 } from "./components/sidebar/Events";
-import Contact from "./components/sidebar/ContactUs";
+import PatientList from "./components/sidebar/AdminPatientList";
 import Support from "./components/sidebar/Support";
 
 function App() {
@@ -79,39 +73,16 @@ function App() {
 
         // Start Receptionist Page Routes
         {
-            path: "/about-us",
-            element: <AboutUs />
+            path: "/admin-calendar-view",
+            element: <CalendarView />
         },
-
         {
-            path: "/about-us/aim",
-            element: <OurAim />
-        },
-
-        {
-            path: "/about-us/vision",
-            element: <OurVision />
-        },
-
-        {
-            path: "/services",
+            path: "/admin-appointments",
             element: <Services />
         },
         {
-            path: "/services/services1",
-            element: <ServicesOne />
-        },
-        {
-            path: "/services/services2",
-            element: <ServicesTwo />
-        },
-        {
-            path: "/services/services3",
-            element: <ServicesThree />
-        },
-        {
-            path: "/contact",
-            element: <Contact />
+            path: "/admin-patients",
+            element: <PatientList />
         },
         {
             path: "/events",
