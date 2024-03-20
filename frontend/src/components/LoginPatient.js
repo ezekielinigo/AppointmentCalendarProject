@@ -52,6 +52,8 @@ function Login() {
             alert("Please fill in all the fields.");
         } 
 
+        
+
         else {
             for (let i = 0; i < events.length; i++) {
 

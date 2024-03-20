@@ -64,7 +64,7 @@ const Sidebar = () => {
 							color: "green",
 						}}
 					>
-						GeeksforGeeks
+						RMC Clinic Appointment Calendar
 					</h1>
 				</Nav>
 				<SidebarNav sidebar={sidebar}>

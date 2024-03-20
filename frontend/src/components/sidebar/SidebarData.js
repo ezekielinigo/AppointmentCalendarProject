@@ -5,14 +5,19 @@ import * as FaIcons from "react-icons/fa";
 import * as AiIcons from "react-icons/ai";
 import * as IoIcons from "react-icons/io";
 import * as RiIcons from "react-icons/ri";
+import { FaCalendar } from "react-icons/fa";
+import { CiViewList } from "react-icons/ci";
+import { FaTableList } from "react-icons/fa6";
+import { FaPersonCirclePlus } from "react-icons/fa6";
+import { FaUserDoctor } from "react-icons/fa6";
 
 export const SidebarData = [
 	{
-		title: "About Us",
+		title: "Calendar",
 		path: "/about-us",
-		icon: <AiIcons.AiFillHome />,
-		iconClosed: <RiIcons.RiArrowDownSFill />,
-		iconOpened: <RiIcons.RiArrowUpSFill />,
+		icon: <FaCalendar />,
+		//iconClosed: <RiIcons.RiArrowDownSFill />,
+		//iconOpened: <RiIcons.RiArrowUpSFill />,
 
 		subNav: [
 			{
@@ -28,11 +33,11 @@ export const SidebarData = [
 		],
 	},
 	{
-		title: "Services",
+		title: "Appointments",
 		path: "/services",
-		icon: <IoIcons.IoIosPaper />,
-		iconClosed: <RiIcons.RiArrowDownSFill />,
-		iconOpened: <RiIcons.RiArrowUpSFill />,
+		icon: <FaTableList />,
+		//iconClosed: <RiIcons.RiArrowDownSFill />,
+		//iconOpened: <RiIcons.RiArrowUpSFill />,
 
 		subNav: [
 			{
@@ -55,17 +60,17 @@ export const SidebarData = [
 		],
 	},
 	{
-		title: "Contact",
+		title: "Patients",
 		path: "/contact",
-		icon: <FaIcons.FaPhone />,
+		icon: <FaPersonCirclePlus />,
 	},
 	{
-		title: "Events",
+		title: "Doctors",
 		path: "/events",
-		icon: <FaIcons.FaEnvelopeOpenText />,
+		icon: <FaUserDoctor />,
 
-		iconClosed: <RiIcons.RiArrowDownSFill />,
-		iconOpened: <RiIcons.RiArrowUpSFill />,
+		//iconClosed: <RiIcons.RiArrowDownSFill />,
+		//iconOpened: <RiIcons.RiArrowUpSFill />,
 
 		subNav: [
 			{
