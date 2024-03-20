@@ -4,13 +4,16 @@ import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import listPlugin from '@fullcalendar/list';
+import interactionPlugin from '@fullcalendar/interaction';
 import './Calendar.css';
-import AppointmentInfoModal from './CalendarModals';
+import AppointmentInfoModal from './CalendarAppointmentInfoModal';
+import AppointmentPromptModal from './CalendarAppointmentPromptModal';
 
 const Calendar = () => {
     // State to store the events
     const [events, setEvents] = useState([]);
-    const [showModal, setShowModal] = useState(false);
+    const [showAppointmentInfoModal, setShowAppointmentInfoModal] = useState(false);
+    const [showAppointmentPromptModal, setShowAppointmentPromptModal] = useState(false);
     const [selectedAppointment, setSelectedAppointment] = useState(null);
     const calendarRef = useRef(null);
     const [editLock, setEditLock] = useState(false);
@@ -19,10 +22,11 @@ const Calendar = () => {
         setEditLock(!editLock);
     }
     const handleClose = () => {
-        setShowModal(false);
+        setShowAppointmentPromptModal(false);
+        setShowAppointmentInfoModal(false);
         setEditLock(false);
     }
-    const handleDateClick = (info) => {
+    const handleAppointmentClick = (info) => {
         // when a date is clicked, the appointment info is stored in selectedAppointment state
         // selectedAppointment is then passed to the modal where it can be modified
         // after saving (thru handleSave), the info of selectedAppointment will be used to update the database
@@ -53,7 +57,7 @@ const Calendar = () => {
             referralDoctor: info.event.extendedProps.referralDoctor,
             newPatient: info.event.extendedProps.newPatient
         });
-        setShowModal(true);
+        setShowAppointmentInfoModal(true);
     }
     const handleSave = async () => {
         try {
@@ -115,13 +119,18 @@ const Calendar = () => {
         fetchEvents();
     }, []);
 
+    const handleDateClick = (info) => {
+        setShowAppointmentPromptModal(true);
+
+    }
+
     // FullCalendar component that displays the calendar
     return (
         <div className="calendar">
             <FullCalendar
                 ref={calendarRef}
                 events={events}
-                plugins={[dayGridPlugin, timeGridPlugin, listPlugin]}
+                plugins={[dayGridPlugin, timeGridPlugin, listPlugin, interactionPlugin]}
                 initialView="dayGridMonth"
                 headerToolbar={{
                     left: 'prev,next today',
@@ -169,11 +178,12 @@ const Calendar = () => {
                 dayMaxEvents={0}
                 nowIndicator={true}
                 allDaySlot={false}
-                eventClick={handleDateClick}
-                selectable={true}
+                eventClick={handleAppointmentClick}
+                selectable={false}
+                dateClick={handleDateClick}
             />
             <AppointmentInfoModal
-                show={showModal}
+                show={showAppointmentInfoModal}
                 handleClose={handleClose}
                 appointment={selectedAppointment}
                 setAppointment={setSelectedAppointment}
@@ -181,8 +191,16 @@ const Calendar = () => {
                 handleEditLock={handleEditLock}
                 handleSave={handleSave}
             />
+            <AppointmentPromptModal
+                show={showAppointmentPromptModal}
+                handleClose={handleClose}
+                handleSave={handleSave}
+                handleTrash={handleClose}
+            />
         </div>
     );
+
+
 
 };
 
