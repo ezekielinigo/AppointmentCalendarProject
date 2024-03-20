@@ -15,6 +15,8 @@ import {Link} from 'react-router-dom';
 import Modal from 'react-bootstrap/Modal';
 import background from '../assets/rmc-bg.jpg';
 import 'react-router-dom';
+import Patients from './Patients';
+  
 
 
 import Sidebar from "./sidebar/Sidebar";
@@ -22,7 +24,13 @@ import Sidebar from "./sidebar/Sidebar";
 function ReceptionistPage() {
     return (
         <> 
-            <Sidebar />
+            <Sidebar /> 
+            
+
+        <div class = "receptionist-page">
+            <Patients />
+            
+             </div>
         </>
     );
 }

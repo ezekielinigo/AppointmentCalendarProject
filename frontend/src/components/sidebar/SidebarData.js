@@ -85,9 +85,4 @@ export const SidebarData = [
 			},
 		],
 	},
-	{
-		title: "Support",
-		path: "/support",
-		icon: <IoIcons.IoMdHelpCircle />,
-	},
 ];
