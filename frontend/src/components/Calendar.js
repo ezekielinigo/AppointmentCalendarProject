@@ -153,7 +153,7 @@ const Calendar = () => {
                 headerToolbar={{
                     left: 'prev,next today',
                     center: 'title',
-                    right: 'dayGridMonth,timeGridWeek,listDay',
+                    right: 'dayGridMonth',
                 }}
                 slotLabelFormat={{ // week view y-axis
                     hour: 'numeric',
@@ -175,7 +175,6 @@ const Calendar = () => {
                                 month: 'short',
                                 day: 'numeric'
                             });
-                            calendarApi.setOption('dateClick', () => {});
                         }else {
                             calendarApi.setOption('dayHeaderFormat', {
                                 weekday: 'short',
@@ -187,11 +186,17 @@ const Calendar = () => {
                                 hour: 'numeric',
                                 minute: '2-digit'
                             });
-                            calendarApi.setOption('dateClick', (info) => {
-                                handleDateClick(info);
-                            });
                         }
                     }
+                }}
+                dateClick={
+                    function(info) {
+                        if (info.view && info.view.type === 'dayGridMonth' && info.view.calendar) {
+                            const calendarApi = info.view.calendar;
+                            calendarApi.changeView('timeGridWeek', info.dateStr); // change view to week view and go to the date clicked
+                        } else {
+                            handleDateClick(info);
+                        }
                 }}
                 moreLinkContent={''} // this handles the text that hides events in a given day/hour, we want this hidden
                 moreLinkDidMount={ // because this is used instead, as it is able to get the capacity of the day/hour
@@ -208,6 +213,10 @@ const Calendar = () => {
                                 info.el.textContent = `${filledSlots}/${capacity.capacity*10} appointments`;
                             } else {
                                 info.el.textContent = `${filledSlots}/${capacity.capacity} appointments`;
+                                if (filledSlots === capacity.capacity) {
+                                    info.el.style.color = '#3ab149';
+                                    info.el.style.backgroundColor = '#071108';
+                                }
                             }
                         }
                     }
@@ -243,7 +252,7 @@ const Calendar = () => {
                         }
                     }
                 }}
-                slotDuration='00:30:00'
+                slotDuration='01:00:00'
                 slotMinTime='07:00:00'
                 slotMaxTime='17:00:00'
                 slotEventOverlap={false}
