@@ -1,4 +1,13 @@
 // Filename - components/Sidebar.js
+/* RMC COLOR PALETTE
+text green: #056839
+dark green: #108942
+green: #3ab149
+light green: #72b844
+yellow green: #b5d333
+white: whitesmoke
+black: #071108
+ */
 
 import React, { useState } from "react";
 import styled from "styled-components";
@@ -10,7 +19,7 @@ import SubMenu from "./SubMenu";
 import { IconContext } from "react-icons/lib";
 
 const Nav = styled.div`
-	background: #15171c;
+	background: #071108;
 	height: 80px;
 	display: flex;
 	justify-content: flex-start;
@@ -27,7 +36,7 @@ const NavIcon = styled(Link)`
 `;
 
 const SidebarNav = styled.nav`
-	background: #15171c;
+	background: #071108;
 	width: 250px;
 	height: 100vh;
 	display: flex;
@@ -50,7 +59,7 @@ const Sidebar = () => {
 
 	return (
 		<>
-			<IconContext.Provider value={{ color: "#fff" }}>
+			<IconContext.Provider value={{ color: "whitesmoke" }}>
 				<Nav>
 					<NavIcon to="#">
 						<FaIcons.FaBars
@@ -61,7 +70,7 @@ const Sidebar = () => {
 						style={{
 							textAlign: "center",
 							marginLeft: "200px",
-							color: "green",
+							color: "#3ab149",
 						}}
 					>
 						RMC Clinic Appointment Calendar

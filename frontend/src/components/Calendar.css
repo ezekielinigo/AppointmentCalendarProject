@@ -4,9 +4,9 @@ dark green: #108942
 green: #3ab149
 light green: #72b844
 yellow green: #b5d333
-white: #faf3dd
+white: whitesmoke
+black: #071108
  */
-
 
 .fc-view-harness {
     max-height: 75vh;
@@ -30,17 +30,20 @@ white: #faf3dd
     display: none;
 }
 
+.fc-toolbar-title {
+    color: #056839;
+}
+
 .fc-timegrid-more-link {
     width: 100%;
     background-color: #108942;
-    color: #faf3dd;
+    color: whitesmoke;
 }
 
 .fc-timegrid-more-link:hover {
-    background-color: #faf3dd;
-    color: #108942;
+    background-color: #056839;
+    color: whitesmoke;
 }
-
 
 a{
     color: #056839;
@@ -95,6 +98,10 @@ input[type=number]::-webkit-outer-spin-button {
     margin-bottom: 25px;
 }
 
+body {
+    background-color: whitesmoke;
+}
+
 :root {
     --fc-button-active-bg-color: #056839;
     --fc-button-active-border-color: #056839;
@@ -105,5 +112,6 @@ input[type=number]::-webkit-outer-spin-button {
     --fc-event-bg-color: #108942;
     --fc-event-border-color: #108942;
     --fc-text-event-color: #faf3ddd;
-    --white: #faf3ddd;
+    --white: whitesmoke;
 }
+

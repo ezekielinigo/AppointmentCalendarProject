@@ -212,8 +212,39 @@ const Calendar = () => {
                         }
                     }
                 }
+                selectAllow={(selectInfo) => {
+                    const hour = selectInfo.start.getHours();
+                    return hour >= 6 && hour < 18;
+                }}
+                dayCellDidMount={(info) => {
+
+                    // get the month and year of the current date (format: 'yyyy-mm-dd')
+                    const date = info.el.dataset.date;
+                    const year = parseInt(date.split('-')[0]);
+                    const month = parseInt(date.split('-')[1]);
+
+                    // get the filled slots of the day (format: 'filledSlots/totalSlots appointments')
+                    let filledSlots = 0;
+                    if (info.el.textContent) {
+                        filledSlots = info.el.textContent.split('')[0].split('/')[0];
+                    }
+
+                    // find the capacity of the month and year
+                    if (monthlyCapacities) {
+                        const capacity = monthlyCapacities.find(capacity => capacity.month === month && capacity.year === year);
+                        if (capacity) {
+                            // if the filled slots is equal to the capacity, color the day red
+                            if (filledSlots === capacity.capacity) {
+                                info.el.style.backgroundColor = 'red';
+                            }
+                        }else{
+                            // if the capacity is not set, color the day yellow
+                            info.el.style.backgroundColor = '#F7EBEC';
+                        }
+                    }
+                }}
                 slotDuration='00:30:00'
-                slotMinTime='06:00:00'
+                slotMinTime='07:00:00'
                 slotMaxTime='17:00:00'
                 slotEventOverlap={false}
                 eventMaxStack={0}
@@ -222,7 +253,7 @@ const Calendar = () => {
                 allDaySlot={false}
                 eventClick={handleAppointmentClick}
                 selectable={false}
-                contentHeight={580}
+                expandRows={true}
             />
             <AppointmentInfoModal
                 show={showAppointmentInfoModal}
