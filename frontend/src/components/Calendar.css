@@ -4,7 +4,7 @@ dark green: #108942
 green: #3ab149
 light green: #72b844
 yellow green: #b5d333
-white: #faf3ddd
+white: #faf3dd
  */
 
 
@@ -32,7 +32,15 @@ white: #faf3ddd
 
 .fc-timegrid-more-link {
     width: 100%;
+    background-color: #108942;
+    color: #faf3dd;
 }
+
+.fc-timegrid-more-link:hover {
+    background-color: #faf3dd;
+    color: #108942;
+}
+
 
 a{
     color: #056839;

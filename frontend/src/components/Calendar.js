@@ -17,7 +17,7 @@ const Calendar = () => {
     const [selectedAppointment, setSelectedAppointment] = useState(null);
     const calendarRef = useRef(null);
     const [editLock, setEditLock] = useState(false);
-    //const [tempData, setTempData] = useState({});
+    const [monthlyCapacities, setMonthlyCapacities] = useState(null);
     const handleEditLock = () => {
         setEditLock(!editLock);
     }
@@ -114,9 +114,27 @@ const Calendar = () => {
         }
     };
 
+    // this fetches the capacity from the database
+    const fetchCapacity = async () => {
+        try {
+            const response = await axios.get('http://localhost:8000/api/settings/');
+            const databaseCapacities = response.data.map(setting => {
+                return {
+                    month: setting.month,
+                    year: setting.year,
+                    capacity: setting.capacity
+                };
+            });
+            setMonthlyCapacities(databaseCapacities);
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
     // Fetch event happens when the component mounts
     useEffect(() => {
         fetchEvents();
+        fetchCapacity();
     }, []);
 
     const handleDateClick = (info) => {
@@ -157,6 +175,7 @@ const Calendar = () => {
                                 month: 'short',
                                 day: 'numeric'
                             });
+                            calendarApi.setOption('dateClick', () => {});
                         }else {
                             calendarApi.setOption('dayHeaderFormat', {
                                 weekday: 'short',
@@ -168,11 +187,34 @@ const Calendar = () => {
                                 hour: 'numeric',
                                 minute: '2-digit'
                             });
+                            calendarApi.setOption('dateClick', (info) => {
+                                handleDateClick(info);
+                            });
                         }
                     }
                 }}
-                moreLinkContent={({num}) => `${num}/6`}
-                slotDuration='01:00:00'
+                moreLinkContent={''} // this handles the text that hides events in a given day/hour, we want this hidden
+                moreLinkDidMount={ // because this is used instead, as it is able to get the capacity of the day/hour
+                    function (info) {
+                        const filledSlots = info.num;
+
+                        const date = info.el.closest('.fc-day').dataset.date;
+                        const year = parseInt(date.split('-')[0]);
+                        const month = parseInt(date.split('-')[1]);
+
+                        if (monthlyCapacities) {
+                            const capacity = monthlyCapacities.find(capacity => capacity.month === month && capacity.year === year);
+                            if (info.view.type === 'dayGridMonth') {
+                                info.el.textContent = `${filledSlots}/${capacity.capacity*10} appointments`;
+                            } else {
+                                info.el.textContent = `${filledSlots}/${capacity.capacity} appointments`;
+                            }
+                        }
+                    }
+                }
+                slotDuration='00:30:00'
+                slotMinTime='06:00:00'
+                slotMaxTime='17:00:00'
                 slotEventOverlap={false}
                 eventMaxStack={0}
                 dayMaxEvents={0}
@@ -180,7 +222,7 @@ const Calendar = () => {
                 allDaySlot={false}
                 eventClick={handleAppointmentClick}
                 selectable={false}
-                dateClick={handleDateClick}
+                contentHeight={580}
             />
             <AppointmentInfoModal
                 show={showAppointmentInfoModal}

@@ -52,7 +52,7 @@ const AppointmentCapacitySettings = () => {
 
     return (
         <div>
-            <h1>Appointment Capacity Settings</h1>
+            <h1>Admin Settings</h1>
             <Row>
                 <Col md={4}>
                     <Form.Group controlId="formMonthYear">
@@ -66,16 +66,21 @@ const AppointmentCapacitySettings = () => {
                         <Form.Control className="form-control form-control-sm" type="number" />
                     </Form.Group>
                 </Col>
-                <Col md={2}>
+                <Col md={4}>
                     <div className="flex-column">
                         <Form.Label>Save Settings</Form.Label>
                         <Button variant="primary" type="submit" className="fc-button-primary" onClick={handleSaveCapacitySettings}>
                             <FiSave></FiSave>
                         </Button>
                     </div>
-
                 </Col>
             </Row>
+            <Form.Switch
+                className="form-control form-control-sm"
+                type="switch"
+                id="custom-switch"
+                label="Enable Appointment Deletion"
+            />
 
 
 
