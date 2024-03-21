@@ -8,10 +8,18 @@ white: #faf3ddd
  */
 
 
-.calendar .fc-view-harness {
-    flex-flow: column;
-    max-height: 80vh;
-    justify-content: center;
+.fc-view-harness {
+    max-height: 75vh;
+}
+
+.fc {
+    max-width: 130vh;
+    margin: auto;
+}
+
+.calendar {
+    max-width: 130vh;
+    margin-top: 25px;
 }
 
 .fc-event{
