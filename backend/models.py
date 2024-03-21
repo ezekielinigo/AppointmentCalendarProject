@@ -114,3 +114,30 @@ class Patient(models.Model):
 
     def __str__(self):
         return self.nameLast + ', ' + self.nameFirst[0] + '.'
+
+MONTH_CHOICES = (
+    (1, 'JANUARY'),
+    (2, 'FEBRUARY'),
+    (3, 'MARCH'),
+    (4, 'APRIL'),
+    (5, 'MAY'),
+    (6, 'JUNE'),
+    (7, 'JULY'),
+    (8, 'AUGUST'),
+    (9, 'SEPTEMBER'),
+    (10, 'OCTOBER'),
+    (11, 'NOVEMBER'),
+    (12, 'DECEMBER'),
+)
+
+class Setting(models.Model):
+    id = models.AutoField(primary_key=True)
+
+    # the department is able to set the capacity of patients they can accommodate per hour
+    # they can set this capacity in bulk for the whole week or the whole month
+
+    month = models.PositiveIntegerField(choices=MONTH_CHOICES, default=datetime.date.today().month)
+    year = models.PositiveIntegerField(default=datetime.date.today().year)
+    capacity = models.PositiveIntegerField(default=0)
+
+

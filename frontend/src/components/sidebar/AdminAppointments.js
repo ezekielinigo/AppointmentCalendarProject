@@ -2,12 +2,13 @@
 
 import React from "react";
 import Sidebar from "./Sidebar";
+import AppointmentCapacitySettings from "../AppointmentCapacitySettings";
 
 export const Services = () => {
 	return (
 		<><Sidebar />
 		<div className="services">
-			<h1>Appointments table rito</h1>
+			<AppointmentCapacitySettings></AppointmentCapacitySettings>
 		</div></>
 	);
 };

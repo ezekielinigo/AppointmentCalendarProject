@@ -37,3 +37,13 @@ class AppointmentSerializer(serializers.ModelSerializer):
             'referralDoctor',
             'newPatient'
         )
+
+class SettingSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Setting
+        fields = (
+            'id',
+            'month',
+            'year',
+            'capacity'
+        )

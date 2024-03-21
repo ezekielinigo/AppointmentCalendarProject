@@ -22,6 +22,7 @@ from backend import views
 router = routers.DefaultRouter()
 router.register(r'appointments', views.AppointmentView, 'appointment')
 router.register(r'patients', views.PatientView, 'patient')
+router.register(r'settings', views.SettingView, 'setting')
 
 urlpatterns = [
     path('admin/', admin.site.urls),

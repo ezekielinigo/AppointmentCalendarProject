@@ -80,6 +80,13 @@ input[type=number]::-webkit-outer-spin-button {
   margin: 0;
 }
 
+.flex-column {
+    display: flex;
+    flex-direction: column;
+    margin-top: 25px;
+    margin-bottom: 25px;
+}
+
 :root {
     --fc-button-active-bg-color: #056839;
     --fc-button-active-border-color: #056839;

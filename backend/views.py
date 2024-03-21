@@ -22,3 +22,12 @@ class PatientView(viewsets.ModelViewSet):
         queryset = self.filter_queryset(self.get_queryset())
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
+
+class SettingView(viewsets.ModelViewSet):
+    serializer_class = SettingSerializer
+    queryset = Setting.objects.all()
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.filter_queryset(self.get_queryset())
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
