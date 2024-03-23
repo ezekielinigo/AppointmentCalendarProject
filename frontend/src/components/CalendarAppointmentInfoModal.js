@@ -114,6 +114,7 @@ const AppointmentInfoModal = ({show, handleClose, appointment, setAppointment, e
                                         <option value="MARRIED">MARRIED</option>
                                         <option value="WIDOWED">WIDOWED</option>
                                         <option value="SEPARATED">SEPARATED</option>
+            
                                     </Form.Select>
                                 </Col>
                             </Row>
