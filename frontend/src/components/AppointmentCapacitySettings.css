@@ -1,0 +1,15 @@
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 34px;
+}
+
+.admin-settings-box {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+    border: 2px solid gray;
+    border-radius: 20px;
+    
+}

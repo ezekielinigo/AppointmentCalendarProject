@@ -12,6 +12,8 @@ import React, { useState } from "react";
 import styled from "styled-components";
 import { IconContext } from "react-icons/lib";
 import "./Header.css";
+import logo from "./rmc-logo.png";
+
 
 const Nav = styled.div`
 	background: #071108;
@@ -21,13 +23,17 @@ const Nav = styled.div`
 	align-items: right;
 `;
 
-
 const Header = () => {
 
 	return (
 		<>
 			<IconContext.Provider value={{ color: "whitesmoke" }}>
 				<Nav>
+					<img style = {{ 
+						margin: 10, width: 70, height: 70 
+					}}
+					
+					src={logo}/>
 					<h1 class = "header-title">
 						RMC Clinic Appointment Calendar
 					</h1>	

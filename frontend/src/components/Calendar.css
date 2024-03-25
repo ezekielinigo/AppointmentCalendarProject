@@ -68,11 +68,23 @@ a:hover {
     margin: 1px;
 }
 
-.AppointmentInfoModal, .form-control, .form-label {
-    font-size: 10px;
+.AppointmentInfoModal {
+    font-size: 15px;
+    margin: 10px;
+    padding: 20px;
+    column-gap: 10px;
+    font-family: 'Roboto', sans-serif;
+    border-radius: 10px;
+    
+}
+
+.form-control, .form-label {
+    font-size: 15px;
     margin: 1px;
     column-gap: 10px;
-    
+    font-family: 'Roboto', sans-serif;
+    border-radius: 10px;
+
 }
 
 .row {
@@ -115,3 +127,7 @@ body {
     --white: whitesmoke;
 }
 
+.admin-settings-box {
+    border-radius: 5px;
+    border-color: black;
+}
