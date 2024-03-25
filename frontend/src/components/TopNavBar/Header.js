@@ -23,6 +23,9 @@ const Nav = styled.div`
 	align-items: right;
 `;
 
+
+
+
 const Header = () => {
 
 	return (
@@ -37,6 +40,8 @@ const Header = () => {
 					<h1 class = "header-title">
 						RMC Clinic Appointment Calendar
 					</h1>
+
+					<h2 class = 'welcome'> Welcome,  </h2>
 
 				</Nav>
 			</IconContext.Provider>

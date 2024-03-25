@@ -17,7 +17,6 @@ import LoginPatient from './components/LoginPatient';
 import LandingPage from './components/LandingPage';
 import ReceptionistPage from './components/ReceptionistPage';
 import SignUp from './components/SignUp';
-
 import { CalendarView } from "./components/TopNavBar/AdminCalendar";
 import { AdminSettings } from "./components/TopNavBar/AdminSettings";
 import PatientList from "./components/TopNavBar/AdminPatientList";

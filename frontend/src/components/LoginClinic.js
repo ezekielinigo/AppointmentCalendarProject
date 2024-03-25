@@ -8,8 +8,8 @@ import {Link} from 'react-router-dom';
 import Modal from 'react-bootstrap/Modal';
 import background from '../assets/rmc-bg.jpg';
 
-function Login() {
 
+function Login() {
 
     const [show, setShow] = useState(true);
 
