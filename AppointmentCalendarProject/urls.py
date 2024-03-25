@@ -28,6 +28,7 @@ router.register(r'doctors', views.DoctorView, 'doctor')
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include(router.urls)),
+    
     path('signup', views.signup),
     path('login', views.login),
     path('test_token', views.test_token),

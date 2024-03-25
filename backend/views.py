@@ -83,6 +83,5 @@ def test_token(request):
 @authentication_classes([SessionAuthentication, TokenAuthentication])
 @permission_classes([IsAuthenticated])
 def logout(request):
-    # Delete the user's token
     request.user.auth_token.delete()
     return Response(status=status.HTTP_200_OK)

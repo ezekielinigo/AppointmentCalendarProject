@@ -66,4 +66,4 @@ class DoctorSerializer(serializers.ModelSerializer):
 class UserSerializer(serializers.ModelSerializer):
     class Meta(object):
         model = User 
-        fields = ['id', 'username', 'password', 'email']
+        fields = ['id', 'username', 'password']

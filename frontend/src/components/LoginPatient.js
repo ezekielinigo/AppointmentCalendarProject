@@ -20,6 +20,62 @@ function Login() {
     const [hospitalNumber, sethospitalNumber] = useState('');
     const [birthDate, setbirthDate] = useState('');
 
+    const shiftChar = (char) => {
+        const alphabet = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+        const index = alphabet.indexOf(char);
+        if (index === -1) return char; // If the character is not alphanumeric, return it as is
+        return alphabet[(index + 5) % alphabet.length]; // Shift the character 5 positions to the right
+    }
+
+    const validateEntry = async () => {
+        const patient = {
+            nameFirst: firstName,
+            nameLast: lastName,
+            birthdate: birthDate,
+            hospitalNumber: hospitalNumber
+        };
+
+        //alert(patient.birthdate + " " + patient.hospitalNumber + " " + patient.nameFirst + " " + patient.nameLast)
+        
+        try { 
+            // session auth/token mechanism to
+
+            // basically pre-defined username for the user using some of the details
+            const user = (patient.nameFirst.slice(0, 2) + patient.nameLast.slice(0, 2) + patient.birthdate.replace(/-/g, '') + patient.hospitalNumber.slice(-4)).slice(0, 10);
+
+            // password mula sa deets pero may shiftChar function para ma-encrypt
+            const pass = (patient.nameLast.slice(-2) + patient.nameFirst.slice(0, 2) + patient.birthdate.replace(/-/g, '') + patient.nameLast + patient.nameFirst).split('').map(shiftChar).join('').slice(0, 10);
+           
+            //alert (user + " " + pass) // pang-debug since ayaw gumana ng tokenizing mechanism kanina
+
+            // ito yung gumanang tokenizing mechanism
+
+            // 1. attempt sign-up
+            const response = await axios.post('http://localhost:8000/signup', { username: user, password: pass });
+            
+            // 2. basically status = 200 means na may existing username na sa database kaya login na  
+            if (response.status === 200) {
+                const login = await axios.post('http://localhost:8000/login', { username: user, password: pass });
+                console.log(login);
+            }
+
+            // 3. other than 200, sign-up then login
+
+            else {
+                const signup = await axios.post('http://localhost:8000/signup', { username: user, password: pass })
+                const login = await axios.post('http://localhost:8000/login', { username: user, password: pass });
+                console.log(signup);
+                console.log(login);
+            } 
+           
+         } 
+
+        catch (error) {
+            console.error(error);
+        }
+        
+    }
+
     const fetchEvents = async () => {
         try {
             const response = await axios.get('http://localhost:8000/api/appointments/');
@@ -65,6 +121,7 @@ function Login() {
                     events[i].extendedProps.birthdate === birthDate && 
                     events[i].extendedProps.hospitalNumber === hospitalNumber) {
                     alert('Patient found! Redirecting to patient page...');
+                    validateEntry();
                     return;
                 } 
 
