@@ -55,6 +55,7 @@ a:hover {
 .fc-button-primary{
     background-color: #108942;
     border-color: #108942;
+    margin-top: 20px;
 }
 
 .fc-button-primary:hover, .fc-button-primary:focus, .fc-button-primary:active {

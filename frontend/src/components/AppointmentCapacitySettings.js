@@ -7,9 +7,9 @@ import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import { FiSave } from 'react-icons/fi';
 import Switch from '@mui/material/Switch';
-import './Calendar.css';
 import './AppointmentCapacitySettings.css';
 import { alpha, styled } from '@mui/material/styles';
+import './Calendar.css';
 
 const AppointmentCapacitySettings = () => {
 
@@ -23,6 +23,7 @@ const AppointmentCapacitySettings = () => {
         '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track': {
             backgroundColor: '#3AB149',
         },
+
     
     }));
 
@@ -90,45 +91,48 @@ const AppointmentCapacitySettings = () => {
             <Col> 
             <Form.Group controlId="formMonthYear">
                         <div className="flex-column">
-                        <Form.Label>Select Month and Year</Form.Label>
-                        <Form.Control type="month" />
-                        <Form.Label>Select Hourly Capacity</Form.Label>
-                        <Form.Control  type="number" />
+                        <Form.Label class = 'form-label'>Select Month and Year</Form.Label>
+                        <Form.Control class = 'form' type="month" />
+                        <Form.Label class = 'form-label'>Select Hourly Capacity</Form.Label>
+                        <Form.Control class = 'form' type="number" />
                         <Button variant="primary" type="submit" className="fc-button-primary" onClick={handleSaveCapacitySettings}>
                             <FiSave></FiSave>
                         </Button>
                     </div>
             </Form.Group>
             </Col>
-            <Col> 
+            
+            <Col>
+            
                    <Form.Group>
-                        <Form.Label>Allow Appointment Deletion</Form.Label>
+                        <Form.Label class = 'form-label'>Allow Appointment Deletion</Form.Label>
                         <Row> 
                         <GreenSwitch
                             checked={checkedAppointmentDeletion}
                             onChange={handleAppointmentDeletionChange}
                             inputProps={{ 'aria-label': 'controlled' }}
                         />
+                        
                         </Row>
-                    <Row> 
-                        <Form.Label>Allow Appointment Reschedule</Form.Label>
+                        <Form.Label class = 'form-label'>Allow Appointment Reschedule</Form.Label>
+                        <Row> 
                         <GreenSwitch
                             checked={checkedAppointmentReschedule}
                             onChange={handleAppointmentRescheduleChange}
                             inputProps={{ 'aria-label': 'controlled' }}
                         />
                         </Row>
-                    </Form.Group>
-                    <Form.Label>Allow Patient Deletion</Form.Label>
-                        
+
+                    <Form.Label class = 'form-label'>Allow Patient Deletion</Form.Label>
+                    <Row> 
                         <GreenSwitch
                             checked={checkedPatientDeletion}
                             onChange={handlePatientDeletionChange}
                             inputProps={{ 'aria-label': 'controlled' }}
                         />
-            </Col>
-
-
+                        </Row>
+                        </Form.Group>
+                </Col>
         </div>
     )
 }

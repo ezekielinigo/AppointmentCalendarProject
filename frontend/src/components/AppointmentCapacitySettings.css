@@ -8,8 +8,24 @@
 .admin-settings-box {
     display: flex;
     justify-content: center;
-    margin-top: 20px;
+    margin: 20px auto;
     border: 2px solid gray;
     border-radius: 20px;
-    
+    width: 50%;
+    align-items: center;
+}
+
+.form {
+    display: flex;
+    flex-direction: column;
+    margin-top: 25px;
+    margin-bottom: 25px;
+}
+
+.form-label {
+    font-size: 20px;
+    margin: 1px;
+    column-gap: 10px;
+    font-family: 'Roboto', sans-serif;
+    border-radius: 10px;
 }

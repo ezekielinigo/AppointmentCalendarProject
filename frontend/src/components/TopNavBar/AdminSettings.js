@@ -10,8 +10,9 @@ export const AdminSettings = () => {
 		<>
 		<NavBar />
 		<AdminNavs/>
-		<div className="services">
-			<AppointmentCapacitySettings></AppointmentCapacitySettings>
-		</div></>
+
+		<AppointmentCapacitySettings/>
+
+		</> 
 	);
 };
