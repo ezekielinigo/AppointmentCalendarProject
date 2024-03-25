@@ -36,7 +36,8 @@ const Header = () => {
 					src={logo}/>
 					<h1 class = "header-title">
 						RMC Clinic Appointment Calendar
-					</h1>	
+					</h1>
+
 				</Nav>
 			</IconContext.Provider>
 		</>

@@ -163,6 +163,7 @@ const Calendar = () => {
             // having assigned the correct patient id, finally create a new appointment in the database
 
             // if only editing an appointment, update the database
+            
             await axios
             .put(`http://localhost:8000/api/patients/${selectedAppointment.patient.id}/`, selectedAppointment.patient)
             .then(response => {

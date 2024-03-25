@@ -18,8 +18,34 @@ function Login() {
 
     const handleLogin = (event) => {
         event.preventDefault(); // para 'di magshow 'yung mga ilalagay na information sa URL
-        alert('Clinic ID: ' + clinicid + '\nPassword: ' + clinicpassword);
+
+        if (clinicid === '' || clinicpassword === '') {
+            alert('Please fill out all the fields.');
+            return;
+        }
+
+        else {
+            //alert('Clinic ID: ' + clinicid + '\nPassword: ' + clinicpassword);
+            validateEntry();
+        }
     }
+
+    const validateEntry = async () => {
+        try { 
+            const login = await axios.post('http://localhost:8000/login', { username: clinicid, password: clinicpassword });
+            console.log(login);
+
+            if (login.status === 200) {
+                alert('Login Successful');
+                window.location.href = PathConstants.ADMINCALENDARVIEW;
+            }
+        } catch (error) {
+            console.error(error);
+            alert('Login Failed! Please check your Clinic ID and Password.');
+        }
+    }
+
+
 
     return (
         <>

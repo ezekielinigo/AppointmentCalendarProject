@@ -20,11 +20,12 @@ function Login() {
     const [hospitalNumber, sethospitalNumber] = useState('');
     const [birthDate, setbirthDate] = useState('');
 
+    // simple encryption function
     const shiftChar = (char) => {
         const alphabet = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
         const index = alphabet.indexOf(char);
-        if (index === -1) return char; // If the character is not alphanumeric, return it as is
-        return alphabet[(index + 5) % alphabet.length]; // Shift the character 5 positions to the right
+        if (index === -1) return char; // if the character is not alphanumeric, return it as it is
+        return alphabet[(index + 5) % alphabet.length]; // shift the character 5 positions to the right
     }
 
     const validateEntry = async () => {
@@ -63,8 +64,8 @@ function Login() {
 
             else {
                 const signup = await axios.post('http://localhost:8000/signup', { username: user, password: pass })
-                const login = await axios.post('http://localhost:8000/login', { username: user, password: pass });
                 console.log(signup);
+                const login = await axios.post('http://localhost:8000/login', { username: user, password: pass });
                 console.log(login);
             } 
            
@@ -105,7 +106,7 @@ function Login() {
     
     if (!hospitalNumberInput) {
         if (firstName === '' || lastName === '' || birthDate === '' || hospitalNumber === '') {
-            alert("Please fill in all the fields.");
+            alert("Please fill out all the fields.");
         } 
 
         
@@ -140,25 +141,6 @@ function Login() {
             }
 
         }
-        
-        
-        /*
-        else {
-            const patient = {
-                nameFirst: firstName,
-                nameLast: lastName,
-                birthdate: birthDate,
-                hospitalNumber: hospitalNumber
-            };
-            axios.post(PathConstants.PATIENTS, patient)
-                .then(response => {
-                    console.log(response);
-                })
-                .catch(error => {
-                    console.error(error);
-                });
-            setShow(false);
-        } */ // tokenizing principle
     }
 
     else if (hospitalNumberInput) {
