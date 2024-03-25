@@ -19,7 +19,7 @@ import Patients from './Patients';
   
 
 
-import Sidebar from "./sidebar/Sidebar";
+import Sidebar from "./TopNavBar/Header";
 import Calendar from './Calendar';
 
 function ReceptionistPage() {

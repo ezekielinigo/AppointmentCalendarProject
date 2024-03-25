@@ -18,18 +18,10 @@ import LandingPage from './components/LandingPage';
 import ReceptionistPage from './components/ReceptionistPage';
 import SignUp from './components/SignUp';
 
-import Sidebar from "./components/sidebar/Sidebar";
-
-import {
-    CalendarView,
-} from "./components/sidebar/AdminCalendar";
-import {
-    Services,
-    ServicesOne,
-    ServicesTwo,
-    ServicesThree,
-} from "./components/sidebar/AdminAppointments";
-import PatientList from "./components/sidebar/AdminPatientList";
+import { CalendarView } from "./components/TopNavBar/AdminCalendar";
+import { AdminSettings } from "./components/TopNavBar/AdminSettings";
+import PatientList from "./components/TopNavBar/AdminPatientList";
+import AdminAppointmentList from "./components/TopNavBar/AdminAppointmentList";
 
 
 function App() {
@@ -71,14 +63,21 @@ function App() {
             path: "/admin-calendar-view",
             element: <CalendarView />
         },
+        {   
+            path: "/admin-settings",
+            element: <AdminSettings />
+
+        },
         {
             path: "/admin-appointments",
-            element: <Services />
+            element: <AdminAppointmentList />
         },
+    
         {
             path: "/admin-patients",
             element: <PatientList />
         },
+
     ])
     
     return (

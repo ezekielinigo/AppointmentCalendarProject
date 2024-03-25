@@ -1,11 +1,14 @@
 import React from "react";
-import Sidebar from "./Sidebar";
 import Calendar from "../Calendar"
+import NavBar from "./Header"
+import AdminNavs from "./AdminNavs";
 
 export const CalendarView = () => {
 	return (
-		<><Sidebar /> 
+		<>
+		<NavBar/>
 		<div>
+			<AdminNavs/>
 			<Calendar />
 		</div></>
 	);

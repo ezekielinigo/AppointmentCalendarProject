@@ -6,6 +6,10 @@ const PathConstants = {
     LANDINGASKER: '/login/patient/',
     LANDING: '/',
     CALENDAR: '/calendar',
+    ADMINCALENDARVIEW: '/admin-calendar-view',
+    ADMINSETTINGS: '/admin-settings',
+    ADMINPATIENTLIST: '/admin-patients',
+    ADMINAPPOINTMENTS: '/admin-appointments',
     
 }
 

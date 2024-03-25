@@ -1,12 +1,13 @@
-// Filename - pages/ContactUs.js
-
 import React from "react";
-import Sidebar from "./Sidebar";
 import PatientTable from "../PatientTable";
+import NavBar from "./Header"	
+import AdminNavs from "./AdminNavs";
 
 const PatientList = () => {
 	return (
-		<><Sidebar />
+		<>
+		<NavBar />
+		<AdminNavs/>
 		<div className="contact">
 			<h1>List of patients registered dito</h1>
 			<PatientTable/>

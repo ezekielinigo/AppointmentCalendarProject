@@ -1,12 +1,15 @@
 // Filename - pages/Services.js
 
 import React from "react";
-import Sidebar from "./Sidebar";
+import NavBar from "./Header";
 import AppointmentCapacitySettings from "../AppointmentCapacitySettings";
+import AdminNavs from "./AdminNavs";
 
-export const Services = () => {
+export const AdminSettings = () => {
 	return (
-		<><Sidebar />
+		<>
+		<NavBar />
+		<AdminNavs/>
 		<div className="services">
 			<AppointmentCapacitySettings></AppointmentCapacitySettings>
 		</div></>
