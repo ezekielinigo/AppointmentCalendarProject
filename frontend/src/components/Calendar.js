@@ -7,30 +7,115 @@ import listPlugin from '@fullcalendar/list';
 import interactionPlugin from '@fullcalendar/interaction';
 import './Calendar.css';
 import AppointmentInfoModal from './CalendarAppointmentInfoModal';
-import AppointmentPromptModal from './CalendarAppointmentPromptModal';
+import AppointmentNewModal from './CalendarAppointmentNewModal';
 
 const Calendar = () => {
     // State to store the events
     const [events, setEvents] = useState([]);
     const [showAppointmentInfoModal, setShowAppointmentInfoModal] = useState(false);
-    const [showAppointmentPromptModal, setShowAppointmentPromptModal] = useState(false);
+    const [showAppointmentNewModal, setShowAppointmentNewModal] = useState(false);
     const [selectedAppointment, setSelectedAppointment] = useState(null);
     const calendarRef = useRef(null);
     const [editLock, setEditLock] = useState(false);
     const [monthlyCapacities, setMonthlyCapacities] = useState(null);
+    const [isLoading, setIsLoading] = useState(true);
+
     const handleEditLock = () => {
         setEditLock(!editLock);
     }
+
     const handleClose = () => {
-        setShowAppointmentPromptModal(false);
+        setShowAppointmentNewModal(false);
         setShowAppointmentInfoModal(false);
         setEditLock(false);
     }
-    const handleAppointmentClick = (info) => {
-        // when a date is clicked, the appointment info is stored in selectedAppointment state
-        // selectedAppointment is then passed to the modal where it can be modified
-        // after saving (thru handleSave), the info of selectedAppointment will be used to update the database
 
+    // this function checks whether a date is available or not
+    // a date is available for new appointments if capacity is set and is not full
+    // a date is available for new appointments if it is more than 1 day from now
+    const isDateAvailable = (date) => {
+        // Get the current date and add one day to it
+        const currentDate = new Date();
+
+        // If the selected date is less than or equal to the current date plus one day, return false
+        if (date <= currentDate) {
+            return false;
+        }
+
+        if (monthlyCapacities) {
+            const year = date.getFullYear();
+            const month = date.getMonth() + 1;
+            const day = date.getDate();
+            const capacity = monthlyCapacities.find(capacity => capacity.month === month && capacity.year === year);
+            if (capacity) {
+                const filledSlots = events.filter(event => {
+                    const eventDate = new Date(event.date);
+                    return eventDate.getFullYear() === year && eventDate.getMonth() + 1 === month && eventDate.getDate() === day;
+                }).length;
+                return filledSlots < capacity.capacity;
+            }
+        }
+        return false;
+    }
+
+    const handleDateClick = (info) => {
+        // if the date clicked has been more than 1 day from now, create new appointment
+        if (isDateAvailable(info.date)) {
+            if (info.view && info.view.type === 'dayGridMonth' && info.view.calendar) {
+                const calendarApi = info.view.calendar;
+                calendarApi.changeView('timeGridWeek', info.dateStr); // change view to week view and go to the date clicked
+            } else {
+                // appointment number format: FMDDMMYY-TTTT-XX
+                // TTTT is the time in 12-hour format)
+                // XX is the number of the appointment in the day
+                // ex: FM123124-07AM-01
+                const MM = info.dateStr.substring(5,7);
+                const DD = info.dateStr.substring(8,10);
+                const YY = info.dateStr.substring(2,4);
+                const hour24 = parseInt(info.dateStr.substring(11,13));
+                const hour12 = hour24 > 12 ? hour24 - 12 : hour24;
+                const TTTT = hour24 >= 12 ? `${hour12.toString().padStart(2, '0')}PM` : `${hour12.toString().padStart(2, '0')}AM`;                const XX = events.filter(event => event.date.toISOString().substring(0,10) === info.dateStr.substring(0,10)).length + 1;
+                const appointmentNumber = `FM${MM}${DD}${YY}-${TTTT}-${XX.toString().padStart(2, '0')}`;
+
+                setSelectedAppointment({
+                    id: 0,
+                    appointmentNumber: appointmentNumber,
+                    patient: {
+                        id: 0,
+                        nameFirst: '',
+                        nameMiddle: '',
+                        nameLast: '',
+                        birthdate: '',
+                        age: '',
+                        sex: '',
+                        civilStatus: '',
+                        hospitalNumber: '',
+                        contact: '',
+                        email: '',
+                        facebookName: '',
+                        address: '',
+                    },
+                    label: '',
+                    date: info.dateStr.substring(0,10),
+                    time: info.dateStr.substring(11,19),
+                    remarks: '',
+                    followup: false,
+                    referralDoctor: '',
+                    newPatient: false
+                })
+                setEditLock(false);
+                setShowAppointmentInfoModal(true);
+            }
+        } else {
+            // show a message to the user that the date is not available for new appointments
+            alert('This date is not available for new appointments.');
+        }
+    }
+
+    // when an appointment is clicked, the appointment info is stored in selectedAppointment state
+    // selectedAppointment is then passed to the modal where it can be modified
+    // after saving (thru handleSave), the info of selectedAppointment will be used to update the database
+    const handleAppointmentClick = (info) => {
         setSelectedAppointment({
             id: info.event.extendedProps.appointmentId,
             appointmentNumber: info.event.extendedProps.appointmentNumber,
@@ -59,19 +144,41 @@ const Calendar = () => {
         });
         setShowAppointmentInfoModal(true);
     }
+
+
+
     const handleSave = async () => {
         try {
+            // if appointment id is 0, it means it is a new appointment
+                // if patient's hospital number is a valid 6-digit number, it is an old patient
+                    // then find that patient in the database
+                    // use that patient's id for this new appointment
+                // else, it is a new patient (ex: hospital number is just blank)
+                    // then get all patients from the database without a hospital number (new patients)
+                    // if there is a patient with the same firstName, middleName, lastName, and birthdate
+                        // use that patient's id for this new appointment
+                    // else, it is a new patient
+                        // create a new patient in the database
+                        // use that patient's id for this new appointment
+            // having assigned the correct patient id, finally create a new appointment in the database
+
+            // if only editing an appointment, update the database
             await axios
             .put(`http://localhost:8000/api/patients/${selectedAppointment.patient.id}/`, selectedAppointment.patient)
-            .then(response => {console.log(response);});
+            .then(response => {
+                console.log(response);
+            });
 
             await axios
-                .put(`http://localhost:8000/api/appointments/${selectedAppointment.id}/`, selectedAppointment)
-                .then(response => {console.log(response);});
+            .put(`http://localhost:8000/api/appointments/${selectedAppointment.id}/`, selectedAppointment)
+            .then(response => {
+                console.log(response);
+            });
 
             handleClose();
             fetchEvents();
         } catch (error) {
+            alert('cannot save appointment');
             console.error(error);
         }
     };
@@ -126,6 +233,7 @@ const Calendar = () => {
                 };
             });
             setMonthlyCapacities(databaseCapacities);
+            setIsLoading(false);
         } catch (error) {
             console.error(error);
         }
@@ -137,15 +245,11 @@ const Calendar = () => {
         fetchCapacity();
     }, []);
 
-    const handleDateClick = (info) => {
-        setShowAppointmentPromptModal(true);
-
-    }
-
     // FullCalendar component that displays the calendar
     return (
         <div className="calendar">
-            <FullCalendar
+            {isLoading ? <div>Loading...</div> : (
+                <FullCalendar
                 ref={calendarRef}
                 events={events}
                 plugins={[dayGridPlugin, timeGridPlugin, listPlugin, interactionPlugin]}
@@ -160,9 +264,9 @@ const Calendar = () => {
                     minute: '2-digit',
                     omitZeroMinute: false,
                 }}
-                titleFormat={{ // top of calendar
-                    month:'long',
-                    year:'numeric'
+                titleFormat={{
+                    month: 'long',
+                    year: 'numeric',
                 }}
                 viewDidMount={function(info) {
                     if (calendarRef.current) {
@@ -226,30 +330,20 @@ const Calendar = () => {
                     return hour >= 6 && hour < 18;
                 }}
                 dayCellDidMount={(info) => {
+                    // get the date of the day cell (format: 'yyyy-mm-dd')
+                    const dateStr = info.el.dataset.date;
+                    const date = new Date(dateStr);
 
-                    // get the month and year of the current date (format: 'yyyy-mm-dd')
-                    const date = info.el.dataset.date;
-                    const year = parseInt(date.split('-')[0]);
-                    const month = parseInt(date.split('-')[1]);
+                    // get the current date (format: 'yyyy-mm-dd')
+                    const currentDate = new Date();
+                    const currentDateString = currentDate.toISOString().split('T')[0];
 
-                    // get the filled slots of the day (format: 'filledSlots/totalSlots appointments')
-                    let filledSlots = 0;
-                    if (info.el.textContent) {
-                        filledSlots = info.el.textContent.split('')[0].split('/')[0];
-                    }
+                    // call isDateAvailable with the date of the day cell
+                    const isAvailable = isDateAvailable(date);
 
-                    // find the capacity of the month and year
-                    if (monthlyCapacities) {
-                        const capacity = monthlyCapacities.find(capacity => capacity.month === month && capacity.year === year);
-                        if (capacity) {
-                            // if the filled slots is equal to the capacity, color the day red
-                            if (filledSlots === capacity.capacity) {
-                                info.el.style.backgroundColor = 'red';
-                            }
-                        }else{
-                            // if the capacity is not set, color the day yellow
-                            info.el.style.backgroundColor = '#F7EBEC';
-                        }
+                    // if the date is not available and it's not the current date, color the day cell red
+                    if (!isAvailable && dateStr !== currentDateString) {
+                        info.el.style.backgroundColor = '#EBEBEB';
                     }
                 }}
                 slotDuration='01:00:00'
@@ -263,7 +357,8 @@ const Calendar = () => {
                 eventClick={handleAppointmentClick}
                 selectable={false}
                 expandRows={true}
-            />
+                />
+            )}
             <AppointmentInfoModal
                 show={showAppointmentInfoModal}
                 handleClose={handleClose}
@@ -273,8 +368,8 @@ const Calendar = () => {
                 handleEditLock={handleEditLock}
                 handleSave={handleSave}
             />
-            <AppointmentPromptModal
-                show={showAppointmentPromptModal}
+            <AppointmentNewModal
+                show={showAppointmentNewModal}
                 handleClose={handleClose}
                 handleSave={handleSave}
                 handleTrash={handleClose}

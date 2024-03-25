@@ -7,7 +7,7 @@ import Button from 'react-bootstrap/Button';
 import './Calendar.css';
 import {FiSave, FiTrash} from "react-icons/fi";
 
-const AppointmentPromptModal = ({show, handleClose, handleTrash, handleSave}) => {
+const AppointmentNewModal = ({show, handleClose, handleTrash, handleSave}) => {
     return (
         <Modal show={show} onHide={handleClose}>
             <Modal.Header>
@@ -29,4 +29,4 @@ const AppointmentPromptModal = ({show, handleClose, handleTrash, handleSave}) =>
     )
 }
 
-export default AppointmentPromptModal;
+export default AppointmentNewModal;
