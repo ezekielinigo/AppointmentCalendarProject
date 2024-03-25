@@ -47,3 +47,17 @@ class SettingSerializer(serializers.ModelSerializer):
             'year',
             'capacity'
         )
+
+class DoctorSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Doctor
+        fields = (
+            'id',
+            'name',
+            'specialization',
+            'contact',
+            'email',
+            'facebookName',
+            'address',
+            'available'
+        )

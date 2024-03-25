@@ -8,8 +8,8 @@
 }
 
 .landing {
-    width: 50%;
-    height: 50%;
+    width: 80%;
+    height: 80%;
     align-items: center;
     justify-content: center;
     display: flex;
@@ -59,8 +59,7 @@
     justify-content: space-between;
 }
 
-.LandingPage {
-    background-image: url('../assets/rmc-bg.jpg');
-    background-size: cover;
-    background-position: center;
+.login-modal {
+    background-color: transparent;
+
 }

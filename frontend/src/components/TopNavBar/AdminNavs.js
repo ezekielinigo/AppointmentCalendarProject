@@ -9,23 +9,8 @@ import {Link} from 'react-router-dom';
 import { FaTableList } from "react-icons/fa6";
 import { FaPersonCirclePlus } from "react-icons/fa6"; */
 
-export default function VariantButtonGroup() {
+export default function AdminNavs() {
   return (
-    /*<Box
-      sx={{
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        '& > *': {
-          m: 1,
-        },
-
-      }}
-    > */
-
-
-
-
       <ButtonGroup class = 'button-group' variant="outlined">
         <Link to = {PathConstants.ADMINCALENDARVIEW}> 
         <Button class = 'nav-buttons' size = 'large'>CALENDAR VIEW</Button>
@@ -43,7 +28,5 @@ export default function VariantButtonGroup() {
         <Button class = 'nav-buttons' size = 'large'>PATIENT TABLE</Button>
         </Link>
       </ButtonGroup>
-     
-    /* </Box> */
   );
 }

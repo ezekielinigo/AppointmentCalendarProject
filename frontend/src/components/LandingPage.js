@@ -2,12 +2,12 @@ import { useState } from 'react';
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import background from '../assets/rmc-bg.jpg';
+import patient from '../assets/patient.png';
+import doctor from '../assets/doctor.png';
 import Logo from '../assets/hospital-logo.png';
-import Login from './LoginClinic';
-import { Routes, Route, Link} from 'react-router-dom';
+import {Link} from 'react-router-dom';
 import './LandingPage.css';
 import PathConstants from '../PathConstants';
-import FormInput from './FormInput';
 
 function LandingPage() {
     const [show, setShow] = useState(true);
@@ -20,12 +20,11 @@ function LandingPage() {
     const patientHandler = () => {
         setShow(false);
         
-        
-
     }
 
     return (
-        <><img src={background} alt='background' className='bg' style={{ 
+        <>        
+        <img src={background} alt='background' className='bg' style={{ 
             width: '100%', // trying to refactor sa .css but i'm not sure how, kaya rito na lang muna
             height: '100%', 
             objectFit: 'cover', 
@@ -59,6 +58,7 @@ function LandingPage() {
                     <Link to={PathConstants.LOGINPATIENT}>
                         <Button className='landing-btn' size='lg' variant="primary" onClick={patientHandler}>
                             I am a patient
+                            <img src={patient}/>
                         </Button> </Link>
                     
                         <Link to = {PathConstants.LOGINCLINIC}>
