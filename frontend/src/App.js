@@ -29,13 +29,8 @@ import {
     ServicesTwo,
     ServicesThree,
 } from "./components/sidebar/AdminAppointments";
-import {
-    Events,
-    EventsOne,
-    EventsTwo,
-} from "./components/sidebar/Events";
 import PatientList from "./components/sidebar/AdminPatientList";
-import Support from "./components/sidebar/Support";
+
 
 function App() {
 
@@ -84,23 +79,6 @@ function App() {
             path: "/admin-patients",
             element: <PatientList />
         },
-        {
-            path: "/events",
-            element: <Events />
-        },
-        {
-            path: "/events/events1",
-            element: <EventsOne />
-        },
-        {
-            path: "/events/events2",
-            element: <EventsTwo />
-        },
-        {
-            path: "/support",
-            element: <Support />
-        }
-
     ])
     
     return (

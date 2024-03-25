@@ -23,7 +23,7 @@ const Nav = styled.div`
 	height: 80px;
 	display: flex;
 	justify-content: flex-start;
-	align-items: center;
+	align-items: right;
 `;
 
 const NavIcon = styled(Link)`
@@ -32,24 +32,7 @@ const NavIcon = styled(Link)`
 	height: 80px;
 	display: flex;
 	justify-content: flex-start;
-	align-items: center;
-`;
-
-const SidebarNav = styled.nav`
-	background: #071108;
-	width: 250px;
-	height: 100vh;
-	display: flex;
-	justify-content: center;
-	position: fixed;
-	top: 0;
-	left: ${({ sidebar }) => (sidebar ? "0" : "-100%")};
-	transition: 350ms;
-	z-index: 10;
-`;
-
-const SidebarWrap = styled.div`
-	width: 100%;
+	align-items: right;
 `;
 
 const Sidebar = () => {
@@ -61,11 +44,6 @@ const Sidebar = () => {
 		<>
 			<IconContext.Provider value={{ color: "whitesmoke" }}>
 				<Nav>
-					<NavIcon to="#">
-						<FaIcons.FaBars
-							onClick={showSidebar}
-						/>
-					</NavIcon>
 					<h1
 						style={{
 							textAlign: "center",
@@ -75,14 +53,7 @@ const Sidebar = () => {
 					>
 						RMC Clinic Appointment Calendar
 					</h1>
-				</Nav>
-				<SidebarNav sidebar={sidebar}>
-					<SidebarWrap>
-						<NavIcon to="#">
-							<AiIcons.AiOutlineClose
-								onClick={showSidebar}
-							/>
-						</NavIcon>
+					
 						{SidebarData.map((item, index) => {
 							return (
 								<SubMenu
@@ -91,8 +62,8 @@ const Sidebar = () => {
 								/>
 							);
 						})}
-					</SidebarWrap>
-				</SidebarNav>
+					
+				</Nav>
 			</IconContext.Provider>
 		</>
 	);
