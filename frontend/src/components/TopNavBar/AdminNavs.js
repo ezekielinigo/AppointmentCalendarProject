@@ -11,7 +11,7 @@ import { FaPersonCirclePlus } from "react-icons/fa6"; */
 
 export default function VariantButtonGroup() {
   return (
-    <Box
+    /*<Box
       sx={{
         display: 'flex',
         flexDirection: 'column',
@@ -21,25 +21,29 @@ export default function VariantButtonGroup() {
         },
 
       }}
-    >
-      <ButtonGroup variant="outlined">
+    > */
+
+
+
+
+      <ButtonGroup class = 'button-group' variant="outlined">
         <Link to = {PathConstants.ADMINCALENDARVIEW}> 
-        <Button size = 'large' color = 'primary'>CALENDAR VIEW</Button>
+        <Button class = 'nav-buttons' size = 'large'>CALENDAR VIEW</Button>
         </Link>
 
         <Link to = {PathConstants.ADMINSETTINGS}> 
-        <Button size = 'large'>ADMIN SETTINGS</Button>
+        <Button class = 'nav-buttons' size = 'large'>ADMIN SETTINGS</Button>
         </Link>
 
         <Link to = {PathConstants.ADMINAPPOINTMENTS}>
-        <Button size = 'large'>APPOINTMENT TABLE</Button>
+        <Button class = 'nav-buttons' size = 'large'>APPOINTMENT TABLE</Button>
         </Link>
 
         <Link to = {PathConstants.ADMINPATIENTLIST}>
-        <Button size = 'large'>PATIENT TABLE</Button>
+        <Button class = 'nav-buttons' size = 'large'>PATIENT TABLE</Button>
         </Link>
       </ButtonGroup>
      
-    </Box>
+    /* </Box> */
   );
 }
