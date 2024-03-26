@@ -7,13 +7,11 @@ import listPlugin from '@fullcalendar/list';
 import interactionPlugin from '@fullcalendar/interaction';
 import './Calendar.css';
 import AppointmentInfoModal from './CalendarAppointmentInfoModal';
-import AppointmentNewModal from './CalendarAppointmentNewModal';
 
 const Calendar = () => {
     // State to store the events
     const [events, setEvents] = useState([]);
     const [showAppointmentInfoModal, setShowAppointmentInfoModal] = useState(false);
-    const [showAppointmentNewModal, setShowAppointmentNewModal] = useState(false);
     const [selectedAppointment, setSelectedAppointment] = useState(null);
     const calendarRef = useRef(null);
     const [editLock, setEditLock] = useState(false);
@@ -25,7 +23,6 @@ const Calendar = () => {
     }
 
     const handleClose = () => {
-        setShowAppointmentNewModal(false);
         setShowAppointmentInfoModal(false);
         setEditLock(false);
     }
@@ -368,12 +365,6 @@ const Calendar = () => {
                 editLock={editLock}
                 handleEditLock={handleEditLock}
                 handleSave={handleSave}
-            />
-            <AppointmentNewModal
-                show={showAppointmentNewModal}
-                handleClose={handleClose}
-                handleSave={handleSave}
-                handleTrash={handleClose}
             />
         </div>
     );

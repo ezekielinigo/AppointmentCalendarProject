@@ -11,18 +11,17 @@
     margin: 20px auto;
     border: 2px solid gray;
     border-radius: 20px;
-    width: 50%;
+    width: 80%;
     align-items: center;
 }
 
-.form {
+.settings-form-control {
     display: flex;
-    flex-direction: column;
     margin-top: 25px;
     margin-bottom: 25px;
 }
 
-.form-label {
+.settings-form-label {
     font-size: 20px;
     margin: 1px;
     column-gap: 10px;
