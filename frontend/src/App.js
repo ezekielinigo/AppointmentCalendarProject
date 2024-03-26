@@ -15,7 +15,6 @@ import { RouterProvider, createBrowserRouter } from 'react-router-dom';
 import LoginClinic from './components/LoginClinic';
 import LoginPatient from './components/LoginPatient';
 import LandingPage from './components/LandingPage';
-import SignUp from './components/SignUp';
 import { CalendarView } from "./components/TopNavBar/AdminCalendar";
 import { AdminSettings } from "./components/TopNavBar/AdminSettings";
 import PatientList from "./components/TopNavBar/AdminPatientList";
@@ -47,11 +46,6 @@ function App() {
         {
             path: '/calendar',
             element: <Calendar />
-        },
-
-        { 
-            path: 'login/patient/signup',
-            element: <SignUp />
         },
 
         // Start Receptionist Page Routes

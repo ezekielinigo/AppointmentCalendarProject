@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import 'react-router-dom';
 import { FormGroup, FormLabel, FormControl } from 'react-bootstrap';
 import { Button } from 'react-bootstrap';
-import './SignUp.css'
+import './SuperAdmin.css';
 import axios from 'axios';
 
 
@@ -72,7 +72,7 @@ function SuperAdmin() {
                 <FormLabel> Re-enter Password </FormLabel>
                 <FormControl id = 'reenter-password' type="password" placeholder="Re-enter Password" />
 
-                <Button onClick = {handleAccountCreation}> Create Account </Button>
+                <Button class = 'create-acc' onClick = {handleAccountCreation}> Create Account </Button>
                 
             </FormGroup>
             
