@@ -42,14 +42,14 @@ class SettingView(viewsets.ModelViewSet):
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
     
-class DoctorView(viewsets.ModelViewSet):
-    serializer_class = DoctorSerializer
-    queryset = Doctor.objects.all()
+#class DoctorView(viewsets.ModelViewSet):
+#    serializer_class = DoctorSerializer
+#    queryset = Doctor.objects.all()
 
-    def list(self, request, *args, **kwargs):
-        queryset = self.filter_queryset(self.get_queryset())
-        serializer = self.get_serializer(queryset, many=True)
-        return Response(serializer.data)
+#    def list(self, request, *args, **kwargs):
+#        queryset = self.filter_queryset(self.get_queryset())
+#        serializer = self.get_serializer(queryset, many=True)
+#        return Response(serializer.data)
     
 # auth
 @api_view(['POST'])
@@ -59,6 +59,12 @@ def signup(request):
         serializer.save()
         user = User.objects.get(username=request.data['username'])
         user.set_password(request.data['password'])
+
+        user.first_name = request.data['first_name'] #added
+        user.last_name = request.data['last_name'] #added
+        
+        
+        
         user.save()
         token = Token.objects.create(user=user)
         return Response({'token': token.key, 'user': serializer.data})

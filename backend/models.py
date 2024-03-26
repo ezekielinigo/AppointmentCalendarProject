@@ -140,23 +140,24 @@ class Setting(models.Model):
     year = models.PositiveIntegerField(default=datetime.date.today().year)
     capacity = models.PositiveIntegerField(default=0)
 
-class Doctor(models.Model):
-    id = models.AutoField(primary_key=True)
+
+#class Doctor(models.Model):
+#    id = models.AutoField(primary_key=True)
 
     ## basic doctor info only since needed for appointment scheduling. the system will assign the doctor based on the availability.
 
-    name = models.CharField(max_length=120)
-    specialization = models.CharField(max_length=120)
-    contact = models.CharField(
-        validators=[RegexValidator(r'^\d{1,11}$', message='Format: 09123123123')],
-        max_length=11,
-        null=True,
-        blank=True
-    )
-    email = models.EmailField()
-    facebookName = models.CharField(default="", max_length=50, blank=True)
-    address = models.TextField(default="", blank=True)
-    available = models.BooleanField(default=True)
-
-    def __str__(self):
-        return self.name + ' (' + self.specialization + ')'
+#    name = models.CharField(max_length=120)
+#    specialization = models.CharField(max_length=120)
+#    contact = models.CharField(
+#        validators=[RegexValidator(r'^\d{1,11}$', message='Format: 09123123123')],
+#        max_length=11,
+#        null=True,
+#        blank=True
+#    )
+#    email = models.EmailField()
+#    facebookName = models.CharField(default="", max_length=50, blank=True)
+#    address = models.TextField(default="", blank=True)
+#    available = models.BooleanField(default=True)
+#
+#    def __str__(self):
+#        return self.name + ' (' + self.specialization + ')'

@@ -21,6 +21,7 @@ import { CalendarView } from "./components/TopNavBar/AdminCalendar";
 import { AdminSettings } from "./components/TopNavBar/AdminSettings";
 import PatientList from "./components/TopNavBar/AdminPatientList";
 import AdminAppointmentList from "./components/TopNavBar/AdminAppointmentList";
+import SuperAdmin from "./components/SuperAdmin";
 
 
 function App() {
@@ -76,6 +77,10 @@ function App() {
             path: "/admin-patients",
             element: <PatientList />
         },
+        {
+            path: "superadmin",
+            element: <SuperAdmin/>
+        }
 
     ])
     

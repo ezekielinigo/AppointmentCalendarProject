@@ -49,21 +49,22 @@ class SettingSerializer(serializers.ModelSerializer):
             'capacity'
         )
 
-class DoctorSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Doctor
-        fields = (
-            'id',
-            'name',
-            'specialization',
-            'contact',
-            'email',
-            'facebookName',
-            'address',
-            'available'
-        )
+#class DoctorSerializer(serializers.ModelSerializer):
+#    class Meta:
+#        model = Doctor
+#        fields = (
+#            'id',
+#            'name',
+#            'specialization',
+#            'contact',
+#            'email',
+#            'facebookName',
+#            'address',
+#            'available'
+#        )
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta(object):
         model = User 
-        fields = ['id', 'username', 'password']
+        #fields = ['id', 'username', 'password']
+        fields = ['id', 'username', 'password', 'first_name', 'last_name']

@@ -10,3 +10,13 @@
     align-items: center;
     box-shadow: 0 0 29px rgba(0, 0, 0, 0.3); 
   }
+
+  .box-2 {
+    background-color: #108942;
+    color: whitesmoke;
+    border-radius: 5px;
+    border-color: black;
+    padding: 10px;
+    margin: 10px;
+    width: 40%;
+}

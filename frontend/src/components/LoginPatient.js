@@ -46,28 +46,30 @@ function Login() {
 
             // password mula sa deets pero may shiftChar function para ma-encrypt
             const pass = (patient.nameLast.slice(-2) + patient.nameFirst.slice(0, 2) + patient.birthdate.replace(/-/g, '') + patient.nameLast + patient.nameFirst).split('').map(shiftChar).join('').slice(0, 10);
-           
+            alert (pass);
             //alert (user + " " + pass) // pang-debug since ayaw gumana ng tokenizing mechanism kanina
 
             // ito yung gumanang tokenizing mechanism
 
             // 1. attempt sign-up
-            const response = await axios.post('http://localhost:8000/signup', { username: user, password: pass });
+            const response = await axios.post('http://localhost:8000/signup', { username: user, password: pass, first_name: patient.nameFirst, last_name: patient.nameLast });
             
             // 2. basically status = 200 means na may existing username na sa database kaya login na  
             if (response.status === 200) {
-                const login = await axios.post('http://localhost:8000/login', { username: user, password: pass });
+                const login = await axios.post('http://localhost:8000/login', { username: user, password: pass, first_name: patient.nameFirst, last_name: patient.nameLast });
                 console.log(login);
             }
 
             // 3. other than 200, sign-up then login
 
             else {
-                const signup = await axios.post('http://localhost:8000/signup', { username: user, password: pass })
+                const signup = await axios.post('http://localhost:8000/signup', { username: user, password: pass, first_name: patient.nameFirst, last_name: patient.nameLast })
                 console.log(signup);
-                const login = await axios.post('http://localhost:8000/login', { username: user, password: pass });
+                const login = await axios.post('http://localhost:8000/login', { username: user, password: pass, first_name: patient.nameFirst, last_name: patient.nameLast });
                 console.log(login);
             } 
+
+            
            
          } 
 
