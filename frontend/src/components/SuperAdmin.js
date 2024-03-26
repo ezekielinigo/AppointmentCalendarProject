@@ -4,11 +4,31 @@ import { FormGroup, FormLabel, FormControl } from 'react-bootstrap';
 import { Button } from 'react-bootstrap';
 import './SuperAdmin.css';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
+
 
 
 import NavBar from "./TopNavBar/AdminNavBar";
 
 function SuperAdmin() {
+    const navigate = useNavigate();
+    const [authenticated, setAuthenticated] = useState(false);
+
+    useEffect(() => {
+        const username = window.prompt('Enter username');
+        const password = window.prompt('Enter password');
+
+        if (username === 'cacsuperadmin' && password === 'superadmin123') {
+            setAuthenticated(true);
+        } else {
+            alert('Invalid credentials');
+            navigate('/'); // Redirect to home page
+        }
+    }, []);
+
+    if (!authenticated) {
+        return null;
+    }
 
     const handleAccountCreation = async() => {
     
@@ -39,7 +59,7 @@ function SuperAdmin() {
 
                 if (response.status === 200) {
                     console.log(response);
-                    alert('Account successfully created! You may now log-in.')
+                    alert('Account successfully created for ' + data.clinicName + '. Your clinic id is ' + randomNumber + '. Please login to continue.');
                     window.location.href = '/login/clinic';
                 } else {
                     console.error('Signup failed with status:', response.status);

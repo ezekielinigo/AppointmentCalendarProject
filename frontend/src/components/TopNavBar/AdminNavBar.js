@@ -40,7 +40,7 @@ const AdminNavBar = () => {
 					</h1>
 
 					<h2 class = 'welcome'> Welcome,  </h2>
-
+					
 					<Button variant="outline-light" style = {{
                         margin: 10,
                         alignItems: 'right'

@@ -1,24 +1,72 @@
 import './LoginPatient.css';
 import React, { useState, useEffect } from 'react';
 import axios from "axios";
-import FormInput from './FormInput'; // Import the FormInput component
+import Switch from '@mui/material/Switch';
+import { FormGroup, FormLabel, FormControl} from 'react-bootstrap';
+import { styled } from '@mui/material/styles';
+import LandingNavBar from './LandingNavBar';
+import Button from '@mui/material/Button';
+import patient from '../assets/patient.png';
+import { Link } from 'react-router-dom';
 import PathConstants from '../PathConstants';
-import {Link} from 'react-router-dom';
-import Modal from 'react-bootstrap/Modal';
-import background from '../assets/rmc-bg.jpg';
-
-import Checkbox, { checkboxClasses } from '@mui/material/Checkbox';
+import { MdKeyboardBackspace } from "react-icons/md";
 
 function Login() {
 
     const [events, setEvents] = useState([]);
-    const [show, setShow] = useState(true);
     const [hospitalNumberInput, setHospitalNumberInput] = useState(false);
     const [checked, setChecked] = useState(false); // for checkbox
     const [firstName, setFirstName] = useState('');
+    const [middleName, setMiddleName] = useState('');
     const [lastName, setLastName] = useState('');
     const [hospitalNumber, sethospitalNumber] = useState('');
     const [birthDate, setbirthDate] = useState('');
+
+    const GreenSwitch = styled(Switch)(({ theme }) => ({
+        width: 42,
+        height: 26,
+        padding: 0,
+        '& .MuiSwitch-switchBase': {
+          padding: 0,
+          margin: 2,
+          transitionDuration: '300ms',
+          '&.Mui-checked': {
+            transform: 'translateX(16px)',
+            color: '#fff',
+            '& + .MuiSwitch-track': {
+              backgroundColor: theme.palette.mode === 'dark' ? '#2ECA45' : '#65C466',
+              opacity: 1,
+              border: 0,
+            },
+            '&.Mui-disabled + .MuiSwitch-track': {
+              opacity: 0.5,
+            },
+          },
+          '&.Mui-focusVisible .MuiSwitch-thumb': {
+            color: '#108942',
+            border: '6px solid #fff',
+          },
+          '&.Mui-disabled .MuiSwitch-thumb': {
+            color: '#108942',
+          },
+          '&.Mui-disabled + .MuiSwitch-track': {
+            opacity: theme.palette.mode === 'light' ? 0.7 : 0.3,
+          },
+        },
+        '& .MuiSwitch-thumb': {
+          boxSizing: 'border-box',
+          width: 22,
+          height: 22,
+        },
+        '& .MuiSwitch-track': {
+          borderRadius: 26 / 2,
+          backgroundColor: theme.palette.mode === 'light' ? '#E9E9EA' : '#39393D',
+          opacity: 1,
+          transition: theme.transitions.create(['background-color'], {
+            duration: 500,
+          }),
+        },
+      }));
 
     // simple encryption function
     const shiftChar = (char) => {
@@ -183,62 +231,98 @@ function Login() {
 
     return (
         <>
-        <img src={background} alt='background' className='bg' style={{ 
-            width: '100%', // trying to refactor sa .css but i'm not sure how, kaya rito na lang muna
-            height: '100%', 
-            objectFit: 'cover', 
-            objectPosition: 'center', 
-            backgroundRepeat: 'no-repeat', 
-            backgroundAttachment: 'fixed', 
-        }} />
-        
-
-        <Modal class = 'login-modal' size='lg' aria-labelledby='contained-modal-title-vcenter' centered='true' backdrop='static' show={show} onHide={() => setShow(false)} keyboard={false}> 
-            <div className = "login-container">
-            <div className="login-header">
-                <img src={require("../assets/hospital-logo.png")} alt="Hospital Logo" className="hospital-logo" />
-            </div>
-            <h1 className="login-title">Please enter the following:</h1>
-             
-            <div className="login-pane">
+        <LandingNavBar/>
+            <div class = 'login-wrapper'>
+            <div class="login-pane">
+            <img class='patient-img2' src={patient} alt='patient image' />
+                <h1 className="login-title">I am a</h1>
+                <h1 className="login-title2">PATIENT</h1>
                 <form className="login-form">
-                <h3> Are you a new patient? <Checkbox  
-                onChange={handleHospitalBox}
-                checked={checked}> </Checkbox></h3>
-                    <h3 className="login-title">Name</h3>
-                   
-                    <div class = 'name-div'> 
-                   
-                    <FormInput type="text" placeholder="First Name" name="first-name" className="user-field"
-                    value = {firstName} // set ung variable firstName, tas setFirstName ung function na magse-set ng value
-                    onChange={(e) => setFirstName(e.target.value)} /> 
+                    <div className="form-and-names-container">
+                        <FormGroup>
+                            <FormLabel class='label'>First Name</FormLabel>
+                            <div className='name-div'>
+                                <FormControl
+                                    type="text"
+                                    placeholder="First Name"
+                                    value={firstName}
+                                    onChange={(e) => setFirstName(e.target.value)}
+                                />
+                                <FormLabel class='label'>Middle Name</FormLabel>
+                                <FormControl
+                                    type="text"
+                                    placeholder="Middle Name"
+                                    value={middleName}
+                                    onChange={(e) => setMiddleName(e.target.value)}
+                                />
+                                <FormLabel class='label'>Last Name</FormLabel>
+                                <FormControl
+                                    type="text"
+                                    placeholder="Last Name"
+                                    value={lastName}
+                                    onChange={(e) => setLastName(e.target.value)}
+                                />
+                            </div>
+                        </FormGroup>
 
-                    <FormInput type="text" placeholder="Last Name" name="last-name" className="user-field" 
-                    value = {lastName}
-                    onChange={(e) => setLastName(e.target.value)}/>
+                        <div className="form-group-container">
+                            <FormGroup>
+                                <FormLabel class='label'>Birthday</FormLabel>
+                                <FormControl
+                                    type="date"
+                                    placeholder="Birthday"
+                                    value={birthDate}
+                                    onChange={(e) => setbirthDate(e.target.value)}
+                                />
+                            </FormGroup>
+
+                            <FormGroup>
+                                <FormLabel class='label'>Hospital Number</FormLabel>
+                                <FormControl
+                                    type="text"
+                                    placeholder="Hospital Number"
+                                    value={hospitalNumber}
+                                    onChange={(e) => sethospitalNumber(e.target.value)}
+                                    disabled={hospitalNumberInput}
+                                />
+                            </FormGroup>
+
+                            <FormGroup>
+                                <FormLabel className='label'>I am a new patient</FormLabel>
+                                <div className='switch-button-container'>
+                                    <GreenSwitch
+                                        onChange={handleHospitalBox}
+                                        checked={checked}
+                                    />
+                                </div>
+                            </FormGroup>
+                           
+                        </div>
                     </div>
-
-                    <h3 className="login-title">Birthday</h3>
-                    <FormInput type="date" placeholder="Birthday" name="birthday" className="user-field" 
-                    value = {birthDate}
-                    onChange={(e) => setbirthDate(e.target.value)}/>
-
-                    <h3 className="login-title">Hospital Number</h3>
-                    <FormInput type="text" placeholder="Hospital Number" name="hospital-number" className="user-field" 
-                    value={hospitalNumber}
-                    onChange={(e) => sethospitalNumber(e.target.value)}
-                    disabled={hospitalNumberInput}
                     
-                     />
-                    
-                    <div className="button-container">
-                        <button type="submit" className="login-button" onClick = {handleValidation}>Proceed</button>
-                    </div>
+
+                    <Button 
+                        type="submit" 
+                        className="login-button"
+                        onClick={handleValidation}
+                        variant="contained" 
+                        color="success"
+                        style={{marginTop: '2vh'}} // Adds a top margin of 5px
+                    >
+                        PROCEED
+                    </Button>
                 </form>
-                
+                <Link to={PathConstants.LANDING}>  <p style = {{
+                            color: 'Green',
+                            fontSize: '2vh',
+                            marginTop: '1vh',
+                            marginLeft: '1.2vh'
+                       
+                        }}> <MdKeyboardBackspace /> Go back  </p> </Link> 
             </div>
             </div>
-        </Modal>
+            
+            
         </>
     );
 }

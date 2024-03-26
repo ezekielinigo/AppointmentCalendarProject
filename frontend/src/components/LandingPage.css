@@ -17,19 +17,27 @@
     transition:cubic-bezier(1, 0, 0, 1)
 }
 
+.button-container {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    height: 100vh;
+}
+
 .landing-btn {
-    width: 300px;
-    margin: 10px 0;
-    height: 300px;
-    padding: 10px;
-    border-radius: 5px;
-    border: 1px solid #ccc;
-    background-color: #282c34;
+    width: 40vw; /* 50% of the viewport width */
+    height: 80vh; /* 50% of the viewport height */
+    padding: 1vw;
+    border-radius: 2vw;
+    background-color: #B5D333;
     color: white;
     cursor: pointer;
     transition: background-color 0.3s ease-in-out;
-    font-size: 40px;
-    flex-direction: row;
+    font-size: 2vw;
+}
+
+.landing-btn:hover {
+    background-color: #b6d3335d;
 }
 
 .title {
@@ -37,7 +45,7 @@
     color: rgb(0, 0, 0);
     text-align: center;
     margin: 10px;
-    flex-wrap: wrap;
+    font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif
 }
 
 .body {
@@ -45,6 +53,8 @@
     color: rgb(0, 0, 0);
     text-align: center;
     margin: 10px;
+    font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif
+
 }
 
 .footer {
@@ -54,12 +64,42 @@
     margin: 30px;
 }
 
-.button-container {
-    display: flex;
-    justify-content: space-between;
-}
-
 .login-modal {
     background-color: transparent;
 
 }
+
+.patient-img {
+    width: 65%;
+    height: 65%;
+    margin-left: 20px;
+}
+
+.patient-img2 {
+    width: 55%;
+    height: 55%;
+    margin-left: 6vw;
+}
+
+.doctor-img {
+    width: 65%;
+    height: 65%;
+    margin-left: 6px;
+    margin-top: 2px;
+}
+
+  .desc {
+    font-size: 50px;
+    color: rgb(0, 0, 0);
+    text-align: center;
+    margin: 10px;
+    font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif
+  }
+
+  .role {
+    font-size: 70px;
+    color: rgb(0, 0, 0);
+    text-align: center;
+    margin: 10px;
+    font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif
+  }

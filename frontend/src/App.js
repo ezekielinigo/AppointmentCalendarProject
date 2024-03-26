@@ -9,7 +9,7 @@ User Auth: https://youtu.be/llrIu4Qsl7c?si=ioJtFl2n2GNsgIxH
 */
 
 import './App.css';
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import Calendar from './components/Calendar';
 import { RouterProvider, createBrowserRouter } from 'react-router-dom';
 import LoginClinic from './components/LoginClinic';
@@ -23,7 +23,6 @@ import SuperAdmin from "./components/SuperAdmin";
 import PatientCalendarView from "./components/PatientCalendarView";
 import PatientAppointmentList from "./components/PatientAppointmentList";
 import PatientPersonalInformation from './components/PatientPersonalInformation';
-import LoginSuperAdmin from './components/LoginSuperAdmin';
 
 function App() {
 
@@ -43,11 +42,6 @@ function App() {
             path: '/login/patient/signin',
             element: <LoginPatient />
         },
-        {
-            path: '/login/superadmin',
-            element: <LoginSuperAdmin />
-        },
-
         {
             path: '/calendar',
             element: <Calendar />

@@ -1,33 +1,57 @@
-.login-header {
-    font-size: 20px;
-    font-weight: bold;
+ .login-title {
     margin: 10px 0;
+    font-size: 5vh;
     text-align: center;
     display: flex;
     justify-content: center;
     align-items: center;
   }
-  
-  .login-title {
-    margin: 10px 0;
+
+  .master-cont {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin-top: -4vh;
+  }
+
+  .login-title2 {
+    font-size: 8vh;
+    margin: 1vh 0;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .login-title3 {
+    font-size: 8vh;
+    margin: 1vh 0;
     text-align: center;
     display: flex;
     justify-content: center;
     align-items: center;
   }
     
-  .login-pane{
-    width: 60%;
-    margin: 50px auto;
+  .login-pane {
+    width: 120%;
+    max-width: 500px;
+    max-height: 810px;
+    margin: 0 auto;
     padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    padding: 10px;
-    /*display: flex;
-    justify-content: center;
-    align-items: center; */
-    box-shadow: 0 0 29px rgba(0, 0, 0, 0.3); 
+    border-radius: 5px;
+    background-color: #B5D333;
+    box-shadow: 0 0 10px 0 rgba(0,0,0,0.1);
   }
+
+  .login-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    padding: 0;
+    margin: -4vh;
+}
   
   input {
     width: 100%;
@@ -35,7 +59,12 @@
     padding: 10px;
     border-radius: 5px;
     border: 1px solid #ccc;
-  
+  }
+
+  .doctor-img2 {
+    width: 65%;
+    height: 65%;
+    margin-left: 9.5vh;
   }
   
   .login-form {
@@ -50,45 +79,23 @@
     margin: 10px 0;
     padding: 5px;
   }
-
   
   .login-button {
-    width: 100%;
-    margin: 10px 0;
-    padding: 10px;
-    border-radius: 5px;
-    border: 1px solid #ccc;
-    background-color: #282c34;
-    color: white;
+    font-size: 20px;
     cursor: pointer;
-    transition: background-color 0.3s ease-in-out;
-  }
-  
-  .login-button:hover {
-    background-color: #61dafb;
-  }
-  
-  .sign-up-button {
     width: 100%;
-    margin: 10px 0;
-    padding: 10px;
-    border-radius: 5px;
-    border: 1px solid #ccc;
-    background-color: #282c34;
-    color: white;
-    cursor: pointer;
-    transition: background-color 0.3s ease-in-out;
   }
-  
-  .sign-up-button:hover {
-    background-color: #61dafb;
+
+  .label {
+    font-size: 0.9vw;
+    font-family: 'Roboto', sans-serif;
+    margin: 0.5vh 0.5vh;
   }
   
   h3 {
     font-size: 20px;
     text-align: center;
   }
-  
   
   .hospital-logo {
     background-repeat: no-repeat;
@@ -99,23 +106,23 @@
     align-items: center;
   }
 
-  .login-modal {
-    width: 50%;
-    height: 50%;
-    align-items: center;
-    justify-content: center;
-    display: flex;
-    flex-direction: column;
-    transition:cubic-bezier(1, 0, 0, 1);
-  }
-
   .name-div {
     display: flex;
-    justify-content: center;
-    align-items: center;
+    flex-direction: column;
   }
 
   .name-label-div {
     display: flex;
     justify-content: center;
+  }
+
+  .form-and-names-container {
+    display: flex;
+    justify-content: center; /* Centers items along the horizontal line */
+    align-items: center; /* Centers items along the vertical line */
+  }
+
+  .form-group-container {
+    margin-left: 25px;
+    margin-top: -10px;
   }

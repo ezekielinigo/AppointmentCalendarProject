@@ -1,13 +1,12 @@
 import { useState } from 'react';
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
-import background from '../assets/rmc-bg.jpg';
 import patient from '../assets/patient.png';
 import doctor from '../assets/doctor.png';
-import Logo from '../assets/hospital-logo.png';
 import {Link} from 'react-router-dom';
 import './LandingPage.css';
 import PathConstants from '../PathConstants';
+import LandingNavBar from './LandingNavBar';
 
 function LandingPage() {
     const [show, setShow] = useState(true);
@@ -23,59 +22,28 @@ function LandingPage() {
     }
 
     return (
-        <>        
-        <img src={background} alt='background' className='bg' style={{ 
-            width: '100%', // trying to refactor sa .css but i'm not sure how, kaya rito na lang muna
-            height: '100%', 
-            objectFit: 'cover', 
-            objectPosition: 'center', 
-            backgroundRepeat: 'no-repeat', 
-            backgroundAttachment: 'fixed', 
-        }} /> 
-        
-        
-        <div class='LandingPage'>
+        <>   
+        <LandingNavBar/>     
 
-            <Modal class = 'landing' size='lg' aria-labelledby='contained-modal-title-vcenter' centered='true' backdrop='static' show={show} onHide={() => setShow(false)} keyboard={false}>
-                <Modal.Header closeButton={false} class = 'header'>
+        <div className='LandingPage'>
+            <div className="button-container">
+                <Link to={PathConstants.LOGINPATIENT}>
+                    <Button className='landing-btn' size='lg' variant="primary" onClick={patientHandler}>
+                        <h2 class = 'desc'> I am a </h2>
+                        <h1 class = 'role'> PATIENT </h1>
+                        <img class='patient-img' src={patient} alt='patient image' />
+                    </Button>
+                </Link>
 
-    
-
-                    <Modal.Title class='title'> 
-                    
-                    <img src={Logo} alt='Logo' className='bg' style={{ 
-                    width: '80%', 
-                    height: '80%',
-                    flexDirection: 'row',
-
-                }} />
-                    
-                   Welcome to RMC Clinic Appointment Calendar </Modal.Title> 
-                </Modal.Header>
-                <Modal.Body class='body'>
-                    Please choose from the following:</Modal.Body>
-                <Modal.Footer class='footer'>
-                    <Link to={PathConstants.LOGINPATIENT}>
-                        <Button className='landing-btn' size='lg' variant="primary" onClick={patientHandler}>
-                            I am a patient
-                            <img src={patient}/>
-                        </Button> </Link>
-                    
-                        <Link to = {PathConstants.LOGINCLINIC}>
-                        <Button className='landing-btn' size='lg' variant="primary" onClick={doctorHandler}>
-                            I am a physician
-                        </Button>
-                   </Link>
-
-
-                </Modal.Footer>
-            </Modal>
-
-            
-
+                <Link to={PathConstants.LOGINCLINIC}>
+                    <Button className='landing-btn' size='lg' variant="primary" onClick={doctorHandler}>
+                        <h2 class = 'desc'> I am a </h2>
+                        <h1 class = 'role'> PHYSICIAN </h1>
+                        <img class='doctor-img' src={doctor} alt='doctor image' />
+                    </Button>
+                </Link>
+            </div>
         </div>
-        
-
         
         </>
 

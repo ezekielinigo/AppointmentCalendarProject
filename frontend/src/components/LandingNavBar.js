@@ -11,7 +11,7 @@ black: #071108
 import React, { useState } from "react";
 import styled from "styled-components";
 import { IconContext } from "react-icons/lib";
-import "./PatientNavBar.css";
+import "./LandingNavBar.css";
 import logo from "../assets/rmc-logo.png";
 import { Button } from "react-bootstrap";
 
@@ -21,9 +21,10 @@ const Nav = styled.div`
 	display: flex;
     justify-content: space-between;
     align-items: center;
-`;
+`;	
 
-const PatientNavBar = () => {
+const AdminNavBar = () => {
+
 	return (
 		<>
 			<IconContext.Provider value={{ color: "whitesmoke" }}>
@@ -36,20 +37,10 @@ const PatientNavBar = () => {
 					<h1 class = "header-title">
 						RMC Clinic Appointment Calendar
 					</h1>
-
-					<h2 class = 'welcome'> Welcome,  </h2>
-
-                    <Button variant="outline-light" style = {{
-                        margin: 10,
-                        alignItems: 'right'
-                    }}> Log Out </Button>
-
 				</Nav>
-
-                
 			</IconContext.Provider>
 		</>
 	);
 };
 
-export default PatientNavBar;
+export default AdminNavBar;
