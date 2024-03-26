@@ -52,6 +52,8 @@ class SettingView(viewsets.ModelViewSet):
 #        return Response(serializer.data)
     
 # auth
+# Reference: https://youtu.be/llrIu4Qsl7c?si=ioJtFl2n2GNsgIxH
+    
 @api_view(['POST'])
 def signup(request):
     serializer = UserSerializer(data=request.data)
@@ -62,8 +64,6 @@ def signup(request):
 
         user.first_name = request.data['first_name'] #added
         user.last_name = request.data['last_name'] #added
-        
-        
         
         user.save()
         token = Token.objects.create(user=user)

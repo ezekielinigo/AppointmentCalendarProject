@@ -1,0 +1,133 @@
+/* RMC COLOR PALETTE
+text green: #056839
+dark green: #108942
+green: #3ab149
+light green: #72b844
+yellow green: #b5d333
+white: whitesmoke
+black: #071108
+ */
+
+.fc-view-harness {
+    max-height: 75vh;
+}
+
+.fc {
+    max-width: 130vh;
+    margin: auto;
+}
+
+.calendar {
+    max-width: 130vh;
+    margin-top: 25px;
+}
+
+.fc-event{
+    font-size: 10px;
+}
+
+.fc-event-time {
+    display: none;
+}
+
+.fc-toolbar-title {
+    color: #056839;
+}
+
+.fc-timegrid-more-link {
+    width: 100%;
+    background-color: #108942;
+    color: whitesmoke;
+}
+
+.fc-timegrid-more-link:hover {
+    background-color: #056839;
+    color: whitesmoke;
+}
+
+a{
+    color: #056839;
+}
+a:hover {
+    color: #056839;
+}
+
+.fc-button-primary{
+    background-color: #108942;
+    border-color: #108942;
+    margin-top: 20px;
+}
+
+.fc-button-primary:hover, .fc-button-primary:focus, .fc-button-primary:active {
+    background-color: #056839 !important;
+    border-color: #056839 !important;
+    box-shadow: 0 0 0 0 !important;
+}
+
+.form-check-input, .form-check{
+    white-space: nowrap;
+    margin: 1px;
+}
+
+.AppointmentInfoModal {
+    font-size: 15px;
+    margin: 10px;
+    padding: 20px;
+    column-gap: 10px;
+    font-family: 'Roboto', sans-serif;
+    border-radius: 10px;
+    
+}
+
+.form-control, .form-label{
+    font-size: 15px;
+    margin: 1px;
+    column-gap: 10px;
+    font-family: 'Roboto', sans-serif;
+    border-radius: 10px;
+}
+
+.row {
+    margin-right: -5px;
+    margin-left: -5px;
+}
+
+.row > [class^="col-"] {
+    padding-right: 5px;
+    padding-left: 5px;
+}
+
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.flex-column {
+    display: flex;
+    flex-direction: column;
+    margin-top: 25px;
+    margin-bottom: 25px;
+}
+
+body {
+    background-color: whitesmoke;
+}
+
+:root {
+    --fc-button-active-bg-color: #056839;
+    --fc-button-active-border-color: #056839;
+    --fc-button-hover-bg-color: #056839;
+    --fc-button-hover-border-color: #056839;
+    --fc-button-bg-color: #108942;
+    --fc-button-border-color: #108942;
+    --fc-event-bg-color: #108942;
+    --fc-event-border-color: #108942;
+    --fc-text-event-color: #faf3ddd;
+    --white: whitesmoke;
+}
+
+.admin-settings-box {
+    border-radius: 5px;
+    border-color: black;
+}

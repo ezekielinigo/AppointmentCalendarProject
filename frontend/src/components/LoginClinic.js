@@ -45,8 +45,6 @@ function Login() {
         }
     }
 
-
-
     return (
         <>
         <img src={background} alt='background' className='bg' style={{ 

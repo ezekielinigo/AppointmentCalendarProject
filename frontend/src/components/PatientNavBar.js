@@ -11,9 +11,8 @@ black: #071108
 import React, { useState } from "react";
 import styled from "styled-components";
 import { IconContext } from "react-icons/lib";
-import "./AdminNavBar.css";
-import logo from "./rmc-logo.png";
-
+import "./PatientNavBar.css";
+import logo from "../assets/rmc-logo.png";
 
 const Nav = styled.div`
 	background: #071108;
@@ -23,7 +22,7 @@ const Nav = styled.div`
 	align-items: right;
 `;
 
-const AdminNavBar = () => {
+const PatientNavBar = () => {
 
 	return (
 		<>
@@ -46,4 +45,4 @@ const AdminNavBar = () => {
 	);
 };
 
-export default AdminNavBar;
+export default PatientNavBar;

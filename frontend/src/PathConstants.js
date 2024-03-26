@@ -10,6 +10,11 @@ const PathConstants = {
     ADMINSETTINGS: '/admin-settings',
     ADMINPATIENTLIST: '/admin-patients',
     ADMINAPPOINTMENTS: '/admin-appointments',
+    PATIENTCALENDAR: '/patient-calendar-view',
+    PATIENTPERSONALINFO: '/patient-personal-info',
+    PATIENTAPPOINTMENTLIST: '/patient-appointments',
+    SUPERADMIN: '/superadmin',
+
     
 }
 
