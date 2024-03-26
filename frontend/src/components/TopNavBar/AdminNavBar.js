@@ -11,7 +11,7 @@ black: #071108
 import React, { useState } from "react";
 import styled from "styled-components";
 import { IconContext } from "react-icons/lib";
-import "./Header.css";
+import "./AdminNavBar.css";
 import logo from "./rmc-logo.png";
 
 

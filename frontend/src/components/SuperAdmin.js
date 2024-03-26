@@ -6,7 +6,7 @@ import './SignUp.css'
 import axios from 'axios';
 
 
-import NavBar from "./TopNavBar/Header";
+import NavBar from "./TopNavBar/AdminNavBar";
 
 function SuperAdmin() {
 

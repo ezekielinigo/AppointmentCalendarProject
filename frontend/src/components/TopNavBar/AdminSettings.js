@@ -1,7 +1,7 @@
 // Filename - pages/Services.js
 
 import React from "react";
-import NavBar from "./Header";
+import NavBar from "./AdminNavBar";
 import AppointmentCapacitySettings from "../AppointmentCapacitySettings";
 import AdminNavs from "./AdminNavs";
 

@@ -1,6 +1,6 @@
 import React from "react";
 import PatientTable from "../PatientTable";
-import NavBar from "./Header"	
+import NavBar from "./AdminNavBar"	
 import AdminNavs from "./AdminNavs";
 
 const PatientList = () => {

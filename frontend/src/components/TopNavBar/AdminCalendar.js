@@ -1,6 +1,6 @@
 import React from "react";
 import Calendar from "../Calendar"
-import NavBar from "./Header"
+import NavBar from "./AdminNavBar"
 import AdminNavs from "./AdminNavs";
 
 export const CalendarView = () => {
