@@ -1,5 +1,5 @@
 
-import './LoginClinic.css';
+import './LoginSuperAdmin.css';
 import React, { useState, useEffect } from 'react';
 import axios from "axios";
 import FormInput from './FormInput'; // Import the FormInput component
@@ -32,17 +32,22 @@ function Login() {
     }
 
     const validateEntry = async () => {
+        if (clinicid !== 'cacsuperadmin') {
+            alert('Invalid username. Please enter the correct username.');
+            return;
+        }
+
         try { 
             const login = await axios.post('http://localhost:8000/login', { username: clinicid, password: clinicpassword });
             console.log(login);
 
             if (login.status === 200) {
                 alert('Login Successful');
-                window.location.href = PathConstants.ADMINCALENDARVIEW;
+                window.location.href = PathConstants.SUPERADMIN;
             }
         } catch (error) {
             console.error(error);
-            alert('Login Failed! Please check your Clinic ID and Password.');
+            alert('Login Failed! Please check your inputs.');
         }
     }
 
@@ -63,14 +68,14 @@ function Login() {
             <div className="login-header">
                 <img src={require("../assets/hospital-logo.png")} alt="Hospital Logo" className="hospital-logo" />
             </div>
-            <h1 className="login-title">Clinic Login</h1>
+            <h1 className="login-title">Superadmin Login</h1>
             <div className="login-pane">
                 <form className="login-form">
-                    <h3 className="login-title">Clinic ID</h3>
+                    <h3 className="login-title">Username</h3>
                     
                     <FormInput 
-                    type="number" 
-                    placeholder="Clinic ID" 
+                    type="text" 
+                    placeholder="Username" 
                     name="clinic-id" 
                     className="user-field" 
                     value = {clinicid}

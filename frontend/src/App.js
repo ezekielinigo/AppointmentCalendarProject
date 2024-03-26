@@ -23,6 +23,7 @@ import SuperAdmin from "./components/SuperAdmin";
 import PatientCalendarView from "./components/PatientCalendarView";
 import PatientAppointmentList from "./components/PatientAppointmentList";
 import PatientPersonalInformation from './components/PatientPersonalInformation';
+import LoginSuperAdmin from './components/LoginSuperAdmin';
 
 function App() {
 
@@ -41,6 +42,10 @@ function App() {
         {
             path: '/login/patient/signin',
             element: <LoginPatient />
+        },
+        {
+            path: '/login/superadmin',
+            element: <LoginSuperAdmin />
         },
 
         {
