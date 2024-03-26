@@ -7,6 +7,7 @@ import {Link} from 'react-router-dom';
 import './LandingPage.css';
 import PathConstants from '../PathConstants';
 import LandingNavBar from './LandingNavBar';
+import background from '../assets/rmc-bg.jpg';
 
 function LandingPage() {
     const [show, setShow] = useState(true);
@@ -23,10 +24,11 @@ function LandingPage() {
 
     return (
         <>   
+        <div class='LandingPage'>
         <LandingNavBar/>     
 
-        <div className='LandingPage'>
-            <div className="button-container">
+        
+            <div class="button-container">
                 <Link to={PathConstants.LOGINPATIENT}>
                     <Button className='landing-btn' size='lg' variant="primary" onClick={patientHandler}>
                         <h2 class = 'desc'> I am a </h2>

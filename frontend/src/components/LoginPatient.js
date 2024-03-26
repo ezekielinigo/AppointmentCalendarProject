@@ -231,6 +231,7 @@ function Login() {
 
     return (
         <>
+        <div class = 'LoginPatient'>
         <LandingNavBar/>
             <div class = 'login-wrapper'>
             <div class="login-pane">
@@ -319,6 +320,7 @@ function Login() {
                             marginLeft: '1.2vh'
                        
                         }}> <MdKeyboardBackspace /> Go back  </p> </Link> 
+            </div>
             </div>
             </div>
             

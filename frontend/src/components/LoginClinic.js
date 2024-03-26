@@ -44,6 +44,7 @@ function Login() {
 
     return (
         <>
+        <div class = 'LoginClinic'>
             <LandingNavBar/>
             <div class = 'login-wrapper'>
             <div class="login-pane">
@@ -99,6 +100,8 @@ function Login() {
                 </form>
             </div>
             </div>
+            </div>
+           
         </>
     );
 }

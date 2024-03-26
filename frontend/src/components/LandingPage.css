@@ -22,6 +22,7 @@
     justify-content: space-around;
     align-items: center;
     height: 100vh;
+    margin-top: -5vh
 }
 
 .landing-btn {
@@ -29,7 +30,7 @@
     height: 80vh; /* 50% of the viewport height */
     padding: 1vw;
     border-radius: 2vw;
-    background-color: #B5D333;
+    background-color: #b5d333;
     color: white;
     cursor: pointer;
     transition: background-color 0.3s ease-in-out;
@@ -37,7 +38,7 @@
 }
 
 .landing-btn:hover {
-    background-color: #b6d3335d;
+    background-color: #108942;
 }
 
 .title {
@@ -86,6 +87,17 @@
     height: 65%;
     margin-left: 6px;
     margin-top: 2px;
+}
+
+.LandingPage, .LoginClinic, .LoginPatient {
+    /* Other styles... */
+
+    background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('../assets/rmc-bg.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    position: relative;
 }
 
   .desc {
