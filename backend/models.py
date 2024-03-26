@@ -38,6 +38,8 @@ class Appointment(models.Model):
 
     # appointment number is auto-generated in format: MMDDYY-TTTT-XX, ex: 123124-01PM-01
     appointmentNumber = models.CharField(max_length=14, editable=False)
+    label = models.CharField(max_length=120, null=True, editable=False)
+
     def save(self, *args, **kwargs):
         # Get the hour and period (AM/PM) from the time formatted as (HH:MM:SS)
         hour = self.time[0:2]
@@ -52,6 +54,9 @@ class Appointment(models.Model):
         if not self.patient.hospitalNumber:
             self.newPatient = True
         super(Appointment, self).save(*args, **kwargs)
+
+        if not self.label:
+            self.label = self.appointmentNumber + ' : ' + self.patient.nameLast + ', ' + self.patient.nameFirst[0] + '.'
 
     def __str__(self):
         if self.appointmentNumber:

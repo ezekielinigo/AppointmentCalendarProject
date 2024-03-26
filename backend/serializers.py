@@ -22,8 +22,9 @@ class PatientSerializer(serializers.ModelSerializer):
         )
 
 class AppointmentSerializer(serializers.ModelSerializer):
-    patient = PatientSerializer(read_only=True)
+    patient = PatientSerializer()
     label = serializers.StringRelatedField(source='patient')
+
     class Meta:
         model = Appointment
         fields = (
@@ -38,6 +39,13 @@ class AppointmentSerializer(serializers.ModelSerializer):
             'referralDoctor',
             'newPatient'
         )
+
+    def create(self, validated_data):
+        patient_data = validated_data.pop('patient')
+        patient_serializer = PatientSerializer(data=patient_data)
+        if patient_serializer.is_valid(raise_exception=True):
+            patient = patient_serializer.save()
+            return Appointment.objects.create(patient=patient, **validated_data)
 
 class SettingSerializer(serializers.ModelSerializer):
     class Meta:

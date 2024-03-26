@@ -7,11 +7,13 @@ import listPlugin from '@fullcalendar/list';
 import interactionPlugin from '@fullcalendar/interaction';
 import './Calendar.css';
 import AppointmentInfoModal from './CalendarAppointmentInfoModal';
+import AppointmentNewModal from "./CalendarAppointmentNewModal";
 
 const Calendar = () => {
     // State to store the events
     const [events, setEvents] = useState([]);
     const [showAppointmentInfoModal, setShowAppointmentInfoModal] = useState(false);
+    const [showAppointmentNewModal, setShowAppointmentNewModal] = useState(false);
     const [selectedAppointment, setSelectedAppointment] = useState(null);
     const calendarRef = useRef(null);
     const [editLock, setEditLock] = useState(false);
@@ -23,6 +25,7 @@ const Calendar = () => {
     }
 
     const handleClose = () => {
+        setShowAppointmentNewModal(false);
         setShowAppointmentInfoModal(false);
         setEditLock(false);
     }
@@ -49,7 +52,7 @@ const Calendar = () => {
                     const eventDate = new Date(event.date);
                     return eventDate.getFullYear() === year && eventDate.getMonth() + 1 === month && eventDate.getDate() === day;
                 }).length;
-                return filledSlots < capacity.capacity;
+                return filledSlots < capacity.capacity*10;
             }
         }
         return false;
@@ -57,6 +60,7 @@ const Calendar = () => {
 
     const handleDateClick = (info) => {
         // if the date clicked has been more than 1 day from now, create new appointment
+        console.log(info.dateStr)
         if (isDateAvailable(info.date)) {
             if (info.view && info.view.type === 'dayGridMonth' && info.view.calendar) {
                 const calendarApi = info.view.calendar;
@@ -71,14 +75,15 @@ const Calendar = () => {
                 const YY = info.dateStr.substring(2,4);
                 const hour24 = parseInt(info.dateStr.substring(11,13));
                 const hour12 = hour24 > 12 ? hour24 - 12 : hour24;
-                const TTTT = hour24 >= 12 ? `${hour12.toString().padStart(2, '0')}PM` : `${hour12.toString().padStart(2, '0')}AM`;                const XX = events.filter(event => event.date.toISOString().substring(0,10) === info.dateStr.substring(0,10)).length + 1;
+                const TTTT = hour24 >= 12 ? `${hour12.toString().padStart(2, '0')}PM` : `${hour12.toString().padStart(2, '0')}AM`;
+                const XX = events.filter(event => event.date.toISOString().substring(0,10) === info.dateStr.substring(0,10)).length + 1;
                 const appointmentNumber = `FM${MM}${DD}${YY}-${TTTT}-${XX.toString().padStart(2, '0')}`;
 
                 setSelectedAppointment({
-                    id: 0,
+                    id: null,
                     appointmentNumber: appointmentNumber,
                     patient: {
-                        id: 0,
+                        id: null,
                         nameFirst: '',
                         nameMiddle: '',
                         nameLast: '',
@@ -101,7 +106,7 @@ const Calendar = () => {
                     newPatient: false
                 })
                 setEditLock(false);
-                setShowAppointmentInfoModal(true);
+                setShowAppointmentNewModal(true);
             }
         } else {
             // show a message to the user that the date is not available for new appointments
@@ -109,10 +114,19 @@ const Calendar = () => {
         }
     }
 
-    // when an appointment is clicked, the appointment info is stored in selectedAppointment state
-    // selectedAppointment is then passed to the modal where it can be modified
-    // after saving (thru handleSave), the info of selectedAppointment will be used to update the database
+
+
     const handleAppointmentClick = (info) => {
+        // if the appointment clicked is "add new appointment", then redirect to use the handleDateClick function
+        // first convert the event's date to a Date object
+        if (info.event.addNewButton) {
+            return;
+        }
+
+
+        // when an appointment is clicked, the appointment info is stored in selectedAppointment state
+        // selectedAppointment is then passed to the modal where it can be modified
+        // after saving (thru handleSave), the info of selectedAppointment will be used to update the database
         setSelectedAppointment({
             id: info.event.extendedProps.appointmentId,
             appointmentNumber: info.event.extendedProps.appointmentNumber,
@@ -142,43 +156,55 @@ const Calendar = () => {
         setShowAppointmentInfoModal(true);
     }
 
-
-
     const handleSave = async () => {
-        try {
-            // if appointment id is 0, it means it is a new appointment
-                // if patient's hospital number is a valid 6-digit number, it is an old patient
-                    // then find that patient in the database
-                    // use that patient's id for this new appointment
-                // else, it is a new patient (ex: hospital number is just blank)
-                    // then get all patients from the database without a hospital number (new patients)
-                    // if there is a patient with the same firstName, middleName, lastName, and birthdate
-                        // use that patient's id for this new appointment
-                    // else, it is a new patient
-                        // create a new patient in the database
-                        // use that patient's id for this new appointment
-            // having assigned the correct patient id, finally create a new appointment in the database
 
-            // if only editing an appointment, update the database
-            
-            await axios
-            .put(`http://localhost:8000/api/patients/${selectedAppointment.patient.id}/`, selectedAppointment.patient)
-            .then(response => {
-                console.log(response);
-            });
+        // if the appointment id is 0, it means new appointment will be made
+            // if patient has hospital number
+                // then check if a patient matches the hospital number
+                // if patient exists
+                    // then set that patient's id for this appointment
+                // if patient does not exist
+                    // then error 'Patient with hospital number XXXXXX does not exist, please leave blank if new patient.'
+            // if patient does not have hospital number or hospital number is blank
+                // then check if a patient matches the name and birthdate
+                    // if patient exists
+                        // then set that patient's id for this appointment
+                    // if patient does not exist
+                        // then create a new patient
+                        // then set the new patient's id for this appointment
+            // then create a new appointment
+        // if the appointment id is not 0, it means an existing appointment will be updated
+            // if patient information is changed
+                // then update the patient information
+            // if appointment information is changed
+                // then update the appointment information
 
-            await axios
-            .put(`http://localhost:8000/api/appointments/${selectedAppointment.id}/`, selectedAppointment)
-            .then(response => {
-                console.log(response);
-            });
+            try {
+                const response = await axios.get('http://localhost:8000/api/patients/');
+                if (selectedAppointment.id === null) {
+                    console.log('actual: ', selectedAppointment);
+                    const appointment = {
+                        ...selectedAppointment,
+                    };
+                    delete appointment.id;
+                    console.log('will send: ', appointment);
+                    await axios.post('http://localhost:8000/api/appointments/', appointment);
 
-            handleClose();
-            fetchEvents();
-        } catch (error) {
-            alert('cannot save appointment');
-            console.error(error);
-        }
+                } else {
+                    const patient = response.data.find(patient => patient.id === selectedAppointment.patient.id);
+                    if (JSON.stringify(patient) !== JSON.stringify(selectedAppointment.patient)) {
+                        await axios.put(`http://localhost:8000/api/patients/${selectedAppointment.patient.id}/`, selectedAppointment.patient);
+                    }
+                    const appointmentResponse = await axios.get(`http://localhost:8000/api/appointments/${selectedAppointment.id}/`);
+                    if (JSON.stringify(appointmentResponse.data) !== JSON.stringify(selectedAppointment)) {
+                        await axios.put(`http://localhost:8000/api/appointments/${selectedAppointment.id}/`, selectedAppointment);
+                    }
+                }
+                //handleClose();
+                fetchEvents();
+            } catch (error) {
+                console.error(error);
+            }
     };
 
     // This fetches events from the database and puts it in the state
@@ -323,6 +349,29 @@ const Calendar = () => {
                         }
                     }
                 }
+                moreLinkClick={
+                    function(info) {
+                        // remove existing appointment buttons
+                        setEvents(prevEvents => {
+                            return prevEvents.filter(event => !event.addNewButton);
+                        });
+
+                        // current date - 8 hours kasi bobo ung date
+                        const date = info.date.setUTCHours(info.date.getUTCHours() - 8);
+                        const newAppointmentButton = {
+                            title: '+ New Appointment',
+                            start: date,
+                            addNewButton: true,
+                        };
+
+                        // if the date is in timegridweek view and date is available
+                            // Add the new appointment button to the events state
+                        if (info.view.type === 'timeGridWeek' && isDateAvailable(new Date(date))) {
+                            setEvents(prevEvents => [...prevEvents, newAppointmentButton]);
+                        }
+
+                    }
+                }
                 selectAllow={(selectInfo) => {
                     const hour = selectInfo.start.getHours();
                     return hour >= 6 && hour < 18;
@@ -359,6 +408,15 @@ const Calendar = () => {
             )}
             <AppointmentInfoModal
                 show={showAppointmentInfoModal}
+                handleClose={handleClose}
+                appointment={selectedAppointment}
+                setAppointment={setSelectedAppointment}
+                editLock={editLock}
+                handleEditLock={handleEditLock}
+                handleSave={handleSave}
+            />
+            <AppointmentNewModal
+                show={showAppointmentNewModal}
                 handleClose={handleClose}
                 appointment={selectedAppointment}
                 setAppointment={setSelectedAppointment}
