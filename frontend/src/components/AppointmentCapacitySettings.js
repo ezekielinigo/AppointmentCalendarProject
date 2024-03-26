@@ -91,10 +91,10 @@ const AppointmentCapacitySettings = () => {
             <Col> 
             <Form.Group controlId="formMonthYear">
                         <div className="flex-column">
-                        <Form.Label class = 'form-label'>Select Month and Year</Form.Label>
-                        <Form.Control class = 'form' type="month" />
-                        <Form.Label class = 'form-label'>Select Hourly Capacity</Form.Label>
-                        <Form.Control class = 'form' type="number" />
+                        <Form.Label class='settings-form-label'>Select Month and Year</Form.Label>
+                        <Form.Control class='settings-form-control' type="month" />
+                        <Form.Label class='settings-form-label'>Select Hourly Capacity</Form.Label>
+                        <Form.Control class='settings-form-control' type="number" />
                         <Button variant="primary" type="submit" className="fc-button-primary" onClick={handleSaveCapacitySettings}>
                             <FiSave></FiSave>
                         </Button>
@@ -105,7 +105,7 @@ const AppointmentCapacitySettings = () => {
             <Col>
             
                    <Form.Group>
-                        <Form.Label class = 'form-label'>Allow Appointment Deletion</Form.Label>
+                        <Form.Label class='settings-form-label'>Allow Appointment Deletion</Form.Label>
                         <Row> 
                         <GreenSwitch
                             checked={checkedAppointmentDeletion}
@@ -114,7 +114,7 @@ const AppointmentCapacitySettings = () => {
                         />
                         
                         </Row>
-                        <Form.Label class = 'form-label'>Allow Appointment Reschedule</Form.Label>
+                        <Form.Label class='settings-form-label'>Allow Appointment Reschedule</Form.Label>
                         <Row> 
                         <GreenSwitch
                             checked={checkedAppointmentReschedule}
@@ -123,7 +123,7 @@ const AppointmentCapacitySettings = () => {
                         />
                         </Row>
 
-                    <Form.Label class = 'form-label'>Allow Patient Deletion</Form.Label>
+                    <Form.Label class='settings-form-label'>Allow Patient Deletion</Form.Label>
                     <Row> 
                         <GreenSwitch
                             checked={checkedPatientDeletion}

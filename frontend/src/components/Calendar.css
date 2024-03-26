@@ -79,13 +79,12 @@ a:hover {
     
 }
 
-.form-control, .form-label {
+.form-control, .form-label{
     font-size: 15px;
     margin: 1px;
     column-gap: 10px;
     font-family: 'Roboto', sans-serif;
     border-radius: 10px;
-
 }
 
 .row {
