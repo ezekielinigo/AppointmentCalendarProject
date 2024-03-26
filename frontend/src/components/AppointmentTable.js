@@ -129,23 +129,61 @@ export default function FullFeaturedCrudGrid() {
   };
 
   const columns = [
-    { field: 'name', headerName: 'Name', width: 180, editable: true },
+    { 
+      field: 'appointmentNumber', 
+      headerName: 'Appointment Number', 
+      width: 180, 
+      editable: true 
+    },
     {
-      field: 'age',
-      headerName: 'Age',
-      type: 'number',
+      field: 'patientName',
+      headerName: 'Patient',
       width: 80,
       align: 'left',
       headerAlign: 'left',
       editable: true,
     },
     {
-      field: 'joinDate',
-      headerName: 'Join date',
+      field: 'appointmentDate',
+      headerName: 'Date',
       type: 'date',
       width: 180,
       editable: true,
     },
+    {
+      field: 'appointmentTime',
+      headerName: 'Time',
+      type: 'time',
+      width: 180,
+      editable: true,
+    },
+    {
+      field: 'appointmentRemarks',
+      headerName: 'Remarks',
+      width: 180,
+      editable: true,
+    },
+    {
+      field: 'appointmentFollowup',
+      headerName: 'For follow-up?',
+      type: 'boolean',
+      width: 180,
+      editable: true,
+    },
+    {
+      field: 'appointmentReferralDoctor',
+      headerName: 'Referral Doctor (if applicable)',
+      width: 180,
+      editable: true,
+    },
+    {
+      field: 'appointmentNewPatient',
+      headerName: 'New Patient?',
+      type: 'boolean',
+      width: 180,
+      editable: true,
+    },
+    /*
     {
       field: 'role',
       headerName: 'Department',
@@ -153,7 +191,7 @@ export default function FullFeaturedCrudGrid() {
       editable: true,
       type: 'singleSelect',
       valueOptions: ['Market', 'Finance', 'Development'],
-    },
+    }, */
     {
       field: 'actions',
       type: 'actions',

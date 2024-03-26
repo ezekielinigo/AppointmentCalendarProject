@@ -1,5 +1,5 @@
 import React from "react";
-import PatientTable from "./PatientTable";
+import PatientTable from "./AppointmentTable";
 import PatientNavs from "./PatientNavs";
 import NavBar from "./PatientNavBar";
 import { FormGroup, FormLabel, FormControl, FormSelect } from "react-bootstrap";

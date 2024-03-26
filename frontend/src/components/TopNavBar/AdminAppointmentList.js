@@ -1,16 +1,15 @@
 import React from "react";
-import PatientTable from "../PatientTable";
+import AppointmentTable from "../AppointmentTable";
 import AdminNavs from "./AdminNavs";
 import NavBar from "./AdminNavBar"
+import "./AdminAppointmentList.css";
 
 const AdminAppointmentList = () => {
 	return (
 		<><NavBar />
         <AdminNavs/>
-		<div className="contact">
-            
-			<h1>List of appointments dito</h1>
-			<PatientTable/>
+		<div className="appointment-table">
+			<AppointmentTable/>
 		</div></>
 	);
 };
