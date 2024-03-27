@@ -19,6 +19,9 @@ const Calendar = () => {
     const [editLock, setEditLock] = useState(false);
     const [monthlyCapacities, setMonthlyCapacities] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
+    const [renderKey, setRenderKey] = useState(0);
+    const [currentView, setCurrentView] = useState('dayGridMonth');
+    const [currentDate, setCurrentDate] = useState(new Date());
 
     const handleEditLock = () => {
         setEditLock(!editLock);
@@ -60,7 +63,6 @@ const Calendar = () => {
 
     const handleDateClick = (info) => {
         // if the date clicked has been more than 1 day from now, create new appointment
-        console.log(info.dateStr)
         if (isDateAvailable(info.date)) {
             if (info.view && info.view.type === 'dayGridMonth' && info.view.calendar) {
                 const calendarApi = info.view.calendar;
@@ -76,7 +78,16 @@ const Calendar = () => {
                 const hour24 = parseInt(info.dateStr.substring(11,13));
                 const hour12 = hour24 > 12 ? hour24 - 12 : hour24;
                 const TTTT = hour24 >= 12 ? `${hour12.toString().padStart(2, '0')}PM` : `${hour12.toString().padStart(2, '0')}AM`;
-                const XX = events.filter(event => event.date.toISOString().substring(0,10) === info.dateStr.substring(0,10)).length + 1;
+                const XX = events.filter(event => {
+                    if (event.date && info.dateStr) {
+                        const eventDate = event.date;
+                        const clickedDate = new Date(info.dateStr);
+                        return eventDate.getFullYear() === clickedDate.getFullYear() &&
+                               eventDate.getMonth() === clickedDate.getMonth() &&
+                               eventDate.getDate() === clickedDate.getDate();
+                    }
+                    return false;
+                }).length + 1;
                 const appointmentNumber = `FM${MM}${DD}${YY}-${TTTT}-${XX.toString().padStart(2, '0')}`;
 
                 setSelectedAppointment({
@@ -118,8 +129,19 @@ const Calendar = () => {
 
     const handleAppointmentClick = (info) => {
         // if the appointment clicked is "add new appointment", then redirect to use the handleDateClick function
-        // first convert the event's date to a Date object
-        if (info.event.addNewButton) {
+        if (info.event.extendedProps.addNewButton) {
+            // convert into format that handleDateClick can use
+            const date = info.event.start;
+            const year = date.getFullYear();
+            const month = (date.getMonth() + 1).toString().padStart(2, '0');
+            const day = date.getDate().toString().padStart(2, '0');
+            const time = date.getHours().toString().padStart(2, '0');
+            const dateStr = `${year}-${month}-${day}T${time}:00:00+08:00`;
+            const addAppointmentDate = {
+                date: date,
+                dateStr: dateStr
+            }
+            handleDateClick(addAppointmentDate);
             return;
         }
 
@@ -201,7 +223,8 @@ const Calendar = () => {
                     }
                 }
                 //handleClose();
-                fetchEvents();
+                setRenderKey(prevKey => prevKey + 1);
+                await fetchEvents();
             } catch (error) {
                 console.error(error);
             }
@@ -239,6 +262,7 @@ const Calendar = () => {
                     }
                 };
             });
+            // remove "add appointments button"
             setEvents(appointments);
         } catch (error) {
             console.error(error);
@@ -274,10 +298,12 @@ const Calendar = () => {
         <div className="calendar">
             {isLoading ? <div>Loading...</div> : (
                 <FullCalendar
+                key={renderKey}
                 ref={calendarRef}
                 events={events}
                 plugins={[dayGridPlugin, timeGridPlugin, listPlugin, interactionPlugin]}
-                initialView="dayGridMonth"
+                initialView={currentView}
+                initialDate={currentDate}
                 headerToolbar={{
                     left: 'prev,next today',
                     center: 'title',
@@ -317,6 +343,12 @@ const Calendar = () => {
                         }
                     }
                 }}
+                // remove add appointment button when switching views
+                datesSet={(info) => {
+                    setEvents(prevEvents => prevEvents.filter(event => !event.addNewButton))
+                    setCurrentView(info.view.type);
+                    setCurrentDate(info.view.currentStart);
+                }}
                 dateClick={
                     function(info) {
                         if (info.view && info.view.type === 'dayGridMonth' && info.view.calendar) {
@@ -331,9 +363,10 @@ const Calendar = () => {
                     function (info) {
                         const filledSlots = info.num;
 
-                        const date = info.el.closest('.fc-day').dataset.date;
-                        const year = parseInt(date.split('-')[0]);
-                        const month = parseInt(date.split('-')[1]);
+                        const date = new Date(info.el.closest('.fc-day').dataset.date);
+                        const utcDate = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate())).toISOString().split('T')[0];
+                        const year = parseInt(utcDate.split('-')[0]);
+                        const month = parseInt(utcDate.split('-')[1]);
 
                         if (monthlyCapacities) {
                             const capacity = monthlyCapacities.find(capacity => capacity.month === month && capacity.year === year);
@@ -356,17 +389,37 @@ const Calendar = () => {
                             return prevEvents.filter(event => !event.addNewButton);
                         });
 
-                        // current date - 8 hours kasi bobo ung date
-                        const date = info.date.setUTCHours(info.date.getUTCHours() - 8);
+                        // create a new appointment button that will show up on the popover of the link that was clicked
+
+                        const year = info.date.getFullYear();
+                        const month = (info.date.getMonth() + 1).toString().padStart(2, '0');
+                        const day = info.date.getDate().toString().padStart(2, '0');
+                        const time = info.date.getUTCHours().toString().padStart(2, '0');
+                        const date = `${year}-${month}-${day}T${time}:00:00+08:00`;
                         const newAppointmentButton = {
                             title: '+ New Appointment',
                             start: date,
                             addNewButton: true,
                         };
 
-                        // if the date is in timegridweek view and date is available
+                        // if the date is in timegridweek view &&
+                        // date is available &&
+                        // hour is available
                             // Add the new appointment button to the events state
-                        if (info.view.type === 'timeGridWeek' && isDateAvailable(new Date(date))) {
+
+                        const capacity = monthlyCapacities.find(capacity => capacity.month === parseInt(month) && capacity.year === year).capacity;
+                        const filled = events.filter(event => {
+                            const eventDate = new Date(event.date);
+                            return eventDate.getHours() === new Date(date).getHours() &&
+                                   eventDate.getDate() === new Date(date).getDate() &&
+                                   eventDate.getMonth() === new Date(date).getMonth() &&
+                                   eventDate.getFullYear() === new Date(date).getFullYear();
+                        }).length;
+
+                        if (info.view.type === 'timeGridWeek' &&
+                            isDateAvailable(new Date(date)) &&
+                            filled < capacity
+                        ) {
                             setEvents(prevEvents => [...prevEvents, newAppointmentButton]);
                         }
 
