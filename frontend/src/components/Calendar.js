@@ -117,6 +117,13 @@ const Calendar = () => {
                     newPatient: false
                 })
                 setEditLock(false);
+                // remove popover
+                setTimeout(() => {
+                    const popover = document.querySelector('.fc-more-popover');
+                    if (popover) {
+                        popover.remove();
+                    }
+                }, 0);
                 setShowAppointmentNewModal(true);
             }
         } else {
@@ -144,7 +151,6 @@ const Calendar = () => {
             handleDateClick(addAppointmentDate);
             return;
         }
-
 
         // when an appointment is clicked, the appointment info is stored in selectedAppointment state
         // selectedAppointment is then passed to the modal where it can be modified
@@ -175,6 +181,13 @@ const Calendar = () => {
             referralDoctor: info.event.extendedProps.referralDoctor,
             newPatient: info.event.extendedProps.newPatient
         });
+        // remove popover
+        setTimeout(() => {
+            const popover = document.querySelector('.fc-more-popover');
+            if (popover) {
+                popover.remove();
+            }
+        }, 0);
         setShowAppointmentInfoModal(true);
     }
 
@@ -422,7 +435,6 @@ const Calendar = () => {
                         ) {
                             setEvents(prevEvents => [...prevEvents, newAppointmentButton]);
                         }
-
                     }
                 }
                 selectAllow={(selectInfo) => {
