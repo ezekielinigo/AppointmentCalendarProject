@@ -9,17 +9,26 @@ import Button from '@mui/material/Button';
 import doctor from '../assets/doctor.png';
 import { MdKeyboardBackspace } from "react-icons/md";
 import { useContext } from 'react';
-import { ClinicContext} from '../App'
+import { ClinicContext, isClinicLoggedInContext } from '../App'
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-
 
 function Login() {
     //const [clinicid, setClinicID] = useState('');
     //const [clinicpassword, setClinicPassword] = useState('');
 
     const { clinicid, setClinicID, clinicpassword, setClinicPassword } = useContext(ClinicContext);
+    const { isClinicLoggedIn, setIsClinicLoggedIn } = useContext(isClinicLoggedInContext);
     const navigate = useNavigate();
+
+    useEffect(() => {
+        const isLoggedIn = sessionStorage.getItem('isClinicLoggedIn');
+
+        if (isLoggedIn) {
+            setIsClinicLoggedIn(true);
+            navigate(PathConstants.ADMINCALENDARVIEW);
+        }
+    }, [navigate, setIsClinicLoggedIn]);
 
     const handleLogin = (event) => {
         event.preventDefault(); // para 'di magshow 'yung mga ilalagay na information sa URL
@@ -34,18 +43,18 @@ function Login() {
         }
     }
 
-    const validateEntry = async (clinicId, clinicPassword) => {
+    const validateEntry = async () => {
         try { 
             const login = await axios.post('http://localhost:8000/login', { username: clinicid, password: clinicpassword });
-            console.log(login);
             
             if (login.status === 200) {
+                sessionStorage.setItem('isClinicLoggedIn', true);
+                sessionStorage.setItem('clinicid', clinicid);
+                setIsClinicLoggedIn(true);
                 alert('Login Successful');
-                alert(clinicid + ' ' + clinicpassword);
                 navigate(PathConstants.ADMINCALENDARVIEW);
             }
         } 
-        
         catch (error) {
             console.error(error);
             alert('Login Failed! Please check your Clinic ID and Password.');
@@ -86,9 +95,6 @@ function Login() {
                                 onChange={(e) => setClinicPassword(e.target.value)}
                             />
                         </FormGroup>
-
-                        
-                    
 
                             <Button className = 'login-button' 
                             variant="contained" 

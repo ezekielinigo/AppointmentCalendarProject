@@ -11,7 +11,7 @@ black: #071108
 import React, { useState } from "react";
 import styled from "styled-components";
 import { IconContext } from "react-icons/lib";
-import "./PatientNavBar.css";
+import "./NavBar.css";
 import logo from "../assets/rmc-logo.png";
 import { Button } from "react-bootstrap";
 import { PatientContext } from '../App';
@@ -26,6 +26,7 @@ const Nav = styled.div`
 `;
 
 const PatientNavBar = () => {
+	const { firstName } = useContext(PatientContext);
 	return (
 		<>
 			<IconContext.Provider value={{ color: "whitesmoke" }}>
@@ -39,7 +40,7 @@ const PatientNavBar = () => {
 						RMC Clinic Appointment Calendar
 					</h1>
 
-					<h2 class = 'welcome'> Welcome,  </h2>
+					<h2 class = 'welcome'> Welcome, {firstName} + ! </h2>
 
                     <Button variant="outline-light" style = {{
                         margin: 10,

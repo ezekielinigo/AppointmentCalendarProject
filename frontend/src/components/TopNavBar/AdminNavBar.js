@@ -11,11 +11,15 @@ black: #071108
 import React from "react";
 import styled from "styled-components";
 import { IconContext } from "react-icons/lib";
-import "./AdminNavBar.css";
+import "../NavBar.css";
 import logo from "./rmc-logo.png";
 import { Button } from "react-bootstrap";
-import { ClinicContext } from '../../App';
+import { ClinicContext, isClinicLoggedInContext } from '../../App';
 import { useContext } from 'react';
+import { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import PathConstants from '../../PathConstants';
+import axios from 'axios';
 
 const Nav = styled.div`
 	background: #071108;
@@ -25,12 +29,98 @@ const Nav = styled.div`
     align-items: center;
 `;	
 
+/*
+For testing sa backend:
+{
+    "username": "577204",
+    "password": "123"
+}
 
+*/
 
 function AdminNavBar() {
-	const { clinicid } = useContext(ClinicContext);
-	
+	const { clinicid, setClinicID, clinicpassword} = useContext(ClinicContext);
+	const { isClinicLoggedIn, setIsClinicLoggedIn } = useContext(isClinicLoggedInContext);
+	const navigate = useNavigate();
 
+	useEffect(() => {
+		const storedClinicId = sessionStorage.getItem('clinicid');
+
+		if (storedClinicId) {
+			setClinicID(storedClinicId);
+		}
+
+		if (!isClinicLoggedIn) {
+			navigate(PathConstants.LOGIN);
+		}
+	}, [setClinicID, isClinicLoggedIn, navigate]);
+
+	function getCookie(name) {
+		let cookieValue = null;
+		if (document.cookie && document.cookie !== '') {
+			const cookies = document.cookie.split(';');
+			for (let i = 0; i < cookies.length; i++) {
+				const cookie = cookies[i].trim();
+				// Does this cookie string begin with the name we want?
+				if (cookie.substring(0, name.length + 1) === (name + '=')) {
+					cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+					break;
+				}
+			}
+		}
+		return cookieValue;
+	}
+
+	/*
+	const handleLogout = async () => {
+		try {
+			// Get the CSRF token
+			const csrftoken = getCookie('csrftoken');
+		
+			// Make a request to the logout endpoint
+			const response = await axios.post('http://localhost:8000/logout', {
+				username: clinicid,
+				password: clinicpassword
+			}, {
+				headers: {
+					'X-CSRFToken': csrftoken
+				}
+			});
+		
+			if (response.status === 200) {
+				sessionStorage.removeItem('isClinicLoggedIn');
+				sessionStorage.removeItem('clinicid');
+				setIsClinicLoggedIn(false);
+				navigate(PathConstants.LOGINCLINIC);
+			} else {
+				console.error('Failed to log out on the server');
+			}
+		} catch (error) {
+			console.error('Failed to log out', error);
+		}
+	} */
+
+	const handleLogout = async () => {
+		try {
+			// Make a request to the logout endpoint
+			const response = await axios.post('http://localhost:8000/logout', {
+				username: clinicid,
+				password: clinicpassword
+			});
+
+			if (response.status === 200) {
+				sessionStorage.removeItem('isClinicLoggedIn');
+				sessionStorage.removeItem('clinicid');
+				setIsClinicLoggedIn(false);
+				navigate(PathConstants.LOGINCLINIC);
+			} else {
+				console.error('Failed to log out on the server');
+			}
+		} catch (error) {
+			console.error('Failed to log out', error);
+		}
+	}
+	
 	return (
 		<>
 			<IconContext.Provider value={{ color: "whitesmoke" }}>
@@ -46,7 +136,7 @@ function AdminNavBar() {
 
 					<h2 className='welcome'> Welcome, {clinicid} </h2>
 					
-					<Button variant="outline-light" style = {{
+					<Button variant="outline-light" onClick={handleLogout} style = {{
 						margin: 10,
 						alignItems: 'right'
 					}}> Log Out </Button>

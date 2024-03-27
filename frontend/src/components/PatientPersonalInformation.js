@@ -9,6 +9,13 @@ import { useState, useEffect } from "react";
 
 const PatientPersonalInformation = () => {
 
+	const retrievePersonalInformation = async () => {
+	
+
+		
+	}
+
+
 	// birthdate to age func
 	const [birthdate, setBirthdate] = useState(null);
     const [age, setAge] = useState(null);
