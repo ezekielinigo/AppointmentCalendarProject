@@ -9,6 +9,8 @@ from rest_framework.authentication import SessionAuthentication, TokenAuthentica
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework import status
+from django.contrib.auth import logout
+from django.contrib.auth import authenticate
 
 from django.shortcuts import get_object_or_404
 from django.contrib.auth.models import User
@@ -76,8 +78,11 @@ def login(request):
     if not user.check_password(request.data['password']):
         return Response("missing user", status=status.HTTP_404_NOT_FOUND)
     token, created = Token.objects.get_or_create(user=user)
-    serializer = UserSerializer(user)
-    return Response({'token': token.key, 'user': serializer.data})
+    if token:
+        serializer = UserSerializer(user)
+        return Response({'token': token.key, 'user': serializer.data})
+    else:
+        return Response("Authentication failed", status=status.HTTP_401_UNAUTHORIZED)
 
 @api_view(['GET'])
 @authentication_classes([SessionAuthentication, TokenAuthentication])
@@ -86,8 +91,15 @@ def test_token(request):
     return Response("passed!")
 
 @api_view(['POST'])
-@authentication_classes([SessionAuthentication, TokenAuthentication])
-@permission_classes([IsAuthenticated])
 def logout(request):
-    request.user.auth_token.delete()
-    return Response(status=status.HTTP_200_OK)
+    username = request.data.get('username')
+    password = request.data.get('password')
+    user = authenticate(username=username, password=password)
+    if user is not None:
+        try:
+            user.auth_token.delete()
+        except (AttributeError, Token.DoesNotExist):
+            return Response("No active session", status=status.HTTP_404_NOT_FOUND)
+        return Response("Successfully logged out.", status=status.HTTP_200_OK)
+    else:
+        return Response("Invalid credentials", status=status.HTTP_401_UNAUTHORIZED)
