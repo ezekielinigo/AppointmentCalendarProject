@@ -27,7 +27,6 @@ import PatientPersonalInformation from './components/PatientPersonalInformation'
 function App() {
 
     const router = createBrowserRouter([
-        
         {
             path: '',
             element: <LandingPage />
@@ -92,11 +91,17 @@ function App() {
         // End Patient Page Routes
 
     ])
-    
-    return (
-        <><RouterProvider router={router}></RouterProvider></>
 
-    );
+    //
+
+
+    //
+
+    return (
+        <>
+            <RouterProvider router={router}></RouterProvider>
+        </>
+      );
 }
 
 export default App;

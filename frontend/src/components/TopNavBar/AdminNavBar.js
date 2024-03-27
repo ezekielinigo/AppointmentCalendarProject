@@ -8,13 +8,12 @@ white: whitesmoke
 black: #071108
  */
 
-import React, { useState } from "react";
+import React from "react";
 import styled from "styled-components";
 import { IconContext } from "react-icons/lib";
 import "./AdminNavBar.css";
 import logo from "./rmc-logo.png";
 import { Button } from "react-bootstrap";
-
 
 const Nav = styled.div`
 	background: #071108;
@@ -23,6 +22,7 @@ const Nav = styled.div`
     justify-content: space-between;
     align-items: center;
 `;	
+
 
 const AdminNavBar = () => {
 
@@ -39,12 +39,12 @@ const AdminNavBar = () => {
 						RMC Clinic Appointment Calendar
 					</h1>
 
-					<h2 class = 'welcome'> Welcome,  </h2>
+					<h2 class='welcome'> Welcome, </h2>
 					
 					<Button variant="outline-light" style = {{
-                        margin: 10,
-                        alignItems: 'right'
-                    }}> Log Out </Button>
+						margin: 10,
+						alignItems: 'right'
+					}}> Log Out </Button>
 
 				</Nav>
 			</IconContext.Provider>

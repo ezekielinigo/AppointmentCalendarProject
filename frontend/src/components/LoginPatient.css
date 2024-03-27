@@ -48,10 +48,13 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
+    height: calc(100vh - 20px); /* Adjust "60px" to the height of your navbar */
     padding: 0;
-    margin: -4vh;
-}
+    margin-top: -2vh; /* Adjust "60px" to the height of your navbar */
+    margin-bottom: 0;
+    flex-wrap: wrap;
+    overflow: hidden; /* Add this line */
+  }
   
   input {
     width: 100%;
@@ -77,7 +80,6 @@
   .user-field {
     width: 100%;
     margin: 10px 0;
-    padding: 5px;
   }
   
   .login-button {
