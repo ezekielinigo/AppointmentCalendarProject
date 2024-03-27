@@ -33,6 +33,9 @@ export const isClinicLoggedInContext = React.createContext();
 export const PatientContext = React.createContext(); // context API for Patient Login
 export const isPatientLoggedInContext = React.createContext();
 
+// special declaration since may automated user and pass generation sa patient login
+export const UserPassContext = React.createContext();
+
 function App() {
 
     // variable declarations for context API Start
@@ -50,7 +53,8 @@ function App() {
     const [birthDate, setbirthDate] = useState('');
     const [isPatientLoggedIn, setIsPatientLoggedIn] = useState(false);
 
-    //
+    //special user and pass for patient login
+    const [userPass, setUserPass] = useState({ user: '', pass: '' });
 
     // variable declarations for context API End
 
@@ -128,6 +132,7 @@ function App() {
     // Router End
 
     return (
+    <UserPassContext.Provider value={{ userPass, setUserPass }}>
     <isClinicLoggedInContext.Provider value={{ isClinicLoggedIn, setIsClinicLoggedIn }}>
         <isPatientLoggedInContext.Provider value={{ isPatientLoggedIn, setIsPatientLoggedIn }}>
             <ClinicContext.Provider value={{ clinicid, setClinicID, clinicpassword, setClinicPassword }}>
@@ -137,7 +142,7 @@ function App() {
                 </PatientContext.Provider>
             </ClinicContext.Provider>
         </isPatientLoggedInContext.Provider>
-    </isClinicLoggedInContext.Provider>
+    </isClinicLoggedInContext.Provider></UserPassContext.Provider>
 );
 }
 

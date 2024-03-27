@@ -11,14 +11,19 @@ import { Link } from 'react-router-dom';
 import PathConstants from '../PathConstants';
 import { MdKeyboardBackspace } from "react-icons/md";
 import { useContext } from 'react';
-import { PatientContext } from '../App';
+import { PatientContext, isPatientLoggedInContext, UserPassContext } from '../App';
 import { useNavigate } from 'react-router-dom';
+import { getCookie } from './utils/cookie';
 
-function Login() {
+
+function LoginPatient() {
 
     const [events, setEvents] = useState([]);
     const [hospitalNumberInput, setHospitalNumberInput] = useState(false);
     const [checked, setChecked] = useState(false); // for checkbox
+    const { setUserPass } = useContext(UserPassContext);
+
+    const csrftoken = getCookie('csrftoken');
     
     /*
     
@@ -37,7 +42,17 @@ function Login() {
         hospitalNumber, sethospitalNumber, 
         birthDate, setbirthDate } = useContext(PatientContext);
 
+    const { isPatientLoggedIn, setIsPatientLoggedIn } = useContext(isPatientLoggedInContext);
     const navigate = useNavigate();
+    
+    useEffect(() => {
+        const isLoggedIn = sessionStorage.getItem('isPatientLoggedIn');
+
+        if (isLoggedIn) {
+            setIsPatientLoggedIn(true);
+            navigate(PathConstants.PATIENTCALENDAR);
+        }
+    }, [navigate, setIsPatientLoggedIn]);
 
     // 
 
@@ -113,40 +128,73 @@ function Login() {
             // session auth/token mechanism to
 
             // basically pre-defined username for the user using some of the details
-            const user = (patient.nameFirst.slice(0, 2) + patient.nameMiddle.slice(0, 2) + patient.nameLast.slice(0, 2) + patient.birthdate.replace(/-/g, '') + patient.hospitalNumber.slice(-4)).slice(0, 10);
-
+            const user = (patient.nameFirst.slice(0, 4) + patient.nameMiddle.slice(0, 2) + patient.nameLast.slice(0, 4) + patient.birthdate.replace(/-/g, '')).slice(0, 10);
             // password mula sa deets pero may shiftChar function para ma-encrypt
             const pass = (patient.nameLast.slice(-2) + patient.nameFirst.slice(0, 2) + patient.birthdate.replace(/-/g, '') + patient.nameLast + patient.nameFirst).split('').map(shiftChar).join('').slice(0, 10);
-            alert (pass);
+            
+            setUserPass({ user, pass });
+            
+            //alert (pass);
             //alert (user + " " + pass) // pang-debug since ayaw gumana ng tokenizing mechanism kanina
 
-            // ito yung gumanang tokenizing mechanism
+        // ito yung gumanang tokenizing mechanism
 
-            // 1. attempt sign-up
-            const response = await axios.post('http://localhost:8000/signup', { username: user, password: pass, first_name: patient.nameFirst, last_name: patient.nameLast });
-            
-            // 2. basically status = 200 means na may existing username na sa database kaya login na  
-            if (response.status === 200) {
-                const login = await axios.post('http://localhost:8000/login', { username: user, password: pass, first_name: patient.nameFirst, last_name: patient.nameLast });
-                console.log(login);
-                navigate(PathConstants.PATIENTCALENDAR);
+        // 1. attempt sign-up
+        const response = await axios.post('http://localhost:8000/signup', 
+            { username: user, password: pass, first_name: patient.nameFirst, last_name: patient.nameLast },
+            {
+                headers: {
+                    'X-CSRFToken': csrftoken
+                }
             }
-
-            // 3. other than 200, sign-up then login
-
-            else {
-                const signup = await axios.post('http://localhost:8000/signup', { username: user, password: pass, first_name: patient.nameFirst, last_name: patient.nameLast })
-                console.log(signup);
-                const login = await axios.post('http://localhost:8000/login', { username: user, password: pass, first_name: patient.nameFirst, last_name: patient.nameLast });
-                console.log(login);
-                navigate(PathConstants.PATIENTCALENDAR);
-            } 
-           
-         } 
-
-        catch (error) {
-            console.error(error);
+        );
+        
+        // 2. basically status = 200 means na may existing username na sa database kaya login na  
+        if (response.status === 200) {
+            const login = await axios.post('http://localhost:8000/login', 
+                { username: user, password: pass, first_name: patient.nameFirst, last_name: patient.nameLast },
+                {
+                    headers: {
+                        'X-CSRFToken': csrftoken
+                    }
+                }
+            );
+            console.log(login);
+            sessionStorage.setItem('isPatientLoggedIn', true);
+            navigate(PathConstants.PATIENTCALENDAR);
         }
+
+        // 3. other than 200, sign-up then login
+        else {
+            const signup = await axios.post('http://localhost:8000/signup', 
+                { username: user, password: pass, first_name: patient.nameFirst, last_name: patient.nameLast },
+                {
+                    headers: {
+                        'X-CSRFToken': csrftoken
+                    }
+                }
+            );
+            console.log(signup);
+
+            const login = await axios.post('http://localhost:8000/login', 
+                { username: user, password: pass, first_name: patient.nameFirst, last_name: patient.nameLast },
+                {
+                    headers: {
+                        'X-CSRFToken': csrftoken
+                    }
+                }
+            );
+            console.log(login);
+            sessionStorage.setItem('isPatientLoggedIn', true);
+            navigate(PathConstants.PATIENTCALENDAR);
+        } 
+    } 
+
+    catch (error) {
+        console.error(error);
+        alert(error);
+        alert('Login Failed! Please check your Patient ID and Password.');
+    }
         
     }
 
@@ -211,6 +259,7 @@ function Login() {
                     alert('Patient found! Birthday does not match. Please check your inputs.');
                     return;
                 }
+
             }
 
             if (window.confirm("Patient not found. Do you want to register as a new patient?")) {
@@ -357,4 +406,4 @@ function Login() {
     );
 }
 
-export default Login;
+export default LoginPatient;

@@ -12,8 +12,9 @@ import { useContext } from 'react';
 import { ClinicContext, isClinicLoggedInContext } from '../App'
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { getCookie } from './utils/cookie';
 
-function Login() {
+function LoginClinic() {
     //const [clinicid, setClinicID] = useState('');
     //const [clinicpassword, setClinicPassword] = useState('');
 
@@ -45,20 +46,30 @@ function Login() {
 
     const validateEntry = async () => {
         try { 
-            const login = await axios.post('http://localhost:8000/login', { username: clinicid, password: clinicpassword });
-            
-            if (login.status === 200) {
-                sessionStorage.setItem('isClinicLoggedIn', true);
-                sessionStorage.setItem('clinicid', clinicid);
-                setIsClinicLoggedIn(true);
-                alert('Login Successful');
-                navigate(PathConstants.ADMINCALENDARVIEW);
+          const csrftoken = getCookie('csrftoken');
+
+          const login = await axios.post('http://localhost:8000/login', 
+            { username: clinicid, password: clinicpassword },
+            {
+              headers: {
+                'X-CSRFToken': csrftoken
+              }
             }
+          );
+          
+          if (login.status === 200) {
+            sessionStorage.setItem('isClinicLoggedIn', true);
+            sessionStorage.setItem('clinicid', clinicid);
+            setIsClinicLoggedIn(true);
+            alert('Login Successful');
+            navigate(PathConstants.ADMINCALENDARVIEW);
+          }
         } 
         catch (error) {
-            console.error(error);
-            alert('Login Failed! Please check your Clinic ID and Password.');
+          console.error(error);
+          alert('Login Failed! Please check your Clinic ID and Password.');
         }
+
     }
 
     return (
@@ -122,4 +133,4 @@ function Login() {
     );
 }
 
-export default Login;
+export default LoginClinic;

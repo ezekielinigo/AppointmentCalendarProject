@@ -20,6 +20,8 @@ import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import PathConstants from '../../PathConstants';
 import axios from 'axios';
+import { getCookie } from '../utils/cookie';
+
 
 const Nav = styled.div`
 	background: #071108;
@@ -55,29 +57,10 @@ function AdminNavBar() {
 		}
 	}, [setClinicID, isClinicLoggedIn, navigate]);
 
-	function getCookie(name) {
-		let cookieValue = null;
-		if (document.cookie && document.cookie !== '') {
-			const cookies = document.cookie.split(';');
-			for (let i = 0; i < cookies.length; i++) {
-				const cookie = cookies[i].trim();
-				// Does this cookie string begin with the name we want?
-				if (cookie.substring(0, name.length + 1) === (name + '=')) {
-					cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-					break;
-				}
-			}
-		}
-		return cookieValue;
-	}
-
-	/*
 	const handleLogout = async () => {
 		try {
-			// Get the CSRF token
 			const csrftoken = getCookie('csrftoken');
 		
-			// Make a request to the logout endpoint
 			const response = await axios.post('http://localhost:8000/logout', {
 				username: clinicid,
 				password: clinicpassword
@@ -98,28 +81,7 @@ function AdminNavBar() {
 		} catch (error) {
 			console.error('Failed to log out', error);
 		}
-	} */
-
-	const handleLogout = async () => {
-		try {
-			// Make a request to the logout endpoint
-			const response = await axios.post('http://localhost:8000/logout', {
-				username: clinicid,
-				password: clinicpassword
-			});
-
-			if (response.status === 200) {
-				sessionStorage.removeItem('isClinicLoggedIn');
-				sessionStorage.removeItem('clinicid');
-				setIsClinicLoggedIn(false);
-				navigate(PathConstants.LOGINCLINIC);
-			} else {
-				console.error('Failed to log out on the server');
-			}
-		} catch (error) {
-			console.error('Failed to log out', error);
-		}
-	}
+	} 
 	
 	return (
 		<>

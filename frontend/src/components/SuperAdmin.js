@@ -5,8 +5,7 @@ import { Button } from 'react-bootstrap';
 import './SuperAdmin.css';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-
-
+import { getCookie } from './utils/cookie';
 
 import NavBar from "./TopNavBar/AdminNavBar";
 
@@ -50,13 +49,22 @@ function SuperAdmin() {
             const randomNumber = Math.floor(100000 + Math.random() * 900000);
 
             try { 
-                const response = await axios.post('http://localhost:8000/signup', { 
-                    username: randomNumber, 
-                    password: data.password, 
-                    first_name: data.clinicName, 
-                    last_name: ''
-                });
-
+                const csrftoken = getCookie('csrftoken');
+            
+                const response = await axios.post('http://localhost:8000/signup', 
+                    { 
+                        username: randomNumber, 
+                        password: data.password, 
+                        first_name: data.clinicName, 
+                        last_name: ''
+                    },
+                    {
+                        headers: {
+                            'X-CSRFToken': csrftoken
+                        }
+                    }
+                );
+            
                 if (response.status === 200) {
                     console.log(response);
                     alert('Account successfully created for ' + data.clinicName + '. Your clinic id is ' + randomNumber + '. Please login to continue.');
@@ -67,11 +75,7 @@ function SuperAdmin() {
             } catch (error) {
                 console.error(error);
             }
-
-
         }
-
-       
     }
 
     return (
