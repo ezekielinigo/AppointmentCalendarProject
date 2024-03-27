@@ -10,17 +10,36 @@ import patient from '../assets/patient.png';
 import { Link } from 'react-router-dom';
 import PathConstants from '../PathConstants';
 import { MdKeyboardBackspace } from "react-icons/md";
+import { useContext } from 'react';
+import { PatientContext } from '../App';
+import { useNavigate } from 'react-router-dom';
 
 function Login() {
 
     const [events, setEvents] = useState([]);
     const [hospitalNumberInput, setHospitalNumberInput] = useState(false);
     const [checked, setChecked] = useState(false); // for checkbox
+    
+    /*
+    
     const [firstName, setFirstName] = useState('');
     const [middleName, setMiddleName] = useState('');
     const [lastName, setLastName] = useState('');
     const [hospitalNumber, sethospitalNumber] = useState('');
-    const [birthDate, setbirthDate] = useState('');
+    const [birthDate, setbirthDate] = useState(''); 
+    
+    */
+
+    // 
+    const { firstName, setFirstName, 
+        middleName, setMiddleName, 
+        lastName, setLastName, 
+        hospitalNumber, sethospitalNumber, 
+        birthDate, setbirthDate } = useContext(PatientContext);
+
+    const navigate = useNavigate();
+
+    // 
 
     const GreenSwitch = styled(Switch)(({ theme }) => ({
         width: 42,
@@ -79,10 +98,14 @@ function Login() {
     const validateEntry = async () => {
         const patient = {
             nameFirst: firstName,
+            nameMiddle: middleName,
             nameLast: lastName,
             birthdate: birthDate,
             hospitalNumber: hospitalNumber
         };
+
+        // alert for above
+        alert(patient.nameFirst + " " + patient.nameLast + " " + patient.birthdate + " " + patient.hospitalNumber)
 
         //alert(patient.birthdate + " " + patient.hospitalNumber + " " + patient.nameFirst + " " + patient.nameLast)
         
@@ -90,7 +113,7 @@ function Login() {
             // session auth/token mechanism to
 
             // basically pre-defined username for the user using some of the details
-            const user = (patient.nameFirst.slice(0, 2) + patient.nameLast.slice(0, 2) + patient.birthdate.replace(/-/g, '') + patient.hospitalNumber.slice(-4)).slice(0, 10);
+            const user = (patient.nameFirst.slice(0, 2) + patient.nameMiddle.slice(0, 2) + patient.nameLast.slice(0, 2) + patient.birthdate.replace(/-/g, '') + patient.hospitalNumber.slice(-4)).slice(0, 10);
 
             // password mula sa deets pero may shiftChar function para ma-encrypt
             const pass = (patient.nameLast.slice(-2) + patient.nameFirst.slice(0, 2) + patient.birthdate.replace(/-/g, '') + patient.nameLast + patient.nameFirst).split('').map(shiftChar).join('').slice(0, 10);
@@ -106,6 +129,7 @@ function Login() {
             if (response.status === 200) {
                 const login = await axios.post('http://localhost:8000/login', { username: user, password: pass, first_name: patient.nameFirst, last_name: patient.nameLast });
                 console.log(login);
+                navigate(PathConstants.PATIENTCALENDAR);
             }
 
             // 3. other than 200, sign-up then login
@@ -115,9 +139,8 @@ function Login() {
                 console.log(signup);
                 const login = await axios.post('http://localhost:8000/login', { username: user, password: pass, first_name: patient.nameFirst, last_name: patient.nameLast });
                 console.log(login);
+                navigate(PathConstants.PATIENTCALENDAR);
             } 
-
-            
            
          } 
 
@@ -159,8 +182,6 @@ function Login() {
             alert("Please fill out all the fields.");
         } 
 
-        
-
         else {
             for (let i = 0; i < events.length; i++) {
 
@@ -183,6 +204,13 @@ function Login() {
                     alert('Patient found! Hospital number does not match. Please check your inputs.');
                     return;
                 } 
+
+                else if (events[i].extendedProps.nameFirst === firstName && 
+                    events[i].extendedProps.nameLast === lastName && 
+                    events[i].extendedProps.birthdate !== birthDate) {
+                    alert('Patient found! Birthday does not match. Please check your inputs.');
+                    return;
+                }
             }
 
             if (window.confirm("Patient not found. Do you want to register as a new patient?")) {

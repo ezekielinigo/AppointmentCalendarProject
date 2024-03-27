@@ -5,7 +5,8 @@ Modal Component: https://react-bootstrap.netlify.app/docs/components/modal/
 Buttons: https://react-bootstrap.netlify.app/components/buttons/
 Routing: https://semaphoreci.com/blog/routing-layer-react
 User Auth: https://youtu.be/llrIu4Qsl7c?si=ioJtFl2n2GNsgIxH
-
+Context: https://react.dev/reference/react/createContext, https://www.youtube.com/watch?v=sP7ANcTpJr8
+MUI Material: https://mui.com/material-ui/getting-started/
 */
 
 import './App.css';
@@ -26,11 +27,24 @@ import PatientPersonalInformation from './components/PatientPersonalInformation'
 import { useState } from 'react';
 
 export const ClinicContext = React.createContext();
+export const PatientContext = React.createContext();
 
 function App() {
 
+    // Variable declarations for context API Start
+
+    // Clinic Login
     const [clinicid, setClinicID] = useState('');
     const [clinicpassword, setClinicPassword] = useState('');
+
+    // Patient Login
+    const [firstName, setFirstName] = useState('');
+    const [middleName, setMiddleName] = useState('');
+    const [lastName, setLastName] = useState('');
+    const [hospitalNumber, sethospitalNumber] = useState('');
+    const [birthDate, setbirthDate] = useState('');
+
+    // Variable declarations for context API End
 
     // Router Start
 
@@ -102,15 +116,13 @@ function App() {
 
     // Router End
 
-    // Context API Start
-
-
-
-    // Context API End
-
     return (
         <ClinicContext.Provider value={{ clinicid, setClinicID, clinicpassword, setClinicPassword }}>
-            <RouterProvider router={router}></RouterProvider>
+            <PatientContext.Provider value={{ firstName, setFirstName, middleName, setMiddleName, lastName, setLastName, hospitalNumber, sethospitalNumber, birthDate, setbirthDate }}>
+            <RouterProvider 
+            router={router}>
+            </RouterProvider>
+            </PatientContext.Provider>
         </ClinicContext.Provider>
     );
 }

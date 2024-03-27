@@ -14,6 +14,8 @@ import { IconContext } from "react-icons/lib";
 import "./PatientNavBar.css";
 import logo from "../assets/rmc-logo.png";
 import { Button } from "react-bootstrap";
+import { PatientContext } from '../App';
+import { useContext } from 'react';
 
 const Nav = styled.div`
 	background: #071108;

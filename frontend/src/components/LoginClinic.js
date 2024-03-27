@@ -21,8 +21,6 @@ function Login() {
     const { clinicid, setClinicID, clinicpassword, setClinicPassword } = useContext(ClinicContext);
     const navigate = useNavigate();
 
-
-
     const handleLogin = (event) => {
         event.preventDefault(); // para 'di magshow 'yung mga ilalagay na information sa URL
 
