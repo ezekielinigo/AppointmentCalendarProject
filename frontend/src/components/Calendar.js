@@ -33,6 +33,21 @@ const Calendar = () => {
         setEditLock(false);
     }
 
+    const handleDelete = async () => {
+        try {
+            const confirm = window.confirm('Are you sure you want to delete this appointment?\nThis action cannot be undone.');
+            if (confirm) {
+                await axios.delete(`http://localhost:8000/api/appointments/${selectedAppointment.id}/`);
+                handleClose();
+                await fetchEvents();
+            }else{
+                return;
+            }
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
     // this function checks whether a date is available or not
     // a date is available for new appointments if capacity is set and is not full
     // a date is available for new appointments if it is more than 1 day from now
@@ -472,6 +487,7 @@ const Calendar = () => {
                 editLock={editLock}
                 handleEditLock={handleEditLock}
                 handleSave={handleSave}
+                handleDelete={handleDelete}
             />
             <AppointmentNewModal
                 show={showAppointmentNewModal}

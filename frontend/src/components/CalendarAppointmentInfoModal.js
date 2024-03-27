@@ -5,10 +5,10 @@ import Col from 'react-bootstrap/Col';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import './Calendar.css';
-import { FiLock, FiUnlock, FiSave } from 'react-icons/fi';
+import { FiLock, FiUnlock, FiSave, FiTrash2 } from 'react-icons/fi';
 // icon library here -> https://circumicons.com/icons
 
-const AppointmentInfoModal = ({show, handleClose, appointment, setAppointment, editLock, handleEditLock, handleSave}) => {
+const AppointmentInfoModal = ({show, handleClose, appointment, setAppointment, editLock, handleEditLock, handleSave, handleDelete}) => {
 
     // creating the date label for the forms
     const date = appointment ? appointment.appointmentNumber : '';
@@ -27,6 +27,11 @@ const AppointmentInfoModal = ({show, handleClose, appointment, setAppointment, e
                 className="fc-button-primary"
                 onClick={handleEditLock}>
                 {editLock ? <FiUnlock /> : <FiLock />}
+            </Button>
+            <Button
+                className="fc-button-primary"
+                onClick={handleDelete}>
+                <FiTrash2 />
             </Button>
             <Button
                 className="fc-button-primary"
