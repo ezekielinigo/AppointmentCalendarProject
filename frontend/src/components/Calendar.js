@@ -38,7 +38,7 @@ const Calendar = () => {
         const currentDate = new Date();
 
         // If the selected date is less than or equal to the current date plus one day, return false
-        if (date <= currentDate) {
+        if (date < currentDate) {
             return false;
         }
 
@@ -377,20 +377,13 @@ const Calendar = () => {
                     return hour >= 6 && hour < 18;
                 }}
                 dayCellDidMount={(info) => {
-                    // get the date of the day cell (format: 'yyyy-mm-dd')
-                    const dateStr = info.el.dataset.date;
-                    const date = new Date(dateStr);
-
-                    // get the current date (format: 'yyyy-mm-dd')
-                    const currentDate = new Date();
-                    const currentDateString = currentDate.toISOString().split('T')[0];
-
-                    // call isDateAvailable with the date of the day cell
-                    const isAvailable = isDateAvailable(date);
-
-                    // if the date is not available and it's not the current date, color the day cell red
-                    if (!isAvailable && dateStr !== currentDateString) {
-                        info.el.style.backgroundColor = '#EBEBEB';
+                    // if date is not available set bg to gray
+                    if (!isDateAvailable(info.date)) {
+                        info.el.style.backgroundColor = '#ebebeb';
+                    }
+                    // if date is today set bg to blue
+                    if (info.date.toDateString() === new Date().toDateString()) {
+                        info.el.style.backgroundColor = '#DBEA9A';
                     }
                 }}
                 slotDuration='01:00:00'
