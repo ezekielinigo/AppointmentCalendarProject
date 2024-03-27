@@ -14,6 +14,8 @@ import { IconContext } from "react-icons/lib";
 import "./AdminNavBar.css";
 import logo from "./rmc-logo.png";
 import { Button } from "react-bootstrap";
+import { ClinicContext } from '../../App';
+import { useContext } from 'react';
 
 const Nav = styled.div`
 	background: #071108;
@@ -24,7 +26,10 @@ const Nav = styled.div`
 `;	
 
 
-const AdminNavBar = () => {
+
+function AdminNavBar() {
+	const { clinicid } = useContext(ClinicContext);
+	
 
 	return (
 		<>
@@ -39,7 +44,7 @@ const AdminNavBar = () => {
 						RMC Clinic Appointment Calendar
 					</h1>
 
-					<h2 class='welcome'> Welcome, </h2>
+					<h2 className='welcome'> Welcome, {clinicid} </h2>
 					
 					<Button variant="outline-light" style = {{
 						margin: 10,

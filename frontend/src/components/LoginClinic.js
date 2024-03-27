@@ -8,11 +8,20 @@ import LandingNavBar from './LandingNavBar';
 import Button from '@mui/material/Button';
 import doctor from '../assets/doctor.png';
 import { MdKeyboardBackspace } from "react-icons/md";
+import { useContext } from 'react';
+import { ClinicContext} from '../App'
+import { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 
 function Login() {
-    const [clinicid, setClinicID] = useState('');
-    const [clinicpassword, setClinicPassword] = useState('');
+    //const [clinicid, setClinicID] = useState('');
+    //const [clinicpassword, setClinicPassword] = useState('');
+
+    const { clinicid, setClinicID, clinicpassword, setClinicPassword } = useContext(ClinicContext);
+    const navigate = useNavigate();
+
+
 
     const handleLogin = (event) => {
         event.preventDefault(); // para 'di magshow 'yung mga ilalagay na information sa URL
@@ -27,16 +36,19 @@ function Login() {
         }
     }
 
-    const validateEntry = async () => {
+    const validateEntry = async (clinicId, clinicPassword) => {
         try { 
             const login = await axios.post('http://localhost:8000/login', { username: clinicid, password: clinicpassword });
             console.log(login);
-
+            
             if (login.status === 200) {
                 alert('Login Successful');
-                window.location.href = PathConstants.ADMINCALENDARVIEW;
+                alert(clinicid + ' ' + clinicpassword);
+                navigate(PathConstants.ADMINCALENDARVIEW);
             }
-        } catch (error) {
+        } 
+        
+        catch (error) {
             console.error(error);
             alert('Login Failed! Please check your Clinic ID and Password.');
         }

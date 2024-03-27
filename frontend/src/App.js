@@ -23,8 +23,16 @@ import SuperAdmin from "./components/SuperAdmin";
 import PatientCalendarView from "./components/PatientCalendarView";
 import PatientAppointmentList from "./components/PatientAppointmentList";
 import PatientPersonalInformation from './components/PatientPersonalInformation';
+import { useState } from 'react';
+
+export const ClinicContext = React.createContext();
 
 function App() {
+
+    const [clinicid, setClinicID] = useState('');
+    const [clinicpassword, setClinicPassword] = useState('');
+
+    // Router Start
 
     const router = createBrowserRouter([
         {
@@ -92,16 +100,19 @@ function App() {
 
     ])
 
-    //
+    // Router End
+
+    // Context API Start
 
 
-    //
+
+    // Context API End
 
     return (
-        <>
+        <ClinicContext.Provider value={{ clinicid, setClinicID, clinicpassword, setClinicPassword }}>
             <RouterProvider router={router}></RouterProvider>
-        </>
-      );
+        </ClinicContext.Provider>
+    );
 }
 
 export default App;
