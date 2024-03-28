@@ -7,24 +7,46 @@ import listPlugin from '@fullcalendar/list';
 import interactionPlugin from '@fullcalendar/interaction';
 import './Calendar.css';
 import AppointmentInfoModal from './CalendarAppointmentInfoModal';
+import AppointmentNewModal from "./CalendarAppointmentNewModal";
 
 const Calendar = () => {
     // State to store the events
     const [events, setEvents] = useState([]);
     const [showAppointmentInfoModal, setShowAppointmentInfoModal] = useState(false);
+    const [showAppointmentNewModal, setShowAppointmentNewModal] = useState(false);
     const [selectedAppointment, setSelectedAppointment] = useState(null);
     const calendarRef = useRef(null);
     const [editLock, setEditLock] = useState(false);
     const [monthlyCapacities, setMonthlyCapacities] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
+    const [renderKey, setRenderKey] = useState(0);
+    const [currentView, setCurrentView] = useState('dayGridMonth');
+    const [currentDate, setCurrentDate] = useState(new Date());
 
     const handleEditLock = () => {
         setEditLock(!editLock);
     }
 
     const handleClose = () => {
+        setShowAppointmentNewModal(false);
         setShowAppointmentInfoModal(false);
         setEditLock(false);
+    }
+
+    const handleDelete = async () => {
+        try {
+            const confirm = window.confirm('Are you sure you want to delete this appointment?\nThis action cannot be undone.');
+            if (confirm) {
+                await axios.delete(`http://localhost:8000/api/appointments/${selectedAppointment.id}/`);
+                handleClose();
+                await fetchEvents();
+                setRenderKey(prevKey => prevKey + 1);
+            }else{
+                return;
+            }
+        } catch (error) {
+            console.error(error);
+        }
     }
 
     // this function checks whether a date is available or not
@@ -35,7 +57,7 @@ const Calendar = () => {
         const currentDate = new Date();
 
         // If the selected date is less than or equal to the current date plus one day, return false
-        if (date <= currentDate) {
+        if (date < currentDate) {
             return false;
         }
 
@@ -49,7 +71,7 @@ const Calendar = () => {
                     const eventDate = new Date(event.date);
                     return eventDate.getFullYear() === year && eventDate.getMonth() + 1 === month && eventDate.getDate() === day;
                 }).length;
-                return filledSlots < capacity.capacity;
+                return filledSlots < capacity.capacity*10;
             }
         }
         return false;
@@ -71,37 +93,63 @@ const Calendar = () => {
                 const YY = info.dateStr.substring(2,4);
                 const hour24 = parseInt(info.dateStr.substring(11,13));
                 const hour12 = hour24 > 12 ? hour24 - 12 : hour24;
-                const TTTT = hour24 >= 12 ? `${hour12.toString().padStart(2, '0')}PM` : `${hour12.toString().padStart(2, '0')}AM`;                const XX = events.filter(event => event.date.toISOString().substring(0,10) === info.dateStr.substring(0,10)).length + 1;
-                const appointmentNumber = `FM${MM}${DD}${YY}-${TTTT}-${XX.toString().padStart(2, '0')}`;
+                const TTTT = hour24 >= 12 ? `${hour12.toString().padStart(2, '0')}PM` : `${hour12.toString().padStart(2, '0')}AM`;
 
-                setSelectedAppointment({
-                    id: 0,
-                    appointmentNumber: appointmentNumber,
-                    patient: {
-                        id: 0,
-                        nameFirst: '',
-                        nameMiddle: '',
-                        nameLast: '',
-                        birthdate: '',
-                        age: '',
-                        sex: '',
-                        civilStatus: '',
-                        hospitalNumber: '',
-                        contact: '',
-                        email: '',
-                        facebookName: '',
-                        address: '',
-                    },
-                    label: '',
-                    date: info.dateStr.substring(0,10),
-                    time: info.dateStr.substring(11,19),
-                    remarks: '',
-                    followup: false,
-                    referralDoctor: '',
-                    newPatient: false
-                })
-                setEditLock(false);
-                setShowAppointmentInfoModal(true);
+                // get capacity for that date
+                const month = info.date.getMonth() + 1;
+                const year = info.date.getFullYear();
+                const capacity = monthlyCapacities.find(capacity => capacity.month === month && capacity.year === year);
+                let appointmentNumber = null;
+
+                for (let i=1; i<=capacity.capacity; i++) {
+                    const XX = i.toString().padStart(2, '0');
+                    const tempAppointmentNumber = `FM${MM}${DD}${YY}-${TTTT}-${XX}`
+                    const existingEvent = events.find(event => event.extendedProps && event.extendedProps.appointmentNumber === tempAppointmentNumber);
+                    if (!existingEvent) {
+                        appointmentNumber = tempAppointmentNumber;
+                        break;
+                    }
+                }
+
+                if (!appointmentNumber) {
+                    alert('Hourly capacity reached');
+                }else {
+                   setSelectedAppointment({
+                                id: null,
+                                appointmentNumber: appointmentNumber,
+                                patient: {
+                                    id: null,
+                                    nameFirst: '',
+                                    nameMiddle: '',
+                                    nameLast: '',
+                                    birthdate: '',
+                                    age: '',
+                                    sex: '',
+                                    civilStatus: '',
+                                    hospitalNumber: '',
+                                    contact: '',
+                                    email: '',
+                                    facebookName: '',
+                                    address: '',
+                                },
+                                label: '',
+                                date: info.dateStr.substring(0,10),
+                                time: info.dateStr.substring(11,19),
+                                remarks: '',
+                                followup: false,
+                                referralDoctor: '',
+                                newPatient: false
+                            })
+                            setEditLock(false);
+                            // remove popover
+                            setTimeout(() => {
+                                const popover = document.querySelector('.fc-more-popover');
+                                if (popover) {
+                                    popover.remove();
+                                }
+                            }, 0);
+                            setShowAppointmentNewModal(true);
+                }
             }
         } else {
             // show a message to the user that the date is not available for new appointments
@@ -109,10 +157,29 @@ const Calendar = () => {
         }
     }
 
-    // when an appointment is clicked, the appointment info is stored in selectedAppointment state
-    // selectedAppointment is then passed to the modal where it can be modified
-    // after saving (thru handleSave), the info of selectedAppointment will be used to update the database
+
+
     const handleAppointmentClick = (info) => {
+        // if the appointment clicked is "add new appointment", then redirect to use the handleDateClick function
+        if (info.event.extendedProps.addNewButton) {
+            // convert into format that handleDateClick can use
+            const date = info.event.start;
+            const year = date.getFullYear();
+            const month = (date.getMonth() + 1).toString().padStart(2, '0');
+            const day = date.getDate().toString().padStart(2, '0');
+            const time = date.getHours().toString().padStart(2, '0');
+            const dateStr = `${year}-${month}-${day}T${time}:00:00+08:00`;
+            const addAppointmentDate = {
+                date: date,
+                dateStr: dateStr
+            }
+            handleDateClick(addAppointmentDate);
+            return;
+        }
+
+        // when an appointment is clicked, the appointment info is stored in selectedAppointment state
+        // selectedAppointment is then passed to the modal where it can be modified
+        // after saving (thru handleSave), the info of selectedAppointment will be used to update the database
         setSelectedAppointment({
             id: info.event.extendedProps.appointmentId,
             appointmentNumber: info.event.extendedProps.appointmentNumber,
@@ -139,47 +206,125 @@ const Calendar = () => {
             referralDoctor: info.event.extendedProps.referralDoctor,
             newPatient: info.event.extendedProps.newPatient
         });
+        // remove popover
+        setTimeout(() => {
+            const popover = document.querySelector('.fc-more-popover');
+            if (popover) {
+                popover.remove();
+            }
+        }, 0);
         setShowAppointmentInfoModal(true);
     }
 
-
-
     const handleSave = async () => {
-        try {
-            // if appointment id is 0, it means it is a new appointment
-                // if patient's hospital number is a valid 6-digit number, it is an old patient
-                    // then find that patient in the database
-                    // use that patient's id for this new appointment
-                // else, it is a new patient (ex: hospital number is just blank)
-                    // then get all patients from the database without a hospital number (new patients)
-                    // if there is a patient with the same firstName, middleName, lastName, and birthdate
-                        // use that patient's id for this new appointment
-                    // else, it is a new patient
-                        // create a new patient in the database
-                        // use that patient's id for this new appointment
-            // having assigned the correct patient id, finally create a new appointment in the database
+            try {
+                const currentApp = selectedAppointment;
+                let currentDate = new Date();
+                const patientList = (await axios.get('http://localhost:8000/api/patients/')).data;
+                const appointmentList = (await axios.get('http://localhost:8000/api/appointments/')).data;
 
-            // if only editing an appointment, update the database
-            
-            await axios
-            .put(`http://localhost:8000/api/patients/${selectedAppointment.patient.id}/`, selectedAppointment.patient)
-            .then(response => {
-                console.log(response);
-            });
+                if (currentApp.id === null) { // for new appointment
 
-            await axios
-            .put(`http://localhost:8000/api/appointments/${selectedAppointment.id}/`, selectedAppointment)
-            .then(response => {
-                console.log(response);
-            });
+                    if (currentApp.newPatient) {
 
-            handleClose();
-            fetchEvents();
-        } catch (error) {
-            alert('cannot save appointment');
-            console.error(error);
-        }
+                        // new patients do not have hospital number
+                        // so full name and birthdate will be used to match
+                        const newPatients = patientList.filter(patient => !patient.hospitalNumber);
+                        const patientMatch = newPatients.find(patient => {
+                            return patient.nameFirst === currentApp.patient.nameFirst &&
+                                patient.nameMiddle === currentApp.patient.nameMiddle &&
+                                patient.nameLast === currentApp.patient.nameLast &&
+                                patient.birthdate === currentApp.patient.birthdate
+                        });
+
+                        if(patientMatch) {
+
+                            // if patient already has an appointment after current time
+                            // 'Patients can only have 1 existing appointment at a time.'
+                            const newPatientAppointmentList = appointmentList.filter(appointment => !appointment.patient.hospitalNumber)
+                            const existingAppointment = newPatientAppointmentList.find(appointment => {
+                                return appointment.patient.nameFirst === currentApp.patient.nameFirst &&
+                                    appointment.patient.nameMiddle === currentApp.patient.nameMiddle &&
+                                    appointment.patient.nameLast === currentApp.patient.nameLast &&
+                                    appointment.patient.birthdate === currentApp.patient.birthdate &&
+                                    new Date(appointment.date) >= currentDate
+                            });
+
+                            if (existingAppointment) {
+                                alert('Cannot make an appointment.\nPatients can only have 1 existing appointment at a time.')
+                                return;
+                            }else {
+                                delete currentApp.id
+                                currentApp.patient = patientMatch;
+                                await axios.post('http://localhost:8000/api/appointments/', currentApp);
+                                console.log('new appointment made for existing new patient')
+                            }
+                        }else {
+
+                            const createNewPatient = window.confirm('Patient not found.\n' +
+                                'Please check your name and birthdate.\n' +
+                                'Do you want to create a new patient instead?')
+                            if (createNewPatient) {
+                                delete currentApp.id
+                                delete currentApp.patient.id
+                                console.log('currentApp.patient:', currentApp.patient);
+                                console.log('currentApp:', currentApp);
+                                const patientResponse = await axios.post('http://localhost:8000/api/patients/', currentApp.patient);
+                                console.log('patientResponse:', patientResponse);
+                                const appointmentResponse = await axios.post('http://localhost:8000/api/appointments/', currentApp);
+                                console.log('appointmentResponse:', appointmentResponse);
+                                console.log('new appointment has been made for new patient');
+                            }else {
+                                return;
+                            }
+
+                        }
+
+                    }else {
+                        // from all existing patients, find a match with exact hospital number
+                        const hospitalNumberMatch = patientList.find(patient => patient.hospitalNumber === currentApp.patient.hospitalNumber);
+                        if (hospitalNumberMatch) {
+
+                            // if patient already has an appointment after current time
+                            // 'Patients can only have 1 existing appointment at a time.'
+                            const existingAppointment = appointmentList.find(appointment => {
+                                return appointment.patient.hospitalNumber === currentApp.patient.hospitalNumber &&
+                                    new Date(appointment.date) >= currentDate
+                            });
+
+                            if (existingAppointment) {
+                                alert('Cannot make an appointment.\nPatients can only have 1 existing appointment at a time.')
+                                return;
+                            }else {
+                                delete currentApp.id
+                                console.log(currentApp)
+                                await axios.post('http://localhost:8000/api/appointments/', currentApp);
+                                console.log('new appointment made for old patient')
+                            }
+
+
+                        }else {
+                            alert(`Patient with hospital number ${currentApp.patient.hospitalNumber} does not exist, please leave blank if new patient.`);
+                            return;
+                        }
+                    }
+                }else { // for updating appointments
+                    const patient = patientList.find(patient => patient.id === currentApp.patient.id);
+                    if (JSON.stringify(patient) !== JSON.stringify(currentApp.patient)) {
+                        await axios.put(`http://localhost:8000/api/patients/${currentApp.patient.id}/`, currentApp.patient);
+                    }
+                    const appointmentResponse = await axios.get(`http://localhost:8000/api/appointments/${currentApp.id}/`);
+                    if (JSON.stringify(appointmentResponse.data) !== JSON.stringify(currentApp)) {
+                        await axios.put(`http://localhost:8000/api/appointments/${currentApp.id}/`, currentApp);
+                    }
+                }
+                await fetchEvents();
+            } catch (error) {
+                console.error(error);
+            }
     };
+
+
 
     // This fetches events from the database and puts it in the state
     const fetchEvents = async () => {
@@ -213,7 +358,9 @@ const Calendar = () => {
                     }
                 };
             });
+            // remove "add appointments button"
             setEvents(appointments);
+            setRenderKey(prevKey => prevKey + 1);
         } catch (error) {
             console.error(error);
         }
@@ -248,10 +395,12 @@ const Calendar = () => {
         <div className="calendar">
             {isLoading ? <div>Loading...</div> : (
                 <FullCalendar
+                key={renderKey}
                 ref={calendarRef}
                 events={events}
                 plugins={[dayGridPlugin, timeGridPlugin, listPlugin, interactionPlugin]}
-                initialView="dayGridMonth"
+                initialView={currentView}
+                initialDate={currentDate}
                 headerToolbar={{
                     left: 'prev,next today',
                     center: 'title',
@@ -291,6 +440,12 @@ const Calendar = () => {
                         }
                     }
                 }}
+                // remove add appointment button when switching views
+                datesSet={(info) => {
+                    setEvents(prevEvents => prevEvents.filter(event => !event.addNewButton))
+                    setCurrentView(info.view.type);
+                    setCurrentDate(info.view.currentStart);
+                }}
                 dateClick={
                     function(info) {
                         if (info.view && info.view.type === 'dayGridMonth' && info.view.calendar) {
@@ -305,9 +460,10 @@ const Calendar = () => {
                     function (info) {
                         const filledSlots = info.num;
 
-                        const date = info.el.closest('.fc-day').dataset.date;
-                        const year = parseInt(date.split('-')[0]);
-                        const month = parseInt(date.split('-')[1]);
+                        const date = new Date(info.el.closest('.fc-day').dataset.date);
+                        const utcDate = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate())).toISOString().split('T')[0];
+                        const year = parseInt(utcDate.split('-')[0]);
+                        const month = parseInt(utcDate.split('-')[1]);
 
                         if (monthlyCapacities) {
                             const capacity = monthlyCapacities.find(capacity => capacity.month === month && capacity.year === year);
@@ -323,25 +479,60 @@ const Calendar = () => {
                         }
                     }
                 }
+                moreLinkClick={
+                    function(info) {
+                        // remove existing appointment buttons
+                        setEvents(prevEvents => {
+                            return prevEvents.filter(event => !event.addNewButton);
+                        });
+
+                        // create a new appointment button that will show up on the popover of the link that was clicked
+
+                        const year = info.date.getFullYear();
+                        const month = (info.date.getMonth() + 1).toString().padStart(2, '0');
+                        const day = info.date.getDate().toString().padStart(2, '0');
+                        const time = info.date.getUTCHours().toString().padStart(2, '0');
+                        const date = `${year}-${month}-${day}T${time}:00:00+08:00`;
+                        const newAppointmentButton = {
+                            title: '+ New Appointment',
+                            start: date,
+                            addNewButton: true,
+                        };
+
+                        // if the date is in timegridweek view &&
+                        // date is available &&
+                        // hour is available
+                            // Add the new appointment button to the events state
+
+                        const capacity = monthlyCapacities.find(capacity => capacity.month === parseInt(month) && capacity.year === year).capacity;
+                        const filled = events.filter(event => {
+                            const eventDate = new Date(event.date);
+                            return eventDate.getHours() === new Date(date).getHours() &&
+                                   eventDate.getDate() === new Date(date).getDate() &&
+                                   eventDate.getMonth() === new Date(date).getMonth() &&
+                                   eventDate.getFullYear() === new Date(date).getFullYear();
+                        }).length;
+
+                        if (info.view.type === 'timeGridWeek' &&
+                            isDateAvailable(new Date(date)) &&
+                            filled < capacity
+                        ) {
+                            setEvents(prevEvents => [...prevEvents, newAppointmentButton]);
+                        }
+                    }
+                }
                 selectAllow={(selectInfo) => {
                     const hour = selectInfo.start.getHours();
                     return hour >= 6 && hour < 18;
                 }}
                 dayCellDidMount={(info) => {
-                    // get the date of the day cell (format: 'yyyy-mm-dd')
-                    const dateStr = info.el.dataset.date;
-                    const date = new Date(dateStr);
-
-                    // get the current date (format: 'yyyy-mm-dd')
-                    const currentDate = new Date();
-                    const currentDateString = currentDate.toISOString().split('T')[0];
-
-                    // call isDateAvailable with the date of the day cell
-                    const isAvailable = isDateAvailable(date);
-
-                    // if the date is not available and it's not the current date, color the day cell red
-                    if (!isAvailable && dateStr !== currentDateString) {
-                        info.el.style.backgroundColor = '#EBEBEB';
+                    // if date is not available set bg to gray
+                    if (!isDateAvailable(info.date)) {
+                        info.el.style.backgroundColor = '#ebebeb';
+                    }
+                    // if date is today set bg to blue
+                    if (info.date.toDateString() === new Date().toDateString()) {
+                        info.el.style.backgroundColor = '#DBEA9A';
                     }
                 }}
                 slotDuration='01:00:00'
@@ -359,6 +550,16 @@ const Calendar = () => {
             )}
             <AppointmentInfoModal
                 show={showAppointmentInfoModal}
+                handleClose={handleClose}
+                appointment={selectedAppointment}
+                setAppointment={setSelectedAppointment}
+                editLock={editLock}
+                handleEditLock={handleEditLock}
+                handleSave={handleSave}
+                handleDelete={handleDelete}
+            />
+            <AppointmentNewModal
+                show={showAppointmentNewModal}
                 handleClose={handleClose}
                 appointment={selectedAppointment}
                 setAppointment={setSelectedAppointment}

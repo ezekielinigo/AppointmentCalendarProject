@@ -19,3 +19,19 @@
 .nav-buttons:hover {
     background-color: #0a5a2c; 
 }
+
+.nav-buttons2 {
+    margin-top: 20px;
+    background-color: #108942;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 5px;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease-in-out;
+    font-size: 20px;
+}
+
+.nav-buttons2:hover {
+    background-color: #0a5a2c; 
+}

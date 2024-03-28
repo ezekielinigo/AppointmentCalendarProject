@@ -38,19 +38,37 @@ class Appointment(models.Model):
 
     # appointment number is auto-generated in format: MMDDYY-TTTT-XX, ex: 123124-01PM-01
     appointmentNumber = models.CharField(max_length=14, editable=False)
+    label = models.CharField(max_length=120, null=True, editable=False)
+
     def save(self, *args, **kwargs):
         # Get the hour and period (AM/PM) from the time formatted as (HH:MM:SS)
-        hour = self.time[0:2]
-        period = 'AM' if int(hour) < 12 else 'PM'
+        hour = int(self.time[0:2])
+        period = 'AM' if hour < 12 else 'PM'
+        hour = hour if hour < 12 else hour - 12
+        hour = 12 if hour == 0 else hour
 
-        # Count the number of appointments for the specific date and time
-        count = Appointment.objects.filter(date=self.date, time=self.time).count()
+        # Get appointments for the specific date and time
+        appointments = Appointment.objects.filter(date=self.date, time=self.time).order_by('appointmentNumber')
+        baseAppointmentNumber = 'FM' + self.date.strftime("%m%d%y") + '-' + str(hour).zfill(2) + period + '-'
+        counter = 1
+
+        # Find missing appointment
+        for appointment in appointments:
+            lastTwoDigits = int(appointment.appointmentNumber[-2:])
+            if lastTwoDigits == counter:
+                counter += 1
+            else:
+                break
 
         # Generate the appointment number
-        self.appointmentNumber = 'FM' + self.date.strftime("%m%d%y") + '-' + hour + period + '-' + str(count + 1).zfill(2)
+        self.appointmentNumber = baseAppointmentNumber + str(counter).zfill(2)
 
         if not self.patient.hospitalNumber:
             self.newPatient = True
+
+        if not self.label:
+            self.label = self.appointmentNumber + ' : ' + self.patient.nameLast + ', ' + self.patient.nameFirst[0] + '.'
+
         super(Appointment, self).save(*args, **kwargs)
 
     def __str__(self):
@@ -62,7 +80,7 @@ class Patient(models.Model):
 
     # in form fill-up, name is split and should be CAPITALIZED
     nameFirst = models.CharField(max_length=120, null=True)
-    nameMiddle = models.CharField(max_length=120, null=True, blank=True)
+    nameMiddle = models.CharField(max_length=120, blank=True)
     nameLast = models.CharField(max_length=120, null=True)
 
     birthdate = models.DateField(default=datetime.date.today)

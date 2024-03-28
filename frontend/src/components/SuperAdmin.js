@@ -4,11 +4,30 @@ import { FormGroup, FormLabel, FormControl } from 'react-bootstrap';
 import { Button } from 'react-bootstrap';
 import './SuperAdmin.css';
 import axios from 'axios';
-
+import { useNavigate } from 'react-router-dom';
+import { getCookie } from './utils/cookie';
 
 import NavBar from "./TopNavBar/AdminNavBar";
 
 function SuperAdmin() {
+    const navigate = useNavigate();
+    const [authenticated, setAuthenticated] = useState(false);
+
+    useEffect(() => {
+        const username = window.prompt('Enter username');
+        const password = window.prompt('Enter password');
+
+        if (username === 'cacsuperadmin' && password === 'superadmin123') {
+            setAuthenticated(true);
+        } else {
+            alert('Invalid credentials');
+            navigate('/'); // Redirect to home page
+        }
+    }, []);
+
+    if (!authenticated) {
+        return null;
+    }
 
     const handleAccountCreation = async() => {
     
@@ -30,16 +49,25 @@ function SuperAdmin() {
             const randomNumber = Math.floor(100000 + Math.random() * 900000);
 
             try { 
-                const response = await axios.post('http://localhost:8000/signup', { 
-                    username: randomNumber, 
-                    password: data.password, 
-                    first_name: data.clinicName, 
-                    last_name: ''
-                });
-
+                const csrftoken = getCookie('csrftoken');
+            
+                const response = await axios.post('http://localhost:8000/signup', 
+                    { 
+                        username: randomNumber, 
+                        password: data.password, 
+                        first_name: data.clinicName, 
+                        last_name: ''
+                    },
+                    {
+                        headers: {
+                            'X-CSRFToken': csrftoken
+                        }
+                    }
+                );
+            
                 if (response.status === 200) {
                     console.log(response);
-                    alert('Account successfully created! You may now log-in.')
+                    alert('Account successfully created for ' + data.clinicName + '. Your clinic id is ' + randomNumber + '. Please login to continue.');
                     window.location.href = '/login/clinic';
                 } else {
                     console.error('Signup failed with status:', response.status);
@@ -47,11 +75,7 @@ function SuperAdmin() {
             } catch (error) {
                 console.error(error);
             }
-
-
         }
-
-       
     }
 
     return (

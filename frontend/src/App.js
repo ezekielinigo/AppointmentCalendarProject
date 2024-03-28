@@ -5,11 +5,13 @@ Modal Component: https://react-bootstrap.netlify.app/docs/components/modal/
 Buttons: https://react-bootstrap.netlify.app/components/buttons/
 Routing: https://semaphoreci.com/blog/routing-layer-react
 User Auth: https://youtu.be/llrIu4Qsl7c?si=ioJtFl2n2GNsgIxH
-
+Context: https://react.dev/reference/react/createContext, https://www.youtube.com/watch?v=sP7ANcTpJr8
+MUI Material: https://mui.com/material-ui/getting-started/
+Session Storage: https://www.w3schools.com/jsref/prop_win_sessionstorage.asp
 */
 
 import './App.css';
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import Calendar from './components/Calendar';
 import { RouterProvider, createBrowserRouter } from 'react-router-dom';
 import LoginClinic from './components/LoginClinic';
@@ -23,12 +25,43 @@ import SuperAdmin from "./components/SuperAdmin";
 import PatientCalendarView from "./components/PatientCalendarView";
 import PatientAppointmentList from "./components/PatientAppointmentList";
 import PatientPersonalInformation from './components/PatientPersonalInformation';
-import LoginSuperAdmin from './components/LoginSuperAdmin';
+import { useState } from 'react';
+
+export const ClinicContext = React.createContext(); // context API for Clinic Login
+export const isClinicLoggedInContext = React.createContext(); 
+
+export const PatientContext = React.createContext(); // context API for Patient Login
+export const isPatientLoggedInContext = React.createContext();
+
+// special declaration since may automated user and pass generation sa patient login
+export const UserPassContext = React.createContext();
 
 function App() {
 
+    // variable declarations for context API Start
+
+    // clinic login
+    const [clinicid, setClinicID] = useState('');
+    const [clinicpassword, setClinicPassword] = useState('');
+    const [isClinicLoggedIn, setIsClinicLoggedIn] = useState(false);
+
+    // patient login
+    const [firstName, setFirstName] = useState('');
+    const [middleName, setMiddleName] = useState('');
+    const [lastName, setLastName] = useState('');
+    const [hospitalNumber, sethospitalNumber] = useState('');
+    const [birthDate, setbirthDate] = useState('');
+    const [isPatientLoggedIn, setIsPatientLoggedIn] = useState(false);
+
+    //special user and pass for patient login
+    const [userPass, setUserPass] = useState({ user: '', pass: '' });
+
+    // variable declarations for context API End
+
+
+    // Router Start
+
     const router = createBrowserRouter([
-        
         {
             path: '',
             element: <LandingPage />
@@ -44,11 +77,6 @@ function App() {
             element: <LoginPatient />
         },
         {
-            path: '/login/superadmin',
-            element: <LoginSuperAdmin />
-        },
-
-        {
             path: '/calendar',
             element: <Calendar />
         },
@@ -56,21 +84,22 @@ function App() {
         // Start Receptionist Page Routes
         {
             path: "/admin-calendar-view",
-            element: <CalendarView />
+            element: isClinicLoggedIn ? <CalendarView /> : <LoginClinic />
+            // check if true ung nasa taas tapos proceed to calendarview, otherwise redirect to login
         },
         {   
             path: "/admin-settings",
-            element: <AdminSettings />
+            element: isClinicLoggedIn ? <AdminSettings /> : <LoginClinic />
 
         },
         {
             path: "/admin-appointments",
-            element: <AdminAppointmentList />
+            element: isClinicLoggedIn ? <AdminAppointmentList /> : <LoginClinic />
         },
     
         {
             path: "/admin-patients",
-            element: <PatientList />
+            element: isClinicLoggedIn ? <PatientList /> : <LoginClinic />
         },
         {
             path: "superadmin",
@@ -83,26 +112,38 @@ function App() {
         
         {
             path: "/patient-calendar-view",
-            element: <PatientCalendarView />
+            element: isPatientLoggedIn ? <PatientCalendarView /> : <LoginPatient />
         },
 
         {
             path: "/patient-personal-info",
-            element: <PatientPersonalInformation />
+            element: isPatientLoggedIn ? <PatientPersonalInformation /> : <LoginPatient />
         },
 
         { 
             path: "/patient-appointments",
-            element: <PatientAppointmentList />
-        }
+            element: isPatientLoggedIn ? <PatientAppointmentList /> : <LoginPatient />
+        },
+        
         // End Patient Page Routes
 
     ])
-    
-    return (
-        <><RouterProvider router={router}></RouterProvider></>
 
-    );
+    // Router End
+
+    return (
+    <UserPassContext.Provider value={{ userPass, setUserPass }}>
+    <isClinicLoggedInContext.Provider value={{ isClinicLoggedIn, setIsClinicLoggedIn }}>
+        <isPatientLoggedInContext.Provider value={{ isPatientLoggedIn, setIsPatientLoggedIn }}>
+            <ClinicContext.Provider value={{ clinicid, setClinicID, clinicpassword, setClinicPassword }}>
+                <PatientContext.Provider value={{ firstName, setFirstName, middleName, setMiddleName, lastName, setLastName, hospitalNumber, sethospitalNumber, birthDate, setbirthDate }}>
+                    <RouterProvider router={router}>
+                    </RouterProvider>
+                </PatientContext.Provider>
+            </ClinicContext.Provider>
+        </isPatientLoggedInContext.Provider>
+    </isClinicLoggedInContext.Provider></UserPassContext.Provider>
+);
 }
 
 export default App;

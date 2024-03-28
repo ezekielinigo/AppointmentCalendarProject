@@ -1,24 +1,106 @@
 import './LoginPatient.css';
 import React, { useState, useEffect } from 'react';
 import axios from "axios";
-import FormInput from './FormInput'; // Import the FormInput component
+import Switch from '@mui/material/Switch';
+import { FormGroup, FormLabel, FormControl} from 'react-bootstrap';
+import { styled } from '@mui/material/styles';
+import LandingNavBar from './LandingNavBar';
+import Button from '@mui/material/Button';
+import patient from '../assets/patient.png';
+import { Link } from 'react-router-dom';
 import PathConstants from '../PathConstants';
-import {Link} from 'react-router-dom';
-import Modal from 'react-bootstrap/Modal';
-import background from '../assets/rmc-bg.jpg';
+import { MdKeyboardBackspace } from "react-icons/md";
+import { useContext } from 'react';
+import { PatientContext, isPatientLoggedInContext, UserPassContext } from '../App';
+import { useNavigate } from 'react-router-dom';
+import { getCookie } from './utils/cookie';
 
-import Checkbox, { checkboxClasses } from '@mui/material/Checkbox';
 
-function Login() {
+function LoginPatient() {
 
     const [events, setEvents] = useState([]);
-    const [show, setShow] = useState(true);
     const [hospitalNumberInput, setHospitalNumberInput] = useState(false);
     const [checked, setChecked] = useState(false); // for checkbox
+    const { setUserPass } = useContext(UserPassContext);
+
+    const csrftoken = getCookie('csrftoken');
+    
+    /*
+    
     const [firstName, setFirstName] = useState('');
+    const [middleName, setMiddleName] = useState('');
     const [lastName, setLastName] = useState('');
     const [hospitalNumber, sethospitalNumber] = useState('');
-    const [birthDate, setbirthDate] = useState('');
+    const [birthDate, setbirthDate] = useState(''); 
+    
+    */
+
+    // 
+    const { firstName, setFirstName, 
+        middleName, setMiddleName, 
+        lastName, setLastName, 
+        hospitalNumber, sethospitalNumber, 
+        birthDate, setbirthDate } = useContext(PatientContext);
+
+    const { isPatientLoggedIn, setIsPatientLoggedIn } = useContext(isPatientLoggedInContext);
+    const navigate = useNavigate();
+    
+    useEffect(() => {
+        const isLoggedIn = sessionStorage.getItem('isPatientLoggedIn');
+
+        if (isLoggedIn) {
+            setIsPatientLoggedIn(true);
+            navigate(PathConstants.PATIENTCALENDAR);
+        }
+    }, [navigate, setIsPatientLoggedIn]);
+
+    // 
+
+    const GreenSwitch = styled(Switch)(({ theme }) => ({
+        width: 42,
+        height: 26,
+        padding: 0,
+        '& .MuiSwitch-switchBase': {
+          padding: 0,
+          margin: 2,
+          transitionDuration: '300ms',
+          '&.Mui-checked': {
+            transform: 'translateX(16px)',
+            color: '#fff',
+            '& + .MuiSwitch-track': {
+              backgroundColor: theme.palette.mode === 'dark' ? '#2ECA45' : '#65C466',
+              opacity: 1,
+              border: 0,
+            },
+            '&.Mui-disabled + .MuiSwitch-track': {
+              opacity: 0.5,
+            },
+          },
+          '&.Mui-focusVisible .MuiSwitch-thumb': {
+            color: '#108942',
+            border: '6px solid #fff',
+          },
+          '&.Mui-disabled .MuiSwitch-thumb': {
+            color: '#108942',
+          },
+          '&.Mui-disabled + .MuiSwitch-track': {
+            opacity: theme.palette.mode === 'light' ? 0.7 : 0.3,
+          },
+        },
+        '& .MuiSwitch-thumb': {
+          boxSizing: 'border-box',
+          width: 22,
+          height: 22,
+        },
+        '& .MuiSwitch-track': {
+          borderRadius: 26 / 2,
+          backgroundColor: theme.palette.mode === 'light' ? '#E9E9EA' : '#39393D',
+          opacity: 1,
+          transition: theme.transitions.create(['background-color'], {
+            duration: 500,
+          }),
+        },
+      }));
 
     // simple encryption function
     const shiftChar = (char) => {
@@ -31,10 +113,14 @@ function Login() {
     const validateEntry = async () => {
         const patient = {
             nameFirst: firstName,
+            nameMiddle: middleName,
             nameLast: lastName,
             birthdate: birthDate,
             hospitalNumber: hospitalNumber
         };
+
+        // alert for above
+        alert(patient.nameFirst + " " + patient.nameLast + " " + patient.birthdate + " " + patient.hospitalNumber)
 
         //alert(patient.birthdate + " " + patient.hospitalNumber + " " + patient.nameFirst + " " + patient.nameLast)
         
@@ -42,40 +128,73 @@ function Login() {
             // session auth/token mechanism to
 
             // basically pre-defined username for the user using some of the details
-            const user = (patient.nameFirst.slice(0, 2) + patient.nameLast.slice(0, 2) + patient.birthdate.replace(/-/g, '') + patient.hospitalNumber.slice(-4)).slice(0, 10);
-
+            const user = (patient.nameFirst.slice(0, 4) + patient.nameMiddle.slice(0, 2) + patient.nameLast.slice(0, 4) + patient.birthdate.replace(/-/g, '')).slice(0, 10);
             // password mula sa deets pero may shiftChar function para ma-encrypt
             const pass = (patient.nameLast.slice(-2) + patient.nameFirst.slice(0, 2) + patient.birthdate.replace(/-/g, '') + patient.nameLast + patient.nameFirst).split('').map(shiftChar).join('').slice(0, 10);
-            alert (pass);
+            
+            setUserPass({ user, pass });
+            
+            //alert (pass);
             //alert (user + " " + pass) // pang-debug since ayaw gumana ng tokenizing mechanism kanina
 
-            // ito yung gumanang tokenizing mechanism
+        // ito yung gumanang tokenizing mechanism
 
-            // 1. attempt sign-up
-            const response = await axios.post('http://localhost:8000/signup', { username: user, password: pass, first_name: patient.nameFirst, last_name: patient.nameLast });
-            
-            // 2. basically status = 200 means na may existing username na sa database kaya login na  
-            if (response.status === 200) {
-                const login = await axios.post('http://localhost:8000/login', { username: user, password: pass, first_name: patient.nameFirst, last_name: patient.nameLast });
-                console.log(login);
+        // 1. attempt sign-up
+        const response = await axios.post('http://localhost:8000/signup', 
+            { username: user, password: pass, first_name: patient.nameFirst, last_name: patient.nameLast },
+            {
+                headers: {
+                    'X-CSRFToken': csrftoken
+                }
             }
-
-            // 3. other than 200, sign-up then login
-
-            else {
-                const signup = await axios.post('http://localhost:8000/signup', { username: user, password: pass, first_name: patient.nameFirst, last_name: patient.nameLast })
-                console.log(signup);
-                const login = await axios.post('http://localhost:8000/login', { username: user, password: pass, first_name: patient.nameFirst, last_name: patient.nameLast });
-                console.log(login);
-            } 
-
-            
-           
-         } 
-
-        catch (error) {
-            console.error(error);
+        );
+        
+        // 2. basically status = 200 means na may existing username na sa database kaya login na  
+        if (response.status === 200) {
+            const login = await axios.post('http://localhost:8000/login', 
+                { username: user, password: pass, first_name: patient.nameFirst, last_name: patient.nameLast },
+                {
+                    headers: {
+                        'X-CSRFToken': csrftoken
+                    }
+                }
+            );
+            console.log(login);
+            sessionStorage.setItem('isPatientLoggedIn', true);
+            navigate(PathConstants.PATIENTCALENDAR);
         }
+
+        // 3. other than 200, sign-up then login
+        else {
+            const signup = await axios.post('http://localhost:8000/signup', 
+                { username: user, password: pass, first_name: patient.nameFirst, last_name: patient.nameLast },
+                {
+                    headers: {
+                        'X-CSRFToken': csrftoken
+                    }
+                }
+            );
+            console.log(signup);
+
+            const login = await axios.post('http://localhost:8000/login', 
+                { username: user, password: pass, first_name: patient.nameFirst, last_name: patient.nameLast },
+                {
+                    headers: {
+                        'X-CSRFToken': csrftoken
+                    }
+                }
+            );
+            console.log(login);
+            sessionStorage.setItem('isPatientLoggedIn', true);
+            navigate(PathConstants.PATIENTCALENDAR);
+        } 
+    } 
+
+    catch (error) {
+        console.error(error);
+        alert(error);
+        alert('Login Failed! Please check your Patient ID and Password.');
+    }
         
     }
 
@@ -111,8 +230,6 @@ function Login() {
             alert("Please fill out all the fields.");
         } 
 
-        
-
         else {
             for (let i = 0; i < events.length; i++) {
 
@@ -135,6 +252,14 @@ function Login() {
                     alert('Patient found! Hospital number does not match. Please check your inputs.');
                     return;
                 } 
+
+                else if (events[i].extendedProps.nameFirst === firstName && 
+                    events[i].extendedProps.nameLast === lastName && 
+                    events[i].extendedProps.birthdate !== birthDate) {
+                    alert('Patient found! Birthday does not match. Please check your inputs.');
+                    return;
+                }
+
             }
 
             if (window.confirm("Patient not found. Do you want to register as a new patient?")) {
@@ -183,64 +308,102 @@ function Login() {
 
     return (
         <>
-        <img src={background} alt='background' className='bg' style={{ 
-            width: '100%', // trying to refactor sa .css but i'm not sure how, kaya rito na lang muna
-            height: '100%', 
-            objectFit: 'cover', 
-            objectPosition: 'center', 
-            backgroundRepeat: 'no-repeat', 
-            backgroundAttachment: 'fixed', 
-        }} />
-        
-
-        <Modal class = 'login-modal' size='lg' aria-labelledby='contained-modal-title-vcenter' centered='true' backdrop='static' show={show} onHide={() => setShow(false)} keyboard={false}> 
-            <div className = "login-container">
-            <div className="login-header">
-                <img src={require("../assets/hospital-logo.png")} alt="Hospital Logo" className="hospital-logo" />
-            </div>
-            <h1 className="login-title">Please enter the following:</h1>
-             
-            <div className="login-pane">
+        <div class = 'LoginPatient'>
+        <LandingNavBar/>
+            <div class = 'login-wrapper'>
+            <div class="login-pane">
+            <img class='patient-img2' src={patient} alt='patient image' />
+                <h1 className="login-title">I am a</h1>
+                <h1 className="login-title2">PATIENT</h1>
                 <form className="login-form">
-                <h3> Are you a new patient? <Checkbox  
-                onChange={handleHospitalBox}
-                checked={checked}> </Checkbox></h3>
-                    <h3 className="login-title">Name</h3>
-                   
-                    <div class = 'name-div'> 
-                   
-                    <FormInput type="text" placeholder="First Name" name="first-name" className="user-field"
-                    value = {firstName} // set ung variable firstName, tas setFirstName ung function na magse-set ng value
-                    onChange={(e) => setFirstName(e.target.value)} /> 
+                    <div className="form-and-names-container">
+                        <FormGroup>
+                            <FormLabel class='label'>First Name</FormLabel>
+                            <div className='name-div'>
+                                <FormControl
+                                    type="text"
+                                    placeholder="First Name"
+                                    value={firstName}
+                                    onChange={(e) => setFirstName(e.target.value)}
+                                />
+                                <FormLabel class='label'>Middle Name</FormLabel>
+                                <FormControl
+                                    type="text"
+                                    placeholder="Middle Name"
+                                    value={middleName}
+                                    onChange={(e) => setMiddleName(e.target.value)}
+                                />
+                                <FormLabel class='label'>Last Name</FormLabel>
+                                <FormControl
+                                    type="text"
+                                    placeholder="Last Name"
+                                    value={lastName}
+                                    onChange={(e) => setLastName(e.target.value)}
+                                />
+                            </div>
+                        </FormGroup>
 
-                    <FormInput type="text" placeholder="Last Name" name="last-name" className="user-field" 
-                    value = {lastName}
-                    onChange={(e) => setLastName(e.target.value)}/>
+                        <div className="form-group-container">
+                            <FormGroup>
+                                <FormLabel class='label'>Birthday</FormLabel>
+                                <FormControl
+                                    type="date"
+                                    placeholder="Birthday"
+                                    value={birthDate}
+                                    onChange={(e) => setbirthDate(e.target.value)}
+                                />
+                            </FormGroup>
+
+                            <FormGroup>
+                                <FormLabel class='label'>Hospital Number</FormLabel>
+                                <FormControl
+                                    type="text"
+                                    placeholder="Hospital Number"
+                                    value={hospitalNumber}
+                                    onChange={(e) => sethospitalNumber(e.target.value)}
+                                    disabled={hospitalNumberInput}
+                                />
+                            </FormGroup>
+
+                            <FormGroup>
+                                <FormLabel className='label'>I am a new patient</FormLabel>
+                                <div className='switch-button-container'>
+                                    <GreenSwitch
+                                        onChange={handleHospitalBox}
+                                        checked={checked}
+                                    />
+                                </div>
+                            </FormGroup>
+                           
+                        </div>
                     </div>
-
-                    <h3 className="login-title">Birthday</h3>
-                    <FormInput type="date" placeholder="Birthday" name="birthday" className="user-field" 
-                    value = {birthDate}
-                    onChange={(e) => setbirthDate(e.target.value)}/>
-
-                    <h3 className="login-title">Hospital Number</h3>
-                    <FormInput type="text" placeholder="Hospital Number" name="hospital-number" className="user-field" 
-                    value={hospitalNumber}
-                    onChange={(e) => sethospitalNumber(e.target.value)}
-                    disabled={hospitalNumberInput}
                     
-                     />
-                    
-                    <div className="button-container">
-                        <button type="submit" className="login-button" onClick = {handleValidation}>Proceed</button>
-                    </div>
+
+                    <Button 
+                        type="submit" 
+                        className="login-button"
+                        onClick={handleValidation}
+                        variant="contained" 
+                        color="success"
+                        style={{marginTop: '2vh'}} // Adds a top margin of 5px
+                    >
+                        PROCEED
+                    </Button>
                 </form>
-                
+                <Link to={PathConstants.LANDING}>  <p style = {{
+                            color: 'Green',
+                            fontSize: '2vh',
+                            marginTop: '1vh',
+                            marginLeft: '1.2vh'
+                       
+                        }}> <MdKeyboardBackspace /> Go back  </p> </Link> 
             </div>
             </div>
-        </Modal>
+            </div>
+            
+            
         </>
     );
 }
 
-export default Login;
+export default LoginPatient;
