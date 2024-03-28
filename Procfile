@@ -1,2 +1,1 @@
-web: gunicorn AppointmentCalendarProject:app
-
+web: gunicorn AppointmentCalendarProject.wsgi --log-file -
