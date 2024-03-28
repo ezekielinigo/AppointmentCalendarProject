@@ -82,6 +82,12 @@
     margin-left: 6vw;
 }
 
+.patient-img3 {
+    width: 45%;
+    height: 45%;
+    margin-left: 1vw;
+}
+
 .doctor-img {
     width: 65%;
     height: 65%;
@@ -90,8 +96,6 @@
 }
 
 .LandingPage, .LoginClinic, .LoginPatient {
-    /* Other styles... */
-
     background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('../assets/rmc-bg.jpg');
     background-size: cover;
     background-position: center;

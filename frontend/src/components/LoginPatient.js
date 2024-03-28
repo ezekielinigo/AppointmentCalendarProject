@@ -23,7 +23,7 @@ function LoginPatient() {
     const [hospitalNumberInput, setHospitalNumberInput] = useState(false);
     const [checked, setChecked] = useState(false); // for switch
     const { setUserPass } = useContext(UserPassContext);
-
+    
     const csrftoken = getCookie('csrftoken');
     
     /*
@@ -37,11 +37,19 @@ function LoginPatient() {
     */
 
     // logged in checker
-    const { firstName, setFirstName, 
+    const { 
+        firstName, setFirstName, 
         middleName, setMiddleName, 
         lastName, setLastName, 
         hospitalNumber, sethospitalNumber, 
-        birthDate, setbirthDate } = useContext(PatientContext);
+        birthDate, setbirthDate,
+        sex, setSex,
+        civilStatus, setCivilStatus,
+        email, setEmail,
+        facebookName, setFacebookName,
+        contactNumber, setContactNumber,
+        address, setAddress
+    } = useContext(PatientContext);
 
     const { isPatientLoggedIn, setIsPatientLoggedIn } = useContext(isPatientLoggedInContext);
     const navigate = useNavigate();
@@ -145,7 +153,7 @@ function LoginPatient() {
 
         // 1. attempt sign-up
         const response = await axios.post('http://localhost:8000/signup', 
-            { username: user, password: pass, first_name: patient.nameFirst, last_name: patient.nameLast },
+            { username: user, password: pass, first_name: firstName, last_name: lastName },
             {
                 headers: {
                     'X-CSRFToken': csrftoken
@@ -267,7 +275,7 @@ function LoginPatient() {
             }
 
             if (window.confirm("Patient not found. Do you want to register as a new patient?")) {
-                handleSignUp();
+                handleSignUpModal();
                 return;
             }
 
@@ -295,8 +303,8 @@ function LoginPatient() {
                 } 
             }
 
-            if (window.confirm("Do you want to register as a new patient?")) {
-                handleSignUp();
+            if (window.confirm("You are registering as a new patient. Please fill in all the required details on the pop-up. Do you want to proceed?")) {
+                handleSignUpModal();
                 return;
             }
 
@@ -305,26 +313,18 @@ function LoginPatient() {
         
     }
 
-    const handleSignUp = async () => {
-        const patientNew = {
-            nameFirst: firstName,
-            nameMiddle: middleName,
-            nameLast: lastName,                   
-            birthdate: birthDate,
-        };
-
-        alert(patientNew.nameFirst + " " + patientNew.nameLast + " " + patientNew.birthdate)
+    const handleSignUpModal = async () => { // for new patient modal pop-up
+        setShowModal(true);
         
-        const user = (patientNew.nameFirst.slice(0, 4) + patientNew.nameMiddle.slice(0, 2) + patientNew.nameLast.slice(0, 4) + patientNew.birthdate.replace(/-/g, '')).slice(0, 10);
+    }
+
+    const handleProceedSignUp = async () => {
+
+        const user = (firstName.slice(0, 4) + middleName.slice(0, 2) + lastName.slice(0, 4) + birthDate.replace(/-/g, '')).slice(0, 10);
             // password mula sa deets pero may shiftChar function para ma-encrypt
-        const pass = (patientNew.nameLast.slice(-2) + patientNew.nameFirst.slice(0, 2) + patientNew.birthdate.replace(/-/g, '') + patientNew.nameLast + patientNew.nameFirst).split('').map(shiftChar).join('').slice(0, 10);
+        const pass = (lastName.slice(-2) + firstName.slice(0, 2) + birthDate.replace(/-/g, '') + lastName + firstName).split('').map(shiftChar).join('').slice(0, 10);
         
         setUserPass({ user, pass });
-
-        setShowModal(true);
-        // alert('gumagana ba'); // for debugging purposes
-
-        /*
         try {
             const response = await axios.post('http://localhost:8000/signup', 
             { username: user, password: pass, first_name: patient.nameFirst, last_name: patient.nameLast },
@@ -335,22 +335,37 @@ function LoginPatient() {
             }
         );
 
-        const createNewPatient = await axios.post('http://localhost:8000/api/patients/', {
-            nameFirst: patientNew.nameFirst,
-            nameMiddle: patientNew.nameMiddle,
-            nameLast: patientNew.nameLast,
-            birthdate: patientNew.birthdate,
-            sex: "",
-            civilStatus: "",
-            hospitalNumber: "",
-            contact: "",
-            email: "test@mail.com",
-            facebookName: "",
-            address: "",
-        });
-
         if (response.status === 200) {
-            createNewPatient();
+            const newPatientInformation = {
+                nameFirst: firstName,
+                nameMiddle: middleName,
+                nameLast: lastName,
+                birthdate: birthDate,
+                gender: sex,
+                civilStats: civilStatus,
+                contact: contactNumber,
+                emailAddress: email,
+                facebook: facebookName,
+                homeAddress: address,
+            }
+    
+            alert(newPatientInformation.nameFirst + " " + newPatientInformation.nameMiddle + " " + 
+            newPatientInformation.nameLast + " " + newPatientInformation.birthdate + " " + newPatientInformation.gender + " " + newPatientInformation.civilStats + " " +
+            newPatientInformation.contact + " " + newPatientInformation.emailAddress + " " + newPatientInformation.facebook + " " + newPatientInformation.homeAddress);
+
+            await axios.post('http://localhost:8000/api/patients/', {
+            nameFirst: newPatientInformation.nameFirst,
+            nameMiddle: newPatientInformation.nameMiddle,
+            nameLast: newPatientInformation.nameLast,
+            birthdate: newPatientInformation.birthdate,
+            sex: newPatientInformation.gender,
+            civilStatus: newPatientInformation.civilStats,
+            hospitalNumber: '',
+            contact: newPatientInformation.contact,
+            email: newPatientInformation.emailAddress,
+            facebookName: newPatientInformation.facebook,
+            address: newPatientInformation.homeAddress,
+        });
             alert('Patient registered successfully! Redirecting to patient page...');
             const login = await axios.post('http://localhost:8000/login', 
                 { username: user, password: pass },
@@ -367,9 +382,11 @@ function LoginPatient() {
         }
         catch (error) {
             console.error(error);
+            alert(error);
             alert('Something went wrong during sign-up. Please try again.');
         }
-        */
+            
+
     }
 
     const handleHospitalBox = (event) => {
@@ -377,112 +394,60 @@ function LoginPatient() {
         setChecked(event.target.checked); // for checkbox
     };
 
-    /*
-    <Modal > 
-    <div class = 'container'>
-        <FormGroup> 
+    const [age, setAge] = useState(null);
 
-        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-            <div style={{ width: '45%' }}>
-            <FormLabel>First Name</FormLabel>
-            <FormControl id = 'nameFirst' type="text" readOnly value={nameFirst}/>
+    const calculateAge = (birthDate) => {
+      const today = new Date();
+      const birthDateObj = new Date(birthDate);
+      let age = today.getFullYear() - birthDateObj.getFullYear();
+      const m = today.getMonth() - birthDateObj.getMonth();
+      if (m < 0 || (m === 0 && today.getDate() < birthDateObj.getDate())) {
+        age--;
+      }
+      return age;
+    };
 
-            <FormLabel>Middle Name</FormLabel>
-            <FormControl id = 'nameMiddle' type="text" readOnly value={nameMiddle}/>
+    useEffect(() => {
+        setAge(calculateAge(birthDate));
+      }, [birthDate]);
+    
+    return (
+        <>
 
-            <FormLabel>Last Name</FormLabel>
-            <FormControl id = 'nameLast' type="text" readOnly value={nameLast}/>
-
-            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                <div style={{ width: '60%' }}>
-                    <FormLabel>Birthdate</FormLabel>
-                    <FormControl id='birthdate' type='date' readOnly value={birthdate} onChange={(e) => setBirthdate(e.target.value)} />
-                </div>
-                <div style={{ width: '35%' }}>
-                    <FormLabel>Age</FormLabel>
-                    <FormControl id='age' type='number' value={age} readOnly />
-                </div>
-            </div>
-
-            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                <div style={{ width: '45%' }}>
-                    <FormLabel>Sex</FormLabel>
-                    <FormControl as="select" id='sex'>
-                        <option value=''>Select...</option>
-                        <option value='MALE'>MALE</option>
-                        <option value='FEMALE'>FEMALE</option>
-                    </FormControl>
-                </div>
-                <div style={{ width: '45%' }}>
-                    <FormLabel>Civil Status</FormLabel>
-                    <FormControl as="select" id='civilStatus' value={civilStatus}>
-                        <option value=''>Select...</option>
-                        <option value='SINGLE'>SINGLE</option>
-                        <option value='MARRIED'>MARRIED</option>
-                        <option value='WIDOWED'>WIDOWED</option>
-                        <option value='SEPARATED'>SEPARATED</option>
-                    </FormControl>
-                </div>
-            </div>
-            </div>
-            <div style={{ width: '45%' }}>
-                <FormLabel>Hospital Number</FormLabel>
-                <FormControl id='hospitalNumber' type="number" readOnly value={hospitalNumber}/>
-
-                <FormLabel>Email</FormLabel>
-                <FormControl id='email' type="text" value={email}/>
-
-                <FormLabel>Facebook Name</FormLabel>
-                <FormControl id='facebookName' type="text" value={facebookName}/>
-
-                <FormLabel>Contact No.</FormLabel>
-                <FormControl id='contactNumber' type='number' value={contactNumber} style={{ 
-                    '-moz-appearance': 'textfield', 
-                    'appearance': 'textfield' 
-                }} onWheel={(e) => e.preventDefault()} />
-                <style jsx>{`
-                    input::-webkit-outer-spin-button,
-                    input::-webkit-inner-spin-button {
-                        -webkit-appearance: none;
-                        margin: 0;
-                `}</style>
-                <FormLabel>Address</FormLabel>
-                <FormControl id='address' as='textarea' rows='3' value={address} />
-            </div>
-        </div>
-            
-        </FormGroup>
-    </div></Modal> */
-
-    <Modal show = {showModal} >
+<Modal class = 'newPatientModal' show = {showModal}
+    onHide = {() => setShowModal(false)}
+     >
         <div class='container'>
+        <img class='patient-img3' src={patient} alt='patient clipart' />
+                <h1 className="modal-new-patient1">I am a</h1>
+                <h1 className="modal-new-patient2">NEW PATIENT</h1>
             <FormGroup>
                 <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                     <div style={{ width: '45%' }}>
                         <FormLabel>First Name</FormLabel>
-                        <FormControl id='nameFirst' type="text" readOnly />
+                        <FormControl id='nameFirst' type="text" readOnly value = {firstName}/>
 
                         <FormLabel>Middle Name</FormLabel>
-                        <FormControl id='nameMiddle' type="text" readOnly />
+                        <FormControl id='nameMiddle' type="text" readOnly value = {middleName} />
 
                         <FormLabel>Last Name</FormLabel>
-                        <FormControl id='nameLast' type="text" readOnly />
+                        <FormControl id='nameLast' type="text" readOnly value = {lastName}/>
 
                         <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                             <div style={{ width: '60%' }}>
                                 <FormLabel>Birthdate</FormLabel>
-                                <FormControl id='birthdate' type='date' readOnly onChange={(e) => setbirthDate(e.target.value)} />
+                                <FormControl id='birthdate' type='date' value = {birthDate} readOnly onChange={(e) => setbirthDate(e.target.value)} />
                             </div>
                             <div style={{ width: '35%' }}>
                                 <FormLabel>Age</FormLabel>
-                                <FormControl id='age' type='number' readOnly />
+                                <FormControl id='age' type='number' value = {age} readOnly />
                             </div>
                         </div>
 
                         <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                             <div style={{ width: '45%' }}>
                                 <FormLabel>Sex</FormLabel>
-                                <FormControl as="select" id='sex'>
+                                <FormControl as="select" id='sex' onChange={(e) => setSex(e.target.value)} >
                                     <option value=''>Select...</option>
                                     <option value='MALE'>MALE</option>
                                     <option value='FEMALE'>FEMALE</option>
@@ -490,7 +455,7 @@ function LoginPatient() {
                             </div>
                             <div style={{ width: '45%' }}>
                                 <FormLabel>Civil Status</FormLabel>
-                                <FormControl as="select" id='civilStatus'>
+                                <FormControl as="select" id='civilStatus' onChange={(e) => setCivilStatus(e.target.value)} >
                                     <option value=''>Select...</option>
                                     <option value='SINGLE'>SINGLE</option>
                                     <option value='MARRIED'>MARRIED</option>
@@ -505,13 +470,13 @@ function LoginPatient() {
                         <FormControl id='hospitalNumber' type="number" readOnly />
 
                         <FormLabel>Email</FormLabel>
-                        <FormControl id='email' type="text" />
+                        <FormControl id='email' type="text" onChange={(e) => setEmail(e.target.value)} />
 
                         <FormLabel>Facebook Name</FormLabel>
-                        <FormControl id='facebookName' type="text" />
+                        <FormControl id='facebookName' type="text" onChange={(e) => setFacebookName(e.target.value)} />
 
                         <FormLabel>Contact No.</FormLabel>
-                        <FormControl id='contactNumber' type='number' style={{
+                        <FormControl id='contactNumber' type='number' onChange={(e) => setContactNumber(e.target.value)} style={{
                             '-moz-appearance': 'textfield',
                             'appearance': 'textfield'
                         }} onWheel={(e) => e.preventDefault()} />
@@ -522,15 +487,23 @@ function LoginPatient() {
                                 margin: 0;
                         `}</style>
                         <FormLabel>Address</FormLabel>
-                        <FormControl id='address' as='textarea' rows='3' />
+                        <FormControl id='address' as='textarea' rows='3' onChange={(e) => setAddress(e.target.value)} />
                     </div>
                 </div>
             </FormGroup>
+            <Button 
+                        type="submit" 
+                        className="login-button"
+                        onClick={handleProceedSignUp}
+                        variant="contained" 
+                        color="success"
+                        style={{marginTop: '2vh', marginBottom: '2vh'}}
+                    >
+                        PROCEED TO SIGN UP
+                    </Button>
         </div>
     </Modal>
 
-    return (
-        <>
         <div class = 'LoginPatient'>
         <LandingNavBar/>
             <div class = 'login-wrapper'>
