@@ -47,6 +47,26 @@ class AppointmentSerializer(serializers.ModelSerializer):
             patient = patient_serializer.save()
             return Appointment.objects.create(patient=patient, **validated_data)
 
+    def update(self, instance, validated_data):
+        # Update the Patient instance
+        patient_data = validated_data.pop('patient', None)
+        if patient_data is not None:
+            patient_serializer = PatientSerializer(instance.patient, data=patient_data, partial=True)
+            if patient_serializer.is_valid(raise_exception=True):
+                patient_serializer.save()
+
+        # Update the Appointment instance
+        instance.appointmentNumber = validated_data.get('appointmentNumber', instance.appointmentNumber)
+        instance.date = validated_data.get('date', instance.date)
+        instance.time = validated_data.get('time', instance.time)
+        instance.remarks = validated_data.get('remarks', instance.remarks)
+        instance.followup = validated_data.get('followup', instance.followup)
+        instance.referralDoctor = validated_data.get('referralDoctor', instance.referralDoctor)
+        instance.newPatient = validated_data.get('newPatient', instance.newPatient)
+        instance.save()
+
+        return instance
+
 class SettingSerializer(serializers.ModelSerializer):
     class Meta:
         model = Setting

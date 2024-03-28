@@ -23,7 +23,7 @@ const AppointmentNewModal = ({show, handleClose, appointment, setAppointment, ha
         const hospitalNumber = appointment.patient.hospitalNumber;
         if (hospitalNumber === '' && !isNewPatient) {
             alert('Please enter hospital number');
-        } else if (!/^\d{6}$/.test(hospitalNumber)) {
+        } else if (!/^\d{6}$/.test(hospitalNumber) && !isNewPatient) {
             alert('Hospital number must be 6 digits numeric only');
         } else {
             try {
@@ -73,7 +73,7 @@ const AppointmentNewModal = ({show, handleClose, appointment, setAppointment, ha
                 onClick={async () => {
                     if (appointment.patient.hospitalNumber === '' && !isNewPatient) {
                         alert('Please enter hospital number');
-                    } else if (!/^\d{6}$/.test(appointment.patient.hospitalNumber)) {
+                    } else if (!/^\d{6}$/.test(appointment.patient.hospitalNumber) && !isNewPatient) {
                         alert('Hospital number must be 6 digits numeric only');
                     }else {
                         await handleSave();
@@ -265,6 +265,7 @@ const AppointmentNewModal = ({show, handleClose, appointment, setAppointment, ha
                                             if (e.target.checked) {
                                                 setAppointment({
                                                     ...appointment,
+                                                    newPatient: true,
                                                     patient: {
                                                         id: 0,
                                                         nameFirst: '',
@@ -281,6 +282,11 @@ const AppointmentNewModal = ({show, handleClose, appointment, setAppointment, ha
                                                         address: ''
                                                     }
                                                 });
+                                            }else {
+                                                setAppointment({
+                                                    ...appointment,
+                                                    newPatient: false
+                                                })
                                             }
                                             setIsNewPatient(e.target.checked)
                                         }}

@@ -39,8 +39,8 @@ const Calendar = () => {
             if (confirm) {
                 await axios.delete(`http://localhost:8000/api/appointments/${selectedAppointment.id}/`);
                 handleClose();
-
                 await fetchEvents();
+                setRenderKey(prevKey => prevKey + 1);
             }else{
                 return;
             }
@@ -96,10 +96,12 @@ const Calendar = () => {
                 const TTTT = hour24 >= 12 ? `${hour12.toString().padStart(2, '0')}PM` : `${hour12.toString().padStart(2, '0')}AM`;
 
                 // get capacity for that date
-                const capacity = 5;
+                const month = info.date.getMonth() + 1;
+                const year = info.date.getFullYear();
+                const capacity = monthlyCapacities.find(capacity => capacity.month === month && capacity.year === year);
                 let appointmentNumber = null;
 
-                for (let i=1; i<=capacity; i++) {
+                for (let i=1; i<=capacity.capacity; i++) {
                     const XX = i.toString().padStart(2, '0');
                     const tempAppointmentNumber = `FM${MM}${DD}${YY}-${TTTT}-${XX}`
                     const existingEvent = events.find(event => event.extendedProps && event.extendedProps.appointmentNumber === tempAppointmentNumber);
@@ -215,47 +217,105 @@ const Calendar = () => {
     }
 
     const handleSave = async () => {
-
-        // if the appointment id is 0, it means new appointment will be made
-            // if patient has hospital number
-                // then check if a patient matches the hospital number
-                // if patient exists
-                    // then set that patient's id for this appointment
-                // if patient does not exist
-                    // then error 'Patient with hospital number XXXXXX does not exist, please leave blank if new patient.'
-            // if patient does not have hospital number or hospital number is blank
-                // then check if a patient matches the name and birthdate
-                    // if patient exists
-                        // then set that patient's id for this appointment
-                    // if patient does not exist
-                        // then create a new patient
-                        // then set the new patient's id for this appointment
-            // then create a new appointment
-        // if the appointment id is not 0, it means an existing appointment will be updated
-            // if patient information is changed
-                // then update the patient information
-            // if appointment information is changed
-                // then update the appointment information
-
             try {
-                const response = await axios.get('http://localhost:8000/api/patients/');
-                if (selectedAppointment.id === null) {
-                    console.log('actual: ', selectedAppointment);
-                    const appointment = {
-                        ...selectedAppointment,
-                    };
-                    delete appointment.id;
-                    console.log('appointment id: ', appointment.appointmentNumber)
-                    await axios.post('http://localhost:8000/api/appointments/', appointment);
+                const currentApp = selectedAppointment;
+                let currentDate = new Date();
+                const patientList = (await axios.get('http://localhost:8000/api/patients/')).data;
+                const appointmentList = (await axios.get('http://localhost:8000/api/appointments/')).data;
 
-                } else {
-                    const patient = response.data.find(patient => patient.id === selectedAppointment.patient.id);
-                    if (JSON.stringify(patient) !== JSON.stringify(selectedAppointment.patient)) {
-                        await axios.put(`http://localhost:8000/api/patients/${selectedAppointment.patient.id}/`, selectedAppointment.patient);
+                if (currentApp.id === null) { // for new appointment
+
+                    if (currentApp.newPatient) {
+
+                        // new patients do not have hospital number
+                        // so full name and birthdate will be used to match
+                        const newPatients = patientList.filter(patient => !patient.hospitalNumber);
+                        const patientMatch = newPatients.find(patient => {
+                            return patient.nameFirst === currentApp.patient.nameFirst &&
+                                patient.nameMiddle === currentApp.patient.nameMiddle &&
+                                patient.nameLast === currentApp.patient.nameLast &&
+                                patient.birthdate === currentApp.patient.birthdate
+                        });
+
+                        if(patientMatch) {
+
+                            // if patient already has an appointment after current time
+                            // 'Patients can only have 1 existing appointment at a time.'
+                            const newPatientAppointmentList = appointmentList.filter(appointment => !appointment.patient.hospitalNumber)
+                            const existingAppointment = newPatientAppointmentList.find(appointment => {
+                                return appointment.patient.nameFirst === currentApp.patient.nameFirst &&
+                                    appointment.patient.nameMiddle === currentApp.patient.nameMiddle &&
+                                    appointment.patient.nameLast === currentApp.patient.nameLast &&
+                                    appointment.patient.birthdate === currentApp.patient.birthdate &&
+                                    new Date(appointment.date) >= currentDate
+                            });
+
+                            if (existingAppointment) {
+                                alert('Cannot make an appointment.\nPatients can only have 1 existing appointment at a time.')
+                                return;
+                            }else {
+                                delete currentApp.id
+                                currentApp.patient = patientMatch;
+                                await axios.post('http://localhost:8000/api/appointments/', currentApp);
+                                console.log('new appointment made for existing new patient')
+                            }
+                        }else {
+
+                            const createNewPatient = window.confirm('Patient not found.\n' +
+                                'Please check your name and birthdate.\n' +
+                                'Do you want to create a new patient instead?')
+                            if (createNewPatient) {
+                                delete currentApp.id
+                                delete currentApp.patient.id
+                                console.log('currentApp.patient:', currentApp.patient);
+                                console.log('currentApp:', currentApp);
+                                const patientResponse = await axios.post('http://localhost:8000/api/patients/', currentApp.patient);
+                                console.log('patientResponse:', patientResponse);
+                                const appointmentResponse = await axios.post('http://localhost:8000/api/appointments/', currentApp);
+                                console.log('appointmentResponse:', appointmentResponse);
+                                console.log('new appointment has been made for new patient');
+                            }else {
+                                return;
+                            }
+
+                        }
+
+                    }else {
+                        // from all existing patients, find a match with exact hospital number
+                        const hospitalNumberMatch = patientList.find(patient => patient.hospitalNumber === currentApp.patient.hospitalNumber);
+                        if (hospitalNumberMatch) {
+
+                            // if patient already has an appointment after current time
+                            // 'Patients can only have 1 existing appointment at a time.'
+                            const existingAppointment = appointmentList.find(appointment => {
+                                return appointment.patient.hospitalNumber === currentApp.patient.hospitalNumber &&
+                                    new Date(appointment.date) >= currentDate
+                            });
+
+                            if (existingAppointment) {
+                                alert('Cannot make an appointment.\nPatients can only have 1 existing appointment at a time.')
+                                return;
+                            }else {
+                                delete currentApp.id
+                                console.log(currentApp)
+                                await axios.post('http://localhost:8000/api/appointments/', currentApp);
+                                console.log('new appointment made for old patient')
+                            }
+
+
+                        }else {
+                            alert(`Patient with hospital number ${currentApp.patient.hospitalNumber} does not exist, please leave blank if new patient.`);
+                            return;
+                        }
                     }
-                    const appointmentResponse = await axios.get(`http://localhost:8000/api/appointments/${selectedAppointment.id}/`);
-                    if (JSON.stringify(appointmentResponse.data) !== JSON.stringify(selectedAppointment)) {
-                        await axios.put(`http://localhost:8000/api/appointments/${selectedAppointment.id}/`, selectedAppointment);
+                }else { // for updating appointments
+                    const patient = patientList.find(patient => patient.id === currentApp.patient.id);
+                    if (JSON.stringify(patient) !== JSON.stringify(currentApp.patient)) {
+                        await axios.put(`http://localhost:8000/api/patients/${currentApp.patient.id}/`, currentApp.patient);
+                    }
+                    const appointmentResponse = await axios.get(`http://localhost:8000/api/appointments/${currentApp.id}/`);
+                    if (JSON.stringify(appointmentResponse.data) !== JSON.stringify(currentApp)) {
+                        await axios.put(`http://localhost:8000/api/appointments/${currentApp.id}/`, currentApp);
                     }
                 }
                 await fetchEvents();
@@ -263,6 +323,8 @@ const Calendar = () => {
                 console.error(error);
             }
     };
+
+
 
     // This fetches events from the database and puts it in the state
     const fetchEvents = async () => {
