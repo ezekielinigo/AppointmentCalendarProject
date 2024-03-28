@@ -14,13 +14,14 @@ import { useContext } from 'react';
 import { PatientContext, isPatientLoggedInContext, UserPassContext } from '../App';
 import { useNavigate } from 'react-router-dom';
 import { getCookie } from './utils/cookie';
+import Modal from 'react-bootstrap/Modal';
 
 
 function LoginPatient() {
 
     const [events, setEvents] = useState([]);
     const [hospitalNumberInput, setHospitalNumberInput] = useState(false);
-    const [checked, setChecked] = useState(false); // for checkbox
+    const [checked, setChecked] = useState(false); // for switch
     const { setUserPass } = useContext(UserPassContext);
 
     const csrftoken = getCookie('csrftoken');
@@ -35,7 +36,7 @@ function LoginPatient() {
     
     */
 
-    // 
+    // logged in checker
     const { firstName, setFirstName, 
         middleName, setMiddleName, 
         lastName, setLastName, 
@@ -54,7 +55,10 @@ function LoginPatient() {
         }
     }, [navigate, setIsPatientLoggedIn]);
 
-    // 
+    // new patient declarations for modal
+    const [showModal, setShowModal] = useState(false);
+    const [isNewPatient, setIsNewPatient] = useState(false);
+
 
     const GreenSwitch = styled(Switch)(({ theme }) => ({
         width: 42,
@@ -263,7 +267,7 @@ function LoginPatient() {
             }
 
             if (window.confirm("Patient not found. Do you want to register as a new patient?")) {
-                alert("Redirecting to patient registration page...");
+                handleSignUp();
                 return;
             }
 
@@ -292,7 +296,7 @@ function LoginPatient() {
             }
 
             if (window.confirm("Do you want to register as a new patient?")) {
-                alert("Redirecting to patient registration page...");
+                handleSignUp();
                 return;
             }
 
@@ -301,10 +305,229 @@ function LoginPatient() {
         
     }
 
+    const handleSignUp = async () => {
+        const patientNew = {
+            nameFirst: firstName,
+            nameMiddle: middleName,
+            nameLast: lastName,                   
+            birthdate: birthDate,
+        };
+
+        alert(patientNew.nameFirst + " " + patientNew.nameLast + " " + patientNew.birthdate)
+        
+        const user = (patientNew.nameFirst.slice(0, 4) + patientNew.nameMiddle.slice(0, 2) + patientNew.nameLast.slice(0, 4) + patientNew.birthdate.replace(/-/g, '')).slice(0, 10);
+            // password mula sa deets pero may shiftChar function para ma-encrypt
+        const pass = (patientNew.nameLast.slice(-2) + patientNew.nameFirst.slice(0, 2) + patientNew.birthdate.replace(/-/g, '') + patientNew.nameLast + patientNew.nameFirst).split('').map(shiftChar).join('').slice(0, 10);
+        
+        setUserPass({ user, pass });
+
+        setShowModal(true);
+        // alert('gumagana ba'); // for debugging purposes
+
+        /*
+        try {
+            const response = await axios.post('http://localhost:8000/signup', 
+            { username: user, password: pass, first_name: patient.nameFirst, last_name: patient.nameLast },
+            {
+                headers: {
+                    'X-CSRFToken': csrftoken
+                }
+            }
+        );
+
+        const createNewPatient = await axios.post('http://localhost:8000/api/patients/', {
+            nameFirst: patientNew.nameFirst,
+            nameMiddle: patientNew.nameMiddle,
+            nameLast: patientNew.nameLast,
+            birthdate: patientNew.birthdate,
+            sex: "",
+            civilStatus: "",
+            hospitalNumber: "",
+            contact: "",
+            email: "test@mail.com",
+            facebookName: "",
+            address: "",
+        });
+
+        if (response.status === 200) {
+            createNewPatient();
+            alert('Patient registered successfully! Redirecting to patient page...');
+            const login = await axios.post('http://localhost:8000/login', 
+                { username: user, password: pass },
+                {
+                    headers: {
+                        'X-CSRFToken': csrftoken
+                    }
+                }
+            );
+            console.log(login);
+            sessionStorage.setItem('isPatientLoggedIn', true);
+            navigate(PathConstants.PATIENTCALENDAR);
+        } 
+        }
+        catch (error) {
+            console.error(error);
+            alert('Something went wrong during sign-up. Please try again.');
+        }
+        */
+    }
+
     const handleHospitalBox = (event) => {
         setHospitalNumberInput(event.target.checked); // basically returns a boolean value to check kung nakacheck ba ung box.
         setChecked(event.target.checked); // for checkbox
     };
+
+    /*
+    <Modal > 
+    <div class = 'container'>
+        <FormGroup> 
+
+        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+            <div style={{ width: '45%' }}>
+            <FormLabel>First Name</FormLabel>
+            <FormControl id = 'nameFirst' type="text" readOnly value={nameFirst}/>
+
+            <FormLabel>Middle Name</FormLabel>
+            <FormControl id = 'nameMiddle' type="text" readOnly value={nameMiddle}/>
+
+            <FormLabel>Last Name</FormLabel>
+            <FormControl id = 'nameLast' type="text" readOnly value={nameLast}/>
+
+            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                <div style={{ width: '60%' }}>
+                    <FormLabel>Birthdate</FormLabel>
+                    <FormControl id='birthdate' type='date' readOnly value={birthdate} onChange={(e) => setBirthdate(e.target.value)} />
+                </div>
+                <div style={{ width: '35%' }}>
+                    <FormLabel>Age</FormLabel>
+                    <FormControl id='age' type='number' value={age} readOnly />
+                </div>
+            </div>
+
+            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                <div style={{ width: '45%' }}>
+                    <FormLabel>Sex</FormLabel>
+                    <FormControl as="select" id='sex'>
+                        <option value=''>Select...</option>
+                        <option value='MALE'>MALE</option>
+                        <option value='FEMALE'>FEMALE</option>
+                    </FormControl>
+                </div>
+                <div style={{ width: '45%' }}>
+                    <FormLabel>Civil Status</FormLabel>
+                    <FormControl as="select" id='civilStatus' value={civilStatus}>
+                        <option value=''>Select...</option>
+                        <option value='SINGLE'>SINGLE</option>
+                        <option value='MARRIED'>MARRIED</option>
+                        <option value='WIDOWED'>WIDOWED</option>
+                        <option value='SEPARATED'>SEPARATED</option>
+                    </FormControl>
+                </div>
+            </div>
+            </div>
+            <div style={{ width: '45%' }}>
+                <FormLabel>Hospital Number</FormLabel>
+                <FormControl id='hospitalNumber' type="number" readOnly value={hospitalNumber}/>
+
+                <FormLabel>Email</FormLabel>
+                <FormControl id='email' type="text" value={email}/>
+
+                <FormLabel>Facebook Name</FormLabel>
+                <FormControl id='facebookName' type="text" value={facebookName}/>
+
+                <FormLabel>Contact No.</FormLabel>
+                <FormControl id='contactNumber' type='number' value={contactNumber} style={{ 
+                    '-moz-appearance': 'textfield', 
+                    'appearance': 'textfield' 
+                }} onWheel={(e) => e.preventDefault()} />
+                <style jsx>{`
+                    input::-webkit-outer-spin-button,
+                    input::-webkit-inner-spin-button {
+                        -webkit-appearance: none;
+                        margin: 0;
+                `}</style>
+                <FormLabel>Address</FormLabel>
+                <FormControl id='address' as='textarea' rows='3' value={address} />
+            </div>
+        </div>
+            
+        </FormGroup>
+    </div></Modal> */
+
+    <Modal show = {showModal} >
+        <div class='container'>
+            <FormGroup>
+                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                    <div style={{ width: '45%' }}>
+                        <FormLabel>First Name</FormLabel>
+                        <FormControl id='nameFirst' type="text" readOnly />
+
+                        <FormLabel>Middle Name</FormLabel>
+                        <FormControl id='nameMiddle' type="text" readOnly />
+
+                        <FormLabel>Last Name</FormLabel>
+                        <FormControl id='nameLast' type="text" readOnly />
+
+                        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                            <div style={{ width: '60%' }}>
+                                <FormLabel>Birthdate</FormLabel>
+                                <FormControl id='birthdate' type='date' readOnly onChange={(e) => setbirthDate(e.target.value)} />
+                            </div>
+                            <div style={{ width: '35%' }}>
+                                <FormLabel>Age</FormLabel>
+                                <FormControl id='age' type='number' readOnly />
+                            </div>
+                        </div>
+
+                        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                            <div style={{ width: '45%' }}>
+                                <FormLabel>Sex</FormLabel>
+                                <FormControl as="select" id='sex'>
+                                    <option value=''>Select...</option>
+                                    <option value='MALE'>MALE</option>
+                                    <option value='FEMALE'>FEMALE</option>
+                                </FormControl>
+                            </div>
+                            <div style={{ width: '45%' }}>
+                                <FormLabel>Civil Status</FormLabel>
+                                <FormControl as="select" id='civilStatus'>
+                                    <option value=''>Select...</option>
+                                    <option value='SINGLE'>SINGLE</option>
+                                    <option value='MARRIED'>MARRIED</option>
+                                    <option value='WIDOWED'>WIDOWED</option>
+                                    <option value='SEPARATED'>SEPARATED</option>
+                                </FormControl>
+                            </div>
+                        </div>
+                    </div>
+                    <div style={{ width: '45%' }}>
+                        <FormLabel>Hospital Number</FormLabel>
+                        <FormControl id='hospitalNumber' type="number" readOnly />
+
+                        <FormLabel>Email</FormLabel>
+                        <FormControl id='email' type="text" />
+
+                        <FormLabel>Facebook Name</FormLabel>
+                        <FormControl id='facebookName' type="text" />
+
+                        <FormLabel>Contact No.</FormLabel>
+                        <FormControl id='contactNumber' type='number' style={{
+                            '-moz-appearance': 'textfield',
+                            'appearance': 'textfield'
+                        }} onWheel={(e) => e.preventDefault()} />
+                        <style jsx>{`
+                            input::-webkit-outer-spin-button,
+                            input::-webkit-inner-spin-button {
+                                -webkit-appearance: none;
+                                margin: 0;
+                        `}</style>
+                        <FormLabel>Address</FormLabel>
+                        <FormControl id='address' as='textarea' rows='3' />
+                    </div>
+                </div>
+            </FormGroup>
+        </div>
+    </Modal>
 
     return (
         <>
