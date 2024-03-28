@@ -91,8 +91,14 @@ class SettingSerializer(serializers.ModelSerializer):
 #            'available'
 #        )
 
+#class UserSerializer(serializers.ModelSerializer):
+#    class Meta(object):
+#        model = User 
+#        #fields = ['id', 'username', 'password']
+#       fields = ['id', 'username', 'password', 'first_name', 'last_name']
+        
 class UserSerializer(serializers.ModelSerializer):
-    class Meta(object):
+    class Meta:
         model = User 
         #fields = ['id', 'username', 'password']
-        fields = ['id', 'username', 'password', 'first_name', 'last_name']
+        fields = ('id', 'username', 'password', 'first_name', 'last_name')

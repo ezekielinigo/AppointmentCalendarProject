@@ -149,8 +149,21 @@ function LoginPatient() {
             //alert (pass);
             //alert (user + " " + pass) // pang-debug since ayaw gumana ng tokenizing mechanism kanina
 
-        // ito yung gumanang tokenizing mechanism
+            const login = await axios.post('http://localhost:8000/login', 
+                { username: user, password: pass, first_name: patient.nameFirst, last_name: patient.nameLast },
+                {
+                    headers: {
+                        'X-CSRFToken': csrftoken
+                    }
+                }
+            );
+            console.log(login);
+            sessionStorage.setItem('isPatientLoggedIn', true);
+            navigate(PathConstants.PATIENTCALENDAR);
+        }
 
+        // ito yung gumanang tokenizing mechanism
+        /*
         // 1. attempt sign-up
         const response = await axios.post('http://localhost:8000/signup', 
             { username: user, password: pass, first_name: firstName, last_name: lastName },
@@ -200,7 +213,7 @@ function LoginPatient() {
             sessionStorage.setItem('isPatientLoggedIn', true);
             navigate(PathConstants.PATIENTCALENDAR);
         } 
-    } 
+    } */
 
     catch (error) {
         console.error(error);
@@ -325,16 +338,24 @@ function LoginPatient() {
         const pass = (lastName.slice(-2) + firstName.slice(0, 2) + birthDate.replace(/-/g, '') + lastName + firstName).split('').map(shiftChar).join('').slice(0, 10);
         
         setUserPass({ user, pass });
-        try {
+
+        alert(user + " " + pass);
+        // alert(patient.nameFirst + " " + patient.nameMiddle + " " + patient.nameLast); ok hindi pala defined within the scope yung patient
+
             const response = await axios.post('http://localhost:8000/signup', 
-            { username: user, password: pass, first_name: patient.nameFirst, last_name: patient.nameLast },
+            { username: user, password: pass, first_name: firstName, last_name: lastName },
             {
                 headers: {
                     'X-CSRFToken': csrftoken
                 }
             }
+            
         );
 
+        console.log(response);
+
+        try {
+            
         if (response.status === 200) {
             const newPatientInformation = {
                 nameFirst: firstName,
@@ -367,6 +388,9 @@ function LoginPatient() {
             address: newPatientInformation.homeAddress,
         });
             alert('Patient registered successfully! Redirecting to patient page...');
+            
+            alert(user + " " + pass);
+            
             const login = await axios.post('http://localhost:8000/login', 
                 { username: user, password: pass },
                 {
@@ -375,6 +399,7 @@ function LoginPatient() {
                     }
                 }
             );
+            
             console.log(login);
             sessionStorage.setItem('isPatientLoggedIn', true);
             navigate(PathConstants.PATIENTCALENDAR);
@@ -384,6 +409,7 @@ function LoginPatient() {
             console.error(error);
             alert(error);
             alert('Something went wrong during sign-up. Please try again.');
+
         }
             
 
