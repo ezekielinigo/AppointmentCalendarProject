@@ -39,6 +39,7 @@ const Calendar = () => {
             if (confirm) {
                 await axios.delete(`http://localhost:8000/api/appointments/${selectedAppointment.id}/`);
                 handleClose();
+
                 await fetchEvents();
             }else{
                 return;
@@ -93,53 +94,60 @@ const Calendar = () => {
                 const hour24 = parseInt(info.dateStr.substring(11,13));
                 const hour12 = hour24 > 12 ? hour24 - 12 : hour24;
                 const TTTT = hour24 >= 12 ? `${hour12.toString().padStart(2, '0')}PM` : `${hour12.toString().padStart(2, '0')}AM`;
-                const XX = events.filter(event => {
-                    if (event.date && info.dateStr) {
-                        const eventDate = event.date;
-                        const clickedDate = new Date(info.dateStr);
-                        return eventDate.getFullYear() === clickedDate.getFullYear() &&
-                               eventDate.getMonth() === clickedDate.getMonth() &&
-                               eventDate.getDate() === clickedDate.getDate();
-                    }
-                    return false;
-                }).length + 1;
-                const appointmentNumber = `FM${MM}${DD}${YY}-${TTTT}-${XX.toString().padStart(2, '0')}`;
 
-                setSelectedAppointment({
-                    id: null,
-                    appointmentNumber: appointmentNumber,
-                    patient: {
-                        id: null,
-                        nameFirst: '',
-                        nameMiddle: '',
-                        nameLast: '',
-                        birthdate: '',
-                        age: '',
-                        sex: '',
-                        civilStatus: '',
-                        hospitalNumber: '',
-                        contact: '',
-                        email: '',
-                        facebookName: '',
-                        address: '',
-                    },
-                    label: '',
-                    date: info.dateStr.substring(0,10),
-                    time: info.dateStr.substring(11,19),
-                    remarks: '',
-                    followup: false,
-                    referralDoctor: '',
-                    newPatient: false
-                })
-                setEditLock(false);
-                // remove popover
-                setTimeout(() => {
-                    const popover = document.querySelector('.fc-more-popover');
-                    if (popover) {
-                        popover.remove();
+                // get capacity for that date
+                const capacity = 5;
+                let appointmentNumber = null;
+
+                for (let i=1; i<=capacity; i++) {
+                    const XX = i.toString().padStart(2, '0');
+                    const tempAppointmentNumber = `FM${MM}${DD}${YY}-${TTTT}-${XX}`
+                    const existingEvent = events.find(event => event.extendedProps && event.extendedProps.appointmentNumber === tempAppointmentNumber);
+                    if (!existingEvent) {
+                        appointmentNumber = tempAppointmentNumber;
+                        break;
                     }
-                }, 0);
-                setShowAppointmentNewModal(true);
+                }
+
+                if (!appointmentNumber) {
+                    alert('Hourly capacity reached');
+                }else {
+                   setSelectedAppointment({
+                                id: null,
+                                appointmentNumber: appointmentNumber,
+                                patient: {
+                                    id: null,
+                                    nameFirst: '',
+                                    nameMiddle: '',
+                                    nameLast: '',
+                                    birthdate: '',
+                                    age: '',
+                                    sex: '',
+                                    civilStatus: '',
+                                    hospitalNumber: '',
+                                    contact: '',
+                                    email: '',
+                                    facebookName: '',
+                                    address: '',
+                                },
+                                label: '',
+                                date: info.dateStr.substring(0,10),
+                                time: info.dateStr.substring(11,19),
+                                remarks: '',
+                                followup: false,
+                                referralDoctor: '',
+                                newPatient: false
+                            })
+                            setEditLock(false);
+                            // remove popover
+                            setTimeout(() => {
+                                const popover = document.querySelector('.fc-more-popover');
+                                if (popover) {
+                                    popover.remove();
+                                }
+                            }, 0);
+                            setShowAppointmentNewModal(true);
+                }
             }
         } else {
             // show a message to the user that the date is not available for new appointments
@@ -237,7 +245,7 @@ const Calendar = () => {
                         ...selectedAppointment,
                     };
                     delete appointment.id;
-                    console.log('will send: ', appointment);
+                    console.log('appointment id: ', appointment.appointmentNumber)
                     await axios.post('http://localhost:8000/api/appointments/', appointment);
 
                 } else {
@@ -250,8 +258,6 @@ const Calendar = () => {
                         await axios.put(`http://localhost:8000/api/appointments/${selectedAppointment.id}/`, selectedAppointment);
                     }
                 }
-                //handleClose();
-                setRenderKey(prevKey => prevKey + 1);
                 await fetchEvents();
             } catch (error) {
                 console.error(error);
@@ -292,6 +298,7 @@ const Calendar = () => {
             });
             // remove "add appointments button"
             setEvents(appointments);
+            setRenderKey(prevKey => prevKey + 1);
         } catch (error) {
             console.error(error);
         }

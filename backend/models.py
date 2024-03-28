@@ -44,19 +44,22 @@ class Appointment(models.Model):
         # Get the hour and period (AM/PM) from the time formatted as (HH:MM:SS)
         hour = self.time[0:2]
         period = 'AM' if int(hour) < 12 else 'PM'
+        hour = int(hour) - 12 if int(hour) < 12 else hour
 
         # Count the number of appointments for the specific date and time
         count = Appointment.objects.filter(date=self.date, time=self.time).count()
 
         # Generate the appointment number
-        self.appointmentNumber = 'FM' + self.date.strftime("%m%d%y") + '-' + hour + period + '-' + str(count + 1).zfill(2)
+        if not self.appointmentNumber:
+            self.appointmentNumber = 'FM' + self.date.strftime("%m%d%y") + '-' + hour + period + '-' + str(count + 1).zfill(2)
 
         if not self.patient.hospitalNumber:
             self.newPatient = True
-        super(Appointment, self).save(*args, **kwargs)
 
         if not self.label:
             self.label = self.appointmentNumber + ' : ' + self.patient.nameLast + ', ' + self.patient.nameFirst[0] + '.'
+
+        super(Appointment, self).save(*args, **kwargs)
 
     def __str__(self):
         if self.appointmentNumber:
