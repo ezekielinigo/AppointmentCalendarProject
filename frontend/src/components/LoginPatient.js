@@ -132,7 +132,7 @@ function LoginPatient() {
         };
 
         // alert for above
-        alert(patient.nameFirst + " " + patient.nameLast + " " + patient.birthdate + " " + patient.hospitalNumber)
+        //alert(patient.nameFirst + " " + patient.nameLast + " " + patient.birthdate + " " + patient.hospitalNumber)
 
         //alert(patient.birthdate + " " + patient.hospitalNumber + " " + patient.nameFirst + " " + patient.nameLast)
         
@@ -150,19 +150,21 @@ function LoginPatient() {
             //alert (user + " " + pass) // pang-debug since ayaw gumana ng tokenizing mechanism kanina
 
             const login = await axios.post('http://localhost:8000/login', 
-                { username: user, password: pass, first_name: patient.nameFirst, last_name: patient.nameLast },
+                { username: user, password: pass },
                 {
                     headers: {
                         'X-CSRFToken': csrftoken
                     }
                 }
             );
+
             console.log(login);
             sessionStorage.setItem('isPatientLoggedIn', true);
+            setIsPatientLoggedIn(true);
             navigate(PathConstants.PATIENTCALENDAR);
         }
 
-        // ito yung gumanang tokenizing mechanism
+        // ito yung gumanang tokenizing mechanism (PRIOR NUNG PREDEFINED PA LANG UNG USER (OR ORIGINALLY GINAWA SA BACKEND))
         /*
         // 1. attempt sign-up
         const response = await axios.post('http://localhost:8000/signup', 
@@ -217,7 +219,7 @@ function LoginPatient() {
 
     catch (error) {
         console.error(error);
-        alert(error);
+        //alert(error);
         alert('Login Failed! Please check your Patient ID and Password.');
     }
         
@@ -225,19 +227,19 @@ function LoginPatient() {
 
     const fetchEvents = async () => {
         try {
-            const response = await axios.get('http://localhost:8000/api/appointments/');
-            const appointments = response.data.map(appointment => {
+            const response = await axios.get('http://localhost:8000/api/patients/');
+            const patients = response.data.map(patient => {
                 return {
-                    title: appointment.appointmentNumber.substring(10,) + ' : ' + appointment.patient.nameLast + ', ' + appointment.patient.nameFirst[0] + '.',
-                    extendedProps: {
-                        nameFirst: appointment.patient.nameFirst,
-                        nameLast: appointment.patient.nameLast,
-                        birthdate: appointment.patient.birthdate,
-                        hospitalNumber: appointment.patient.hospitalNumber,
+                    title: patient.nameLast + ', ' + patient.nameFirst[0] + '.',
+                    patientIdentifierFromAppointment: {
+                        nameFirst: patient.nameFirst,
+                        nameLast: patient.nameLast,
+                        birthdate: patient.birthdate,
+                        hospitalNumber: patient.hospitalNumber,
                     }
                 };
             });
-            setEvents(appointments);
+            setEvents(patients);
         } catch (error) {
             console.error(error);
         }
@@ -251,64 +253,79 @@ function LoginPatient() {
         event.preventDefault(); // para 'di magshow 'yung mga ilalagay na information sa URL
     
     if (!hospitalNumberInput) {
-        if (firstName === '' || lastName === '' || birthDate === '' || hospitalNumber === '') {
+        if (firstName === '' || lastName === '' || birthDate === '') {
             alert("Please fill out all the fields.");
         } 
 
         else {
             for (let i = 0; i < events.length; i++) {
-
-                //alert(events[i].extendedProps.nameFirst + " " + events[i].extendedProps.nameLast + " " + events[i].extendedProps.birthdate + " " + events[i].extendedProps.hospitalNumber)
+                //alert(events[i].patientIdentifierFromAppointment.nameFirst + " " + events[i].patientIdentifierFromAppointment.nameLast + " " + events[i].patientIdentifierFromAppointment.birthdate + " " + events[i].patientIdentifierFromAppointment.hospitalNumber)
                 //alert(firstName + " " + lastName + " " + birthDate + " " + hospitalNumber)
 
-                if (events[i].extendedProps.nameFirst === firstName && 
-                    events[i].extendedProps.nameLast === lastName && 
-                    events[i].extendedProps.birthdate === birthDate && 
-                    events[i].extendedProps.hospitalNumber === hospitalNumber) {
+
+                //alert(events[i].patientIdentifierFromAppointment.hospitalNumber + "|" + "input hospital num:" + hospitalNumber + 'e');
+
+                if (events[i].patientIdentifierFromAppointment.nameFirst === firstName && 
+                    events[i].patientIdentifierFromAppointment.nameLast === lastName && 
+                    events[i].patientIdentifierFromAppointment.birthdate === birthDate &&
+                    events[i].patientIdentifierFromAppointment.hospitalNumber === hospitalNumber) {
+
+                        alert('Patient found! Redirecting to patient page...');
+                        validateEntry();
+                        return;
+                }
+
+                else if (events[i].patientIdentifierFromAppointment.nameFirst === firstName && 
+                    events[i].patientIdentifierFromAppointment.nameLast === lastName && 
+                    events[i].patientIdentifierFromAppointment.birthdate === birthDate && 
+                    events[i].patientIdentifierFromAppointment.hospitalNumber === '') {
+                    
+        
                     alert('Patient found! Redirecting to patient page...');
                     validateEntry();
                     return;
-                } 
+                }
 
-                else if (events[i].extendedProps.nameFirst === firstName && 
-                    events[i].extendedProps.nameLast === lastName && 
-                    events[i].extendedProps.birthdate === birthDate && 
-                    events[i].extendedProps.hospitalNumber !== hospitalNumber) {
+                else if (events[i].patientIdentifierFromAppointment.nameFirst === firstName && 
+                    events[i].patientIdentifierFromAppointment.nameLast === lastName && 
+                    events[i].patientIdentifierFromAppointment.birthdate === birthDate && 
+                    events[i].patientIdentifierFromAppointment.hospitalNumber !== hospitalNumber) {
                     alert('Patient found! Hospital number does not match. Please check your inputs.');
                     return;
                 } 
 
-                else if (events[i].extendedProps.nameFirst === firstName && 
-                    events[i].extendedProps.nameLast === lastName && 
-                    events[i].extendedProps.birthdate !== birthDate) {
+                else if (events[i].patientIdentifierFromAppointment.nameFirst === firstName && 
+                    events[i].patientIdentifierFromAppointment.nameLast === lastName && 
+                    events[i].patientIdentifierFromAppointment.birthdate !== birthDate) {
                     alert('Patient found! Birthday does not match. Please check your inputs.');
                     return;
                 }
 
             }
 
-            if (window.confirm("Patient not found. Do you want to register as a new patient?")) {
-                handleSignUpModal();
-                return;
-            }
+                    if (window.confirm("Patient not found. Do you want to register as a new patient?")) {
+                        handleSignUpModal();
+                        return;
+                    }
 
+            
         }
     }
 
     else if (hospitalNumberInput) {
         if (firstName === '' || lastName === '' || birthDate === '') {
-            alert("Please fill in all the fields.");
+            alert("Please fill out all the fields.");
         } 
 
         else {
             for (let i = 0; i < events.length; i++) {
 
-                //alert(events[i].extendedProps.nameFirst + " " + events[i].extendedProps.nameLast + " " + events[i].extendedProps.birthdate + " " + events[i].extendedProps.hospitalNumber)
+                //alert(events[i].patientIdentifierFromAppointment.nameFirst + " " + events[i].patientIdentifierFromAppointment.nameLast + " " + events[i].patientIdentifierFromAppointment.birthdate + " " + events[i].patientIdentifierFromAppointment.hospitalNumber)
                 //alert(firstName + " " + lastName + " " + birthDate + " " + hospitalNumber)
 
-                if (events[i].extendedProps.nameFirst === firstName && 
-                    events[i].extendedProps.nameLast === lastName && 
-                    events[i].extendedProps.birthdate === birthDate) {
+                if (events[i].patientIdentifierFromAppointment.nameFirst === firstName && 
+                    events[i].patientIdentifierFromAppointment.nameLast === lastName && 
+                    events[i].patientIdentifierFromAppointment.birthdate === birthDate) {
                     alert('You already have a record on our database. Please input your hospital number.');
                     setChecked(false); // pang uncheck
                     setHospitalNumberInput(false); // pang enable ng text box
@@ -389,7 +406,7 @@ function LoginPatient() {
         });
             alert('Patient registered successfully! Redirecting to patient page...');
             
-            alert(user + " " + pass);
+            //alert(user + " " + pass);
             
             const login = await axios.post('http://localhost:8000/login', 
                 { username: user, password: pass },
@@ -402,7 +419,8 @@ function LoginPatient() {
             
             console.log(login);
             sessionStorage.setItem('isPatientLoggedIn', true);
-            navigate(PathConstants.PATIENTCALENDAR);
+            setShowModal(false);
+            redirectToPatientPage();
         } 
         }
         catch (error) {
@@ -414,6 +432,23 @@ function LoginPatient() {
             
 
     }
+
+    const redirectToPatientPage = () => {
+        navigate(PathConstants.PATIENTCALENDAR);
+    } 
+
+    /*
+    const [initialRender, setInitialRender] = useState(true);
+
+    useEffect(() => {
+        if (initialRender) {
+            setInitialRender(false);
+        } 
+        
+        else if (!showModal) {
+            navigate(PathConstants.PATIENTCALENDAR);
+        }
+    }, [showModal]); */
 
     const handleHospitalBox = (event) => {
         setHospitalNumberInput(event.target.checked); // basically returns a boolean value to check kung nakacheck ba ung box.
