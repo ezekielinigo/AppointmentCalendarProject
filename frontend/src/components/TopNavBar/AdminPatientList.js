@@ -8,8 +8,7 @@ const PatientList = () => {
 		<>
 		<NavBar />
 		<AdminNavs/>
-		<div className="contact">
-			<h1>List of patients registered dito</h1>
+		<div className="patient-table">
 			<PatientTableList/>
 		</div></>
 	);

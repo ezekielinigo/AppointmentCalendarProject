@@ -8,6 +8,7 @@ import SaveIcon from '@mui/icons-material/Save';
 import CancelIcon from '@mui/icons-material/Close';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
+import { Typography } from '@mui/material';
 
 import {
   GridRowModes,
@@ -228,7 +229,21 @@ export default function FullFeaturedCrudGrid() {
         }} />
     </Box>
 
-  
+    <Typography variant="h6" gutterBottom sx={{ fontFamily: 'Arial', fontSize: '1.5rem', marginLeft: '20px', fontWeight: 'bold'}}>
+        To edit a record:
+      </Typography>
+      <Typography variant="body2" sx={{ fontFamily: 'Arial', fontSize: '1.25rem', marginLeft: '20px'  }}>
+        <ul>
+          <li>Double click the field.</li>
+          <li>Type in the changes.</li>
+          <li> Repeat for all fields to edit. </li>
+          <li>Hit enter.</li>
+          <li>Click the pencil icon on the Actions column.</li>
+          <li>Click the Save icon.</li>
+        </ul>
+      </Typography>
+
+        
     </>
        
     

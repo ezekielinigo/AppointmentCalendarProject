@@ -5,3 +5,11 @@
     margin: auto;
 
 }
+
+.patient-table {
+    width: 80%;
+    border-collapse: collapse;
+    margin-top: 50px;
+    margin: auto;
+
+}

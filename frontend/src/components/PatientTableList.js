@@ -8,6 +8,7 @@ import SaveIcon from '@mui/icons-material/Save';
 import CancelIcon from '@mui/icons-material/Close';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
+import { Typography } from '@mui/material';
 
 import {
   GridRowModes,
@@ -23,7 +24,7 @@ function EditToolbar(props) {
   const handleClick = () => {
     const newRecord = { name: '', age: '', hospitalNumber: '', isNew: true };
 
-    axios.post('http://localhost:8000/api/appointments/', newRecord)
+    axios.post('http://localhost:8000/api/patients/', newRecord)
       .then(response => {
         const newRecordWithId = response.data;
         setRows((oldRows) => [...oldRows, newRecordWithId]);
@@ -51,19 +52,15 @@ export default function FullFeaturedCrudGrid() {
   const [rowModesModel, setRowModesModel] = React.useState({});
 
   useEffect(() => {
-      axios.get('http://localhost:8000/api/appointments/')
-        .then(response => {
-          const dataWithHospitalNumber = response.data.map(item => ({
-            ...item,
-            hospitalNumber: item.patient.hospitalNumber
-          }));
-          setRows(dataWithHospitalNumber);
-          console.log(dataWithHospitalNumber);
-        })
-        .catch(error => {
-          console.error('There was an error!', error);
-        });
-    }, []);
+    axios.get('http://localhost:8000/api/patients/')
+      .then(response => {
+        setRows(response.data);
+        console.log(response.data);
+      })
+      .catch(error => {
+        console.error('There was an error!', error);
+      });
+  }, []);
 
    const handleRowEditStop = (params, event) => {
       if (params.reason === GridRowEditStopReasons.rowFocusOut) {
@@ -82,7 +79,7 @@ export default function FullFeaturedCrudGrid() {
     if (confirmSave) {
       const updatedRow = processRowUpdate(row);
       
-      axios.put(`http://localhost:8000/api/appointments/${id}/`, updatedRow)
+      axios.put(`http://localhost:8000/api/patients/${id}/`, updatedRow)
         .then(response => {
           setRows(prevRows => prevRows.map((row) => row.id === id ? response.data : row));
           setRowModesModel(prevRowModesModel => ({ ...prevRowModesModel, [id]: { mode: GridRowModes.View } }));
@@ -96,7 +93,7 @@ export default function FullFeaturedCrudGrid() {
   const handleDeleteClick = (id) => () => {
     const confirmDelete = window.confirm('Are you sure you want to delete this record?');
     if (confirmDelete) {
-      axios.delete(`http://localhost:8000/api/appointments/${id}/`)
+      axios.delete(`http://localhost:8000/api/patients/${id}/`)
         .then(response => {
           setRows(rows.filter((row) => row.id !== id));
         })
@@ -129,27 +126,6 @@ export default function FullFeaturedCrudGrid() {
   };
 
   const columns = [
-    { field: 'id', headerName: 'id', width: 180, editable: true },
-    { field: 'appointmentNumber', headerName: 'Appointment Number', width: 180, editable: true },
-    { field: 'label', headerName: 'Patient Name', width: 130, editable: true },
-    { field: 'hospitalNumber', headerName: 'Hospital Number', width: 180, editable: true },
-    /* { field: 'patient.nameMiddle', headerName: 'Middle Name', width: 130, editable: true },
-    { field: 'patient.nameLast', headerName: 'Last Name', width: 130, editable: true },
-    { field: 'patient.birthdate', headerName: 'Birthdate', width: 130, editable: true },
-    { field: 'patient.age', headerName: 'Age', width: 90, editable: true },
-    { field: 'patient.sex', headerName: 'Sex', width: 90, editable: true },
-    { field: 'patient.civilStatus', headerName: 'Civil Status', width: 130, editable: true },
-    { field: 'patient.hospitalNumber', headerName: 'Hospital Number', width: 180, editable: true },
-    { field: 'patient.contact', headerName: 'Contact', width: 130, editable: true },
-    { field: 'patient.email', headerName: 'Email', width: 200, editable: true },
-    { field: 'patient.facebookName', headerName: 'Facebook Name', width: 200, editable: true },
-    { field: 'patient.address', headerName: 'Address', width: 300, editable: true }, */
-    { field: 'date', headerName: 'Date', width: 130, editable: true },
-    { field: 'time', headerName: 'Time', width: 130, editable: true },
-    { field: 'remarks', headerName: 'Remarks', width: 300, editable: true },
-    { field: 'followup', headerName: 'Follow Up', width: 130, editable: true },
-    { field: 'referralDoctor', headerName: 'Referral Doctor', width: 200, editable: true },
-    { field: 'newPatient', headerName: 'New Patient', width: 130, editable: true },
     {
       field: 'actions',
       type: 'actions',
@@ -195,11 +171,29 @@ export default function FullFeaturedCrudGrid() {
           />,
         ];
       },
+      sticky: true,
     },
+    
+    
+    { field: 'id', headerName: 'ID', width: 90, editable: false},
+    { field: 'nameFirst', headerName: 'First Name', width: 130, editable: true },
+    { field: 'nameMiddle', headerName: 'Middle Name', width: 130, editable: true },
+    { field: 'nameLast', headerName: 'Last Name', width: 130, editable: true },
+    { field: 'birthdate', headerName: 'Birthdate', width: 130, editable: true },
+    { field: 'age', headerName: 'Age', width: 90, editable: true },
+    { field: 'sex', headerName: 'Sex', width: 90, editable: true },
+    { field: 'civilStatus', headerName: 'Civil Status', width: 130, editable: true },
+    { field: 'hospitalNumber', headerName: 'Hospital Number', width: 180, editable: true },
+    { field: 'contact', headerName: 'Contact', width: 130, editable: true },
+    { field: 'email', headerName: 'Email', width: 200, editable: true },
+    { field: 'facebookName', headerName: 'Facebook Name', width: 200, editable: true },
+    { field: 'address', headerName: 'Address', width: 300, editable: true }, 
   ];
 
   return (
-    <><Box
+    <>
+    
+    <Box
       sx={{
         height: 600,
         width: '100%',
@@ -227,7 +221,6 @@ export default function FullFeaturedCrudGrid() {
           toolbar: { setRows, setRowModesModel },
         }} />
     </Box>
-
   
     </>
        
