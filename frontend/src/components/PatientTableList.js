@@ -221,6 +221,20 @@ export default function FullFeaturedCrudGrid() {
           toolbar: { setRows, setRowModesModel },
         }} />
     </Box>
+
+    <Typography variant="h6" gutterBottom sx={{ fontFamily: 'Arial', fontSize: '1.5rem', marginLeft: '20px', fontWeight: 'bold'}}>
+        To edit a record:
+      </Typography>
+      <Typography variant="body2" sx={{ fontFamily: 'Arial', fontSize: '1.25rem', marginLeft: '20px'  }}>
+        <ul>
+          <li>Double click the field.</li>
+          <li>Type in the changes.</li>
+          <li> Repeat for all fields to edit. </li>
+          <li>Hit enter.</li>
+          <li>Click the pencil icon on the Actions column.</li>
+          <li>Click the Save icon.</li>
+        </ul>
+      </Typography>
   
     </>
        
