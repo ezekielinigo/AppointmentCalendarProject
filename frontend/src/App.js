@@ -1,5 +1,4 @@
 /*
-
 References:
 Modal Component: https://react-bootstrap.netlify.app/docs/components/modal/ 
 Buttons: https://react-bootstrap.netlify.app/components/buttons/
@@ -8,6 +7,49 @@ User Auth: https://youtu.be/llrIu4Qsl7c?si=ioJtFl2n2GNsgIxH
 Context: https://react.dev/reference/react/createContext, https://www.youtube.com/watch?v=sP7ANcTpJr8
 MUI Material: https://mui.com/material-ui/getting-started/
 Session Storage: https://www.w3schools.com/jsref/prop_win_sessionstorage.asp
+
+Notes (sqlite3 to postgresql):
+pip install psycopg2
+
+1. set settings.py to:
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
+    }
+}
+
+python manage.py dumpdata > data.json
+Open data.json using notepad -> save as -> encoding should be utf-8
+
+2. download and install https://www.postgresql.org/download/
+3. set password to 7V6D}1xh:kMx (kapag nag prompt)
+3. open pgAdmin 4
+4. create new server (name: rmcdb, host: localhost, port: 5432, maintenance db: postgres, username: postgres, password: 7V6D}1xh:kMx)
+5. create new database (name: rmcdb)
+6. set settings.py to:
+DATABASES = {
+    "default": {
+        "ENGINE": "django.db.backends.postgresql_psycopg2",
+        "NAME": "rmcdb",
+        "USER": "postgres",
+        "PASSWORD": "7V6D}1xh:kMx",
+        "HOST": "localhost",
+        "PORT": "5432",
+    }
+}
+
+python manage.py makemigrations
+python manage.py migrate --run-syncdb
+python manage.py shell
+-- paste lines 47 to 49 on terminal then enter -- 
+from django.contrib.contenttypes.models import ContentType
+ContentType.objects.all().delete()
+quit()
+
+python manage.py loaddata data.json
+python manage.py runserver
+
 */
 
 import './App.css';

@@ -37,7 +37,7 @@ class Appointment(models.Model):
     remarks = models.TextField(null=True, blank=True)
 
     # appointment number is auto-generated in format: MMDDYY-TTTT-XX, ex: 123124-01PM-01
-    appointmentNumber = models.CharField(max_length=14, editable=False)
+    appointmentNumber = models.CharField(max_length=16, editable=False) # changed to 16 since may dalawang dash (for postgresql implementation)
     label = models.CharField(max_length=120, null=True, editable=False)
 
     def save(self, *args, **kwargs):

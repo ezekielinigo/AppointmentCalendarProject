@@ -176,7 +176,7 @@ function LoginPatient() {
                     'X-CSRFToken': csrftoken
                 }
             }
-        );
+        ); 
         
         // 2. basically status = 200 means na may existing username na sa database kaya login na  
         if (response.status === 200) {
@@ -396,7 +396,7 @@ function LoginPatient() {
             newPatientInformation.nameLast + " " + newPatientInformation.birthdate + " " + newPatientInformation.gender + " " + newPatientInformation.civilStats + " " +
             newPatientInformation.contact + " " + newPatientInformation.emailAddress + " " + newPatientInformation.facebook + " " + newPatientInformation.homeAddress);
             */
-           
+
             await axios.post('http://localhost:8000/api/patients/', {
             nameFirst: newPatientInformation.nameFirst,
             nameMiddle: newPatientInformation.nameMiddle,
