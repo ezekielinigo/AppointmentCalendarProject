@@ -46,12 +46,13 @@ const AppointmentCapacitySettings = () => {
         handleMonthChange, handleYearChange, handleCapacityChange,
     } = useContext(SettingsContext);
 
-    
+
 
     /*const month = parseInt(document.getElementById('formMonthYear').value.substring(5, 7));
     const year = parseInt(document.getElementById('formMonthYear').value.substring(0, 4));
     const capacity = parseInt(document.getElementById('formCapacity').value);*/
 
+    /*
     const handleSaveCapacitySettings = async () => {
         try {
             // program will first get the monthYear and capacity from the form
@@ -59,11 +60,13 @@ const AppointmentCapacitySettings = () => {
             const year = parseInt(document.getElementById('formMonthYear').value.substring(0, 4));
             const capacity = parseInt(document.getElementById('formCapacity').value); */
 
-            console.log(month, year, capacity);
+            /*console.log(month, year, capacity);
+            alert(`Month: ${month}, Year: ${year}, Capacity: ${capacity}`);
             // then, a matching monthYear will be searched in the database
             const response = await axios.get('http://localhost:8000/api/settings/');
-            const settingIdx = response.data.findIndex(setting => setting.month === month && setting.year === year);
-
+            const settingIdx = response.data.findIndex(setting => Number(setting.month) === month && Number(setting.year) === year);
+            
+            alert(`Setting Index: ${settingIdx}`);
             // if found, the capacity will be updated
             if (settingIdx !== -1) {
                 await axios.put(`http://localhost:8000/api/settings/${response.data[settingIdx].id}/`, {
@@ -71,6 +74,8 @@ const AppointmentCapacitySettings = () => {
                     year: year,
                     capacity: capacity
                 });
+
+                console.log(response.data[settingIdx].id);
             }
 
             // else, a new entry will be created
@@ -86,12 +91,52 @@ const AppointmentCapacitySettings = () => {
             alert(`Successfully set appointment capacity of ${capacity} for ${month}/${year}`);
 
         } catch (error) {
-            alert('Error setting appointment capacity');
-            alert(error);
+            alert('Please fill the fields correctly.');
+            //alert(error);
             console.log(error);
         }
 
+    } */
 
+    const handleSaveCapacitySettings = async () => {
+        try {
+            console.log(month, year, capacity);
+            // a matching monthYear will be searched in the database
+            const response = await axios.get('http://localhost:8000/api/settings/');
+            
+            let isUpdated = false;
+
+            // trying forloop implementation compared sa initial na findIndex
+            for (let i = 0; i < response.data.length; i++) {
+                // added parseInt para hopefully tama yung maging comparison
+                if (parseInt(response.data[i].month) === parseInt(month) && parseInt(response.data[i].year) === parseInt(year)) {
+                    // if found, the capacity will be updated
+                    await axios.put(`http://localhost:8000/api/settings/${Number(response.data[i].id)}/`, {
+                        month: month,
+                        year: year,
+                        capacity: capacity
+                    });
+                    isUpdated = true; // an existing entry has been updated
+                    break;
+                }
+            }
+
+            if (!isUpdated) { // if not updated, then post a new entry
+                // else, a new entry will be created
+                await axios.post('http://localhost:8000/api/settings/', {
+                    month: month,
+                    year: year,
+                    capacity: capacity
+                });
+            }
+            // finally, a success message will be displayed
+            alert(`Successfully set appointment capacity of ${capacity} for ${month}/${year}`);
+        } 
+        
+        catch (error) {
+            alert('Please fill the fields correctly.');
+            console.log(error);
+        }
     }
 
     return (
@@ -106,18 +151,19 @@ const AppointmentCapacitySettings = () => {
                 value={month}
                 onChange={handleMonthChange}
             >
-    <option value="1">JANUARY</option>
-    <option value="2">FEBRUARY</option>
-    <option value="3">MARCH</option>
-    <option value="4">APRIL</option>
-    <option value="5">MAY</option>
-    <option value="6">JUNE</option>
-    <option value="7">JULY</option>
-    <option value="8">AUGUST</option>
-    <option value="9">SEPTEMBER</option>
-    <option value="10">OCTOBER</option>
-    <option value="11">NOVEMBER</option>
-    <option value="12">DECEMBER</option>
+                <option value ="0">Select Month</option>
+                <option value="1">JANUARY</option>
+                <option value="2">FEBRUARY</option>
+                <option value="3">MARCH</option>
+                <option value="4">APRIL</option>
+                <option value="5">MAY</option>
+                <option value="6">JUNE</option>
+                <option value="7">JULY</option>
+                <option value="8">AUGUST</option>
+                <option value="9">SEPTEMBER</option>
+                <option value="10">OCTOBER</option>
+                <option value="11">NOVEMBER</option>
+                <option value="12">DECEMBER</option>
             </FormControl>
             <FormLabel className='settings-form-label'>Select Year</FormLabel>
             <FormControl

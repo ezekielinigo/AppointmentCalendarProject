@@ -6,6 +6,9 @@ import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/DeleteOutlined';
 import SaveIcon from '@mui/icons-material/Save';
 import CancelIcon from '@mui/icons-material/Close';
+import { useState, useEffect } from 'react';
+import axios from 'axios';
+
 import {
   GridRowModes,
   DataGrid,
@@ -13,66 +16,25 @@ import {
   GridActionsCellItem,
   GridRowEditStopReasons,
 } from '@mui/x-data-grid';
-import {
-  randomCreatedDate,
-  randomTraderName,
-  randomId,
-  randomArrayItem,
-} from '@mui/x-data-grid-generator';
-
-const roles = ['Market', 'Finance', 'Development'];
-const randomRole = () => {
-  return randomArrayItem(roles);
-};
-
-const initialRows = [
-  {
-    id: randomId(),
-    name: randomTraderName(),
-    age: 25,
-    joinDate: randomCreatedDate(),
-    role: randomRole(),
-  },
-  {
-    id: randomId(),
-    name: randomTraderName(),
-    age: 36,
-    joinDate: randomCreatedDate(),
-    role: randomRole(),
-  },
-  {
-    id: randomId(),
-    name: randomTraderName(),
-    age: 19,
-    joinDate: randomCreatedDate(),
-    role: randomRole(),
-  },
-  {
-    id: randomId(),
-    name: randomTraderName(),
-    age: 28,
-    joinDate: randomCreatedDate(),
-    role: randomRole(),
-  },
-  {
-    id: randomId(),
-    name: randomTraderName(),
-    age: 23,
-    joinDate: randomCreatedDate(),
-    role: randomRole(),
-  },
-];
 
 function EditToolbar(props) {
   const { setRows, setRowModesModel } = props;
 
   const handleClick = () => {
-    const id = randomId();
-    setRows((oldRows) => [...oldRows, { id, name: '', age: '', isNew: true }]);
-    setRowModesModel((oldModel) => ({
-      ...oldModel,
-      [id]: { mode: GridRowModes.Edit, fieldToFocus: 'name' },
-    }));
+    const newRecord = { name: '', age: '', hospitalNumber: '', isNew: true };
+
+    axios.post('http://localhost:8000/api/appointments/', newRecord)
+      .then(response => {
+        const newRecordWithId = response.data;
+        setRows((oldRows) => [...oldRows, newRecordWithId]);
+        setRowModesModel((oldModel) => ({
+          ...oldModel,
+          [newRecordWithId.id]: { mode: GridRowModes.Edit, fieldToFocus: 'name' },
+        }));
+      })
+      .catch(error => {
+        console.error('There was an error!', error);
+      });
   };
 
   return (
@@ -85,25 +47,63 @@ function EditToolbar(props) {
 }
 
 export default function FullFeaturedCrudGrid() {
-  const [rows, setRows] = React.useState(initialRows);
+  const [rows, setRows] = useState([]);
   const [rowModesModel, setRowModesModel] = React.useState({});
 
-  const handleRowEditStop = (params, event) => {
-    if (params.reason === GridRowEditStopReasons.rowFocusOut) {
-      event.defaultMuiPrevented = true;
+  useEffect(() => {
+      axios.get('http://localhost:8000/api/appointments/')
+        .then(response => {
+          const dataWithHospitalNumber = response.data.map(item => ({
+            ...item,
+            hospitalNumber: item.patient.hospitalNumber
+          }));
+          setRows(dataWithHospitalNumber);
+          console.log(dataWithHospitalNumber);
+        })
+        .catch(error => {
+          console.error('There was an error!', error);
+        });
+    }, []);
+
+   const handleRowEditStop = (params, event) => {
+      if (params.reason === GridRowEditStopReasons.rowFocusOut) {
+        event.defaultMuiPrevented = true;
+      }
+    };
+
+  const handleEditClick = (id) => () => {
+      setRowModesModel({ ...rowModesModel, [id]: { mode: GridRowModes.Edit } });
+    };
+
+  const handleSaveClick = (id) => () => {
+    const row = rows.find((row) => row.id === id);
+    const confirmSave = window.confirm('Are you sure you want to edit this entry?');
+
+    if (confirmSave) {
+      const updatedRow = processRowUpdate(row);
+      
+      axios.put(`http://localhost:8000/api/appointments/${id}/`, updatedRow)
+        .then(response => {
+          setRows(prevRows => prevRows.map((row) => row.id === id ? response.data : row));
+          setRowModesModel(prevRowModesModel => ({ ...prevRowModesModel, [id]: { mode: GridRowModes.View } }));
+        })
+        .catch(error => {
+          console.error('There was an error!', error);
+        });
     }
   };
 
-  const handleEditClick = (id) => () => {
-    setRowModesModel({ ...rowModesModel, [id]: { mode: GridRowModes.Edit } });
-  };
-
-  const handleSaveClick = (id) => () => {
-    setRowModesModel({ ...rowModesModel, [id]: { mode: GridRowModes.View } });
-  };
-
   const handleDeleteClick = (id) => () => {
-    setRows(rows.filter((row) => row.id !== id));
+    const confirmDelete = window.confirm('Are you sure you want to delete this record?');
+    if (confirmDelete) {
+      axios.delete(`http://localhost:8000/api/appointments/${id}/`)
+        .then(response => {
+          setRows(rows.filter((row) => row.id !== id));
+        })
+        .catch(error => {
+          console.error('There was an error!', error);
+        });
+    }
   };
 
   const handleCancelClick = (id) => () => {
@@ -112,7 +112,7 @@ export default function FullFeaturedCrudGrid() {
       [id]: { mode: GridRowModes.View, ignoreModifications: true },
     });
 
-    const editedRow = rows.find((row) => row.id === id);
+  const editedRow = rows.find((row) => row.id === id);
     if (editedRow.isNew) {
       setRows(rows.filter((row) => row.id !== id));
     }
@@ -120,7 +120,7 @@ export default function FullFeaturedCrudGrid() {
 
   const processRowUpdate = (newRow) => {
     const updatedRow = { ...newRow, isNew: false };
-    setRows(rows.map((row) => (row.id === newRow.id ? updatedRow : row)));
+    setRows(prevRows => prevRows.map((row) => (row.id === newRow.id ? updatedRow : row)));
     return updatedRow;
   };
 
@@ -129,69 +129,27 @@ export default function FullFeaturedCrudGrid() {
   };
 
   const columns = [
-    { 
-      field: 'appointmentNumber', 
-      headerName: 'Appointment Number', 
-      width: 180, 
-      editable: true 
-    },
-    {
-      field: 'patientName',
-      headerName: 'Patient',
-      width: 80,
-      align: 'left',
-      headerAlign: 'left',
-      editable: true,
-    },
-    {
-      field: 'appointmentDate',
-      headerName: 'Date',
-      type: 'date',
-      width: 180,
-      editable: true,
-    },
-    {
-      field: 'appointmentTime',
-      headerName: 'Time',
-      type: 'time',
-      width: 180,
-      editable: true,
-    },
-    {
-      field: 'appointmentRemarks',
-      headerName: 'Remarks',
-      width: 180,
-      editable: true,
-    },
-    {
-      field: 'appointmentFollowup',
-      headerName: 'For follow-up?',
-      type: 'boolean',
-      width: 180,
-      editable: true,
-    },
-    {
-      field: 'appointmentReferralDoctor',
-      headerName: 'Referral Doctor (if applicable)',
-      width: 180,
-      editable: true,
-    },
-    {
-      field: 'appointmentNewPatient',
-      headerName: 'New Patient?',
-      type: 'boolean',
-      width: 180,
-      editable: true,
-    },
-    /*
-    {
-      field: 'role',
-      headerName: 'Department',
-      width: 220,
-      editable: true,
-      type: 'singleSelect',
-      valueOptions: ['Market', 'Finance', 'Development'],
-    }, */
+    { field: 'id', headerName: 'id', width: 180, editable: true },
+    { field: 'appointmentNumber', headerName: 'Appointment Number', width: 180, editable: true },
+    { field: 'label', headerName: 'Patient Name', width: 130, editable: true },
+    { field: 'hospitalNumber', headerName: 'Hospital Number', width: 180, editable: true },
+    /* { field: 'patient.nameMiddle', headerName: 'Middle Name', width: 130, editable: true },
+    { field: 'patient.nameLast', headerName: 'Last Name', width: 130, editable: true },
+    { field: 'patient.birthdate', headerName: 'Birthdate', width: 130, editable: true },
+    { field: 'patient.age', headerName: 'Age', width: 90, editable: true },
+    { field: 'patient.sex', headerName: 'Sex', width: 90, editable: true },
+    { field: 'patient.civilStatus', headerName: 'Civil Status', width: 130, editable: true },
+    { field: 'patient.hospitalNumber', headerName: 'Hospital Number', width: 180, editable: true },
+    { field: 'patient.contact', headerName: 'Contact', width: 130, editable: true },
+    { field: 'patient.email', headerName: 'Email', width: 200, editable: true },
+    { field: 'patient.facebookName', headerName: 'Facebook Name', width: 200, editable: true },
+    { field: 'patient.address', headerName: 'Address', width: 300, editable: true }, */
+    { field: 'date', headerName: 'Date', width: 130, editable: true },
+    { field: 'time', headerName: 'Time', width: 130, editable: true },
+    { field: 'remarks', headerName: 'Remarks', width: 300, editable: true },
+    { field: 'followup', headerName: 'Follow Up', width: 130, editable: true },
+    { field: 'referralDoctor', headerName: 'Referral Doctor', width: 200, editable: true },
+    { field: 'newPatient', headerName: 'New Patient', width: 130, editable: true },
     {
       field: 'actions',
       type: 'actions',
@@ -241,9 +199,9 @@ export default function FullFeaturedCrudGrid() {
   ];
 
   return (
-    <Box
+    <><Box
       sx={{
-        height: 500,
+        height: 600,
         width: '100%',
         '& .actions': {
           color: 'text.secondary',
@@ -258,6 +216,7 @@ export default function FullFeaturedCrudGrid() {
         columns={columns}
         editMode="row"
         rowModesModel={rowModesModel}
+        isCellEditable={(params) => params.row.id !== 0}
         onRowModesModelChange={handleRowModesModelChange}
         onRowEditStop={handleRowEditStop}
         processRowUpdate={processRowUpdate}
@@ -266,8 +225,12 @@ export default function FullFeaturedCrudGrid() {
         }}
         slotProps={{
           toolbar: { setRows, setRowModesModel },
-        }}
-      />
+        }} />
     </Box>
+
+  
+    </>
+       
+    
   );
 }
