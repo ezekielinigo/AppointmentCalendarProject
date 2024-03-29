@@ -71,6 +71,7 @@ import { useState } from 'react';
 
 export const ClinicContext = React.createContext(); // context API for Clinic Login
 export const isClinicLoggedInContext = React.createContext(); 
+export const SettingsContext = React.createContext(); // context API for Settings
 
 export const PatientContext = React.createContext(); // context API for Patient Login
 export const isPatientLoggedInContext = React.createContext();
@@ -87,6 +88,41 @@ function App() {
     const [clinicpassword, setClinicPassword] = useState('');
     const [isClinicLoggedIn, setIsClinicLoggedIn] = useState(false);
 
+    // clinic settings
+    const [checkedAppointmentDeletion, setCheckedAppointmentDeletion] = useState(true);
+
+    const handleAppointmentDeletionChange = (event) => {
+        setCheckedAppointmentDeletion(event.target.checked);
+    };
+    
+    const [checkedPatientDeletion, setCheckedPatientDeletion] = React.useState(true);
+
+    const handlePatientDeletionChange = (event) => {
+        setCheckedPatientDeletion(event.target.checked);
+    };
+
+    const [checkedAppointmentReschedule, setCheckedAppointmentReschedule] = React.useState(true);
+
+    const handleAppointmentRescheduleChange = (event) => {
+        setCheckedAppointmentReschedule(event.target.checked);
+    };
+
+    const [month, setMonth] = useState('');
+    const [year, setYear] = useState('');
+    const [capacity, setCapacity] = useState('');
+
+    const handleMonthChange = (event) => {
+        setMonth(event.target.value);
+    };
+
+    const handleYearChange = (event) => {
+        setYear(event.target.value);
+    };
+
+    const handleCapacityChange = (event) => {
+        setCapacity(event.target.value);
+    };
+
     // patient login
     const [firstName, setFirstName] = useState('');
     const [middleName, setMiddleName] = useState('');
@@ -94,7 +130,6 @@ function App() {
     const [hospitalNumber, sethospitalNumber] = useState('');
     const [birthDate, setbirthDate] = useState('');
     const [isPatientLoggedIn, setIsPatientLoggedIn] = useState(false);
-    const [persistFirstName, setPersistFirstName] = useState(true); // for local storage
 
     // patient sign up
     const [sex, setSex] = useState('');
@@ -186,6 +221,16 @@ function App() {
     // Router End
 
     return (
+        <SettingsContext.Provider value={{
+            checkedAppointmentDeletion,
+            handleAppointmentDeletionChange,
+            checkedPatientDeletion,
+            handlePatientDeletionChange,
+            checkedAppointmentReschedule,
+            handleAppointmentRescheduleChange,
+            month, setMonth, year, setYear, capacity, setCapacity,
+            handleMonthChange, handleYearChange, handleCapacityChange,
+        }}> 
     <UserPassContext.Provider value={{ user, pass, setUser, setPass }}>
     <isClinicLoggedInContext.Provider value={{ isClinicLoggedIn, setIsClinicLoggedIn }}>
         <isPatientLoggedInContext.Provider value={{ isPatientLoggedIn, setIsPatientLoggedIn }}>
@@ -202,14 +247,13 @@ function App() {
       facebookName, setFacebookName,
       contactNumber, setContactNumber,
       address, setAddress,
-      persistFirstName, setPersistFirstName
     }}>
                     <RouterProvider router={router}>
                     </RouterProvider>
                 </PatientContext.Provider>
             </ClinicContext.Provider>
         </isPatientLoggedInContext.Provider>
-    </isClinicLoggedInContext.Provider></UserPassContext.Provider>
+    </isClinicLoggedInContext.Provider></UserPassContext.Provider></SettingsContext.Provider>
 );
 }
 

@@ -10,6 +10,10 @@ import Switch from '@mui/material/Switch';
 import './AppointmentCapacitySettings.css';
 import { alpha, styled } from '@mui/material/styles';
 import './Calendar.css';
+import { SettingsContext } from '../App';
+import { useContext } from 'react';
+import { FormControl, FormLabel } from 'react-bootstrap';
+
 
 const AppointmentCapacitySettings = () => {
 
@@ -27,30 +31,33 @@ const AppointmentCapacitySettings = () => {
     
     }));
 
-    const [checkedAppointmentDeletion, setCheckedAppointmentDeletion] = useState(true);
+    const {
+        checkedAppointmentDeletion,
+        setCheckedAppointmentDeletion,
+        handleAppointmentDeletionChange,
+        checkedPatientDeletion,
+        setCheckedPatientDeletion,
+        handlePatientDeletionChange,
+        checkedAppointmentReschedule,
+        setCheckedAppointmentReschedule,
+        handleAppointmentRescheduleChange,
+        month, year, capacity,
+        setMonth, setYear, setCapacity,
+        handleMonthChange, handleYearChange, handleCapacityChange,
+    } = useContext(SettingsContext);
 
-    const handleAppointmentDeletionChange = (event) => {
-        setCheckedAppointmentDeletion(event.target.checked);
-    };
     
-    const [checkedPatientDeletion, setCheckedPatientDeletion] = React.useState(true);
 
-    const handlePatientDeletionChange = (event) => {
-        setCheckedPatientDeletion(event.target.checked);
-    };
-
-    const [checkedAppointmentReschedule, setCheckedAppointmentReschedule] = React.useState(true);
-
-    const handleAppointmentRescheduleChange = (event) => {
-        setCheckedAppointmentReschedule(event.target.checked);
-    }; 
+    /*const month = parseInt(document.getElementById('formMonthYear').value.substring(5, 7));
+    const year = parseInt(document.getElementById('formMonthYear').value.substring(0, 4));
+    const capacity = parseInt(document.getElementById('formCapacity').value);*/
 
     const handleSaveCapacitySettings = async () => {
         try {
             // program will first get the monthYear and capacity from the form
-            const month = parseInt(document.getElementById('formMonthYear').value.substring(5, 7));
+            /*const month = parseInt(document.getElementById('formMonthYear').value.substring(5, 7));
             const year = parseInt(document.getElementById('formMonthYear').value.substring(0, 4));
-            const capacity = parseInt(document.getElementById('formCapacity').value);
+            const capacity = parseInt(document.getElementById('formCapacity').value); */
 
             console.log(month, year, capacity);
             // then, a matching monthYear will be searched in the database
@@ -80,6 +87,7 @@ const AppointmentCapacitySettings = () => {
 
         } catch (error) {
             alert('Error setting appointment capacity');
+            alert(error);
             console.log(error);
         }
 
@@ -91,10 +99,40 @@ const AppointmentCapacitySettings = () => {
             <Col> 
             <Form.Group controlId="formMonthYear">
                         <div className="flex-column">
-                        <Form.Label class='settings-form-label'>Select Month and Year</Form.Label>
-                        <Form.Control class='settings-form-control' type="month" />
-                        <Form.Label class='settings-form-label'>Select Hourly Capacity</Form.Label>
-                        <Form.Control class='settings-form-control' type="number" />
+                        <FormLabel className='settings-form-label'>Select Month</FormLabel>
+            <FormControl
+                className='settings-form-control'
+                as="select"
+                value={month}
+                onChange={handleMonthChange}
+            >
+    <option value="1">JANUARY</option>
+    <option value="2">FEBRUARY</option>
+    <option value="3">MARCH</option>
+    <option value="4">APRIL</option>
+    <option value="5">MAY</option>
+    <option value="6">JUNE</option>
+    <option value="7">JULY</option>
+    <option value="8">AUGUST</option>
+    <option value="9">SEPTEMBER</option>
+    <option value="10">OCTOBER</option>
+    <option value="11">NOVEMBER</option>
+    <option value="12">DECEMBER</option>
+            </FormControl>
+            <FormLabel className='settings-form-label'>Select Year</FormLabel>
+            <FormControl
+                className='settings-form-control'
+                type="number"
+                value={year}
+                onChange={handleYearChange}
+            />
+            <FormLabel className='settings-form-label'>Select Hourly Capacity</FormLabel>
+            <FormControl
+                className='settings-form-control'
+                type="number"
+                value={capacity}
+                onChange={handleCapacityChange}
+            />
                         <Button variant="primary" type="submit" className="fc-button-primary" onClick={handleSaveCapacitySettings}>
                             <FiSave></FiSave>
                         </Button>
