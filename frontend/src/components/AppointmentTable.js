@@ -9,6 +9,9 @@ import CancelIcon from '@mui/icons-material/Close';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Typography } from '@mui/material';
+import { SettingsContext } from '../App';
+import { useContext } from 'react';
+
 
 import {
   GridRowModes,
@@ -50,6 +53,7 @@ function EditToolbar(props) {
 export default function FullFeaturedCrudGrid() {
   const [rows, setRows] = useState([]);
   const [rowModesModel, setRowModesModel] = React.useState({});
+  const { checkedAppointmentDeletion, checkedAppointmentReschedule } = useContext(SettingsContext);
 
   useEffect(() => {
       axios.get('http://localhost:8000/api/appointments/')
@@ -157,6 +161,7 @@ export default function FullFeaturedCrudGrid() {
       headerName: 'Actions',
       width: 100,
       cellClassName: 'actions',
+
       getActions: ({ id }) => {
         const isInEditMode = rowModesModel[id]?.mode === GridRowModes.Edit;
 
@@ -180,21 +185,41 @@ export default function FullFeaturedCrudGrid() {
           ];
         }
 
-        return [
+        const actions = [
           <GridActionsCellItem
-            icon={<EditIcon />}
-            label="Edit"
-            className="textPrimary"
-            onClick={handleEditClick(id)}
-            color="inherit"
-          />,
-          <GridActionsCellItem
-            icon={<DeleteIcon />}
-            label="Delete"
-            onClick={handleDeleteClick(id)}
-            color="inherit"
+            icon={<SaveIcon />}
+            label="Save"
+            sx={{
+              color: 'primary.main',
+            }}
+            onClick={handleSaveClick(id)}
           />,
         ];
+
+        if (checkedAppointmentReschedule) {
+          actions.push(
+            <GridActionsCellItem
+              icon={<EditIcon />}
+              label="Edit"
+              className="textPrimary"
+              onClick={handleEditClick(id)}
+              color="inherit"
+            />
+          );
+        }
+
+        if (checkedAppointmentDeletion) {
+          actions.push(
+            <GridActionsCellItem
+              icon={<DeleteIcon />}
+              label="Delete"
+              onClick={handleDeleteClick(id)}
+              color="inherit"
+            />
+          );
+        }
+
+        return actions;
       },
     },
   ];
@@ -217,7 +242,12 @@ export default function FullFeaturedCrudGrid() {
         columns={columns}
         editMode="row"
         rowModesModel={rowModesModel}
-        isCellEditable={(params) => params.row.id !== 0}
+        isCellEditable={(params) => {
+          if (checkedAppointmentReschedule && (params.field === 'date' || params.field === 'time')) {
+            return false;
+          }
+          return params.row.id !== 0;
+        }}
         onRowModesModelChange={handleRowModesModelChange}
         onRowEditStop={handleRowEditStop}
         processRowUpdate={processRowUpdate}

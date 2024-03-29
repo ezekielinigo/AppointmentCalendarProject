@@ -9,6 +9,8 @@ import CancelIcon from '@mui/icons-material/Close';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Typography } from '@mui/material';
+import { SettingsContext } from '../App';
+import { useContext } from 'react';
 
 import {
   GridRowModes,
@@ -50,6 +52,8 @@ function EditToolbar(props) {
 export default function FullFeaturedCrudGrid() {
   const [rows, setRows] = useState([]);
   const [rowModesModel, setRowModesModel] = React.useState({});
+  const { checkedPatientDeletion } = useContext(SettingsContext);
+
 
   useEffect(() => {
     axios.get('http://localhost:8000/api/patients/')
@@ -172,6 +176,39 @@ export default function FullFeaturedCrudGrid() {
         ];
       },
       sticky: true,
+
+      getActions: ({ id }) => {
+        const isInEditMode = rowModesModel[id]?.mode === GridRowModes.Edit;
+
+        if (isInEditMode) {
+          return [
+            // ...
+          ];
+        }
+
+        const actions = [
+          <GridActionsCellItem
+            icon={<EditIcon />}
+            label="Edit"
+            className="textPrimary"
+            onClick={handleEditClick(id)}
+            color="inherit"
+          />,
+        ];
+
+        if (checkedPatientDeletion) { // tatanggalin yung delete funcs sa table when the switch is off
+          actions.push(
+            <GridActionsCellItem
+              icon={<DeleteIcon />}
+              label="Delete"
+              onClick={handleDeleteClick(id)}
+              color="inherit"
+            />
+          );
+        }
+
+        return actions;
+      },
     },
     
     

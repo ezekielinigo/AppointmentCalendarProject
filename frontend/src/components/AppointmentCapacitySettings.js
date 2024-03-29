@@ -46,8 +46,6 @@ const AppointmentCapacitySettings = () => {
         handleMonthChange, handleYearChange, handleCapacityChange,
     } = useContext(SettingsContext);
 
-
-
     /*const month = parseInt(document.getElementById('formMonthYear').value.substring(5, 7));
     const year = parseInt(document.getElementById('formMonthYear').value.substring(0, 4));
     const capacity = parseInt(document.getElementById('formCapacity').value);*/
