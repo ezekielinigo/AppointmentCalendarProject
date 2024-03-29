@@ -22,7 +22,7 @@ function LoginPatient() {
     const [events, setEvents] = useState([]);
     const [hospitalNumberInput, setHospitalNumberInput] = useState(false);
     const [checked, setChecked] = useState(false); // for switch
-    const { setUserPass } = useContext(UserPassContext);
+    const { setUser, setPass } = useContext(UserPassContext);
     
     const csrftoken = getCookie('csrftoken');
     
@@ -144,7 +144,9 @@ function LoginPatient() {
             // password mula sa deets pero may shiftChar function para ma-encrypt
             const pass = (patient.nameLast.slice(-2) + patient.nameFirst.slice(0, 2) + patient.birthdate.replace(/-/g, '') + patient.nameLast + patient.nameFirst).split('').map(shiftChar).join('').slice(0, 10);
             
-            setUserPass({ user, pass });
+            // setUserPass({ user, pass });
+            setUser(user);
+            setPass(pass);
             
             //alert (pass);
             //alert (user + " " + pass) // pang-debug since ayaw gumana ng tokenizing mechanism kanina
@@ -354,9 +356,12 @@ function LoginPatient() {
             // password mula sa deets pero may shiftChar function para ma-encrypt
         const pass = (lastName.slice(-2) + firstName.slice(0, 2) + birthDate.replace(/-/g, '') + lastName + firstName).split('').map(shiftChar).join('').slice(0, 10);
         
-        setUserPass({ user, pass });
+        //setUserPass({ user, pass });
 
-        alert(user + " " + pass);
+        setUser(user);
+        setPass(pass);
+
+        //alert(user + " " + pass);
         // alert(patient.nameFirst + " " + patient.nameMiddle + " " + patient.nameLast); ok hindi pala defined within the scope yung patient
 
             const response = await axios.post('http://localhost:8000/signup', 
@@ -387,10 +392,11 @@ function LoginPatient() {
                 homeAddress: address,
             }
     
-            alert(newPatientInformation.nameFirst + " " + newPatientInformation.nameMiddle + " " + 
+            /*alert(newPatientInformation.nameFirst + " " + newPatientInformation.nameMiddle + " " + 
             newPatientInformation.nameLast + " " + newPatientInformation.birthdate + " " + newPatientInformation.gender + " " + newPatientInformation.civilStats + " " +
             newPatientInformation.contact + " " + newPatientInformation.emailAddress + " " + newPatientInformation.facebook + " " + newPatientInformation.homeAddress);
-
+            */
+           
             await axios.post('http://localhost:8000/api/patients/', {
             nameFirst: newPatientInformation.nameFirst,
             nameMiddle: newPatientInformation.nameMiddle,
@@ -416,11 +422,13 @@ function LoginPatient() {
                     }
                 }
             );
-            
+
+            setShowModal(false);
+
             console.log(login);
             sessionStorage.setItem('isPatientLoggedIn', true);
-            setShowModal(false);
-            redirectToPatientPage();
+            setIsPatientLoggedIn(true);
+            navigate(PathConstants.PATIENTCALENDAR);
         } 
         }
         catch (error) {
@@ -432,10 +440,6 @@ function LoginPatient() {
             
 
     }
-
-    const redirectToPatientPage = () => {
-        navigate(PathConstants.PATIENTCALENDAR);
-    } 
 
     /*
     const [initialRender, setInitialRender] = useState(true);

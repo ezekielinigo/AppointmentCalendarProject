@@ -41,44 +41,77 @@ For testing sa backend:
 */
 
 function AdminNavBar() {
-	const { clinicid, setClinicID, clinicpassword} = useContext(ClinicContext);
+	const { clinicid, setClinicID, clinicpassword, setClinicPassword } = useContext(ClinicContext);
 	const { isClinicLoggedIn, setIsClinicLoggedIn } = useContext(isClinicLoggedInContext);
 	const navigate = useNavigate();
 
+	/*
 	useEffect(() => {
 		const storedClinicId = sessionStorage.getItem('clinicid');
+		const storedClinicPassword = sessionStorage.getItem('clinicpassword');
 
 		if (storedClinicId) {
 			setClinicID(storedClinicId);
+		}
+		if (storedClinicPassword) {
+			setClinicPassword(storedClinicPassword);
 		}
 
 		if (!isClinicLoggedIn) {
 			navigate(PathConstants.LOGIN);
 		}
-	}, [setClinicID, isClinicLoggedIn, navigate]);
+	}, [isClinicLoggedIn, navigate]); */
+
+	useEffect(() => {
+		const storedClinicId = sessionStorage.getItem('clinicid');
+		const storedClinicPassword = sessionStorage.getItem('clinicpassword');
+
+		if (storedClinicId) {
+			setClinicID(storedClinicId);
+		}
+
+		if (storedClinicPassword) {
+			setClinicPassword(storedClinicPassword);
+		}
+
+	}, []);
+
+	useEffect(() => {
+		sessionStorage.setItem('clinicid', clinicid);
+		sessionStorage.setItem('clinicpassword', clinicpassword);
+	}, [clinicid, clinicpassword]);
 
 	const handleLogout = async () => {
 		try {
 			const csrftoken = getCookie('csrftoken');
-		
+			
+			// alert(clinicid, clinicpassword);
+
 			const response = await axios.post('http://localhost:8000/logout', {
 				username: clinicid,
-				password: clinicpassword
+				password: clinicpassword 
 			}, {
 				headers: {
 					'X-CSRFToken': csrftoken
 				}
 			});
-		
+			
 			if (response.status === 200) {
 				sessionStorage.removeItem('isClinicLoggedIn');
 				sessionStorage.removeItem('clinicid');
+				sessionStorage.removeItem('clinicpassword');
 				setIsClinicLoggedIn(false);
+				alert("You have been logged out successfully. Redirecting to login page.");
 				navigate(PathConstants.LOGINCLINIC);
-			} else {
+			} 
+			
+			else {
 				console.error('Failed to log out on the server');
 			}
-		} catch (error) {
+
+		} 
+		
+		catch (error) {
 			console.error('Failed to log out', error);
 		}
 	} 
@@ -95,14 +128,15 @@ function AdminNavBar() {
 					<h1 class = "header-title">
 						RMC Clinic Appointment Calendar
 					</h1>
-
-					<h2 className='welcome'> Welcome, {clinicid} </h2>
 					
-					<Button variant="outline-light" onClick={handleLogout} style = {{
-						margin: 10,
-						alignItems: 'right'
-					}}> Log Out </Button>
-
+					{isClinicLoggedIn &&
+					
+					<><h2 className='welcome'> Welcome, {clinicid} </h2><Button variant="outline-light" onClick={handleLogout} style={{
+							margin: 10,
+							alignItems: 'right'
+						}}> Log Out </Button></>
+					}
+					
 				</Nav>
 			</IconContext.Provider>
 		</>

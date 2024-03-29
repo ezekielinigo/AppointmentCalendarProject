@@ -30,25 +30,54 @@ const Nav = styled.div`
 
 const PatientNavBar = () => {
 	const { firstName, setFirstName } = useContext(PatientContext);
-    const { isPatientLoggedIn, setIsPatientLoggedIn } = useContext(isPatientLoggedInContext);
-    const { userPass } = useContext(UserPassContext);
+    const { isPatientLoggedIn, setIsPatientLoggedIn} = useContext(isPatientLoggedInContext);
+    const { user, pass, setUser, setPass } = useContext(UserPassContext);
     const navigate = useNavigate();
 
     useEffect(() => {
-        // Check if the data exists in sessionStorage
+        // check if the data exists in sessionStorage
         if (sessionStorage.getItem('firstName')) {
-            // If the data exists, use it to set the state
+            // if the data exists, use it to set the state
             setFirstName(sessionStorage.getItem('firstName'));
         }
     }, []);
 
+    useEffect(() => {
+        // whenever firstName changes, save it to sessionStorage
+        sessionStorage.setItem('firstName', firstName);
+        //alert(firstName);
+    }, [firstName]);
+
+    // retrieve user and pass from sessionStorage when the component mounts
+    useEffect(() => {
+        const storedUser = sessionStorage.getItem('user');
+        const storedPass = sessionStorage.getItem('pass');
+
+        if (storedUser) {
+            setUser(storedUser);
+        }
+
+        if (storedPass) {
+            setPass(storedPass);
+        }
+
+    }, []);    
+
+    // save user and pass to sessionStorage whenever they change
+    useEffect(() => {
+        sessionStorage.setItem('user', user);
+        sessionStorage.setItem('pass', pass);
+    }, [user, pass]);
+
     const handleLogout = async () => {
         try {
             const csrftoken = getCookie('csrftoken');
+
+            //alert(user + " " + pass);
         
             const response = await axios.post('http://localhost:8000/logout', {
-                username: userPass.user,
-                password: userPass.pass
+                username: user,
+                password: pass,
             }, {
                 headers: {
                     'X-CSRFToken': csrftoken
@@ -84,12 +113,13 @@ const PatientNavBar = () => {
                         RMC Clinic Appointment Calendar
                     </h1>
 
-                    <h2 className='welcome'> Welcome, {firstName} </h2>
-
-                    <Button variant="outline-light" onClick={handleLogout} style = {{
-                        margin: 10,
-                        alignItems: 'right'
-                    }}> Log Out </Button>
+                    {isPatientLoggedIn && 
+                    
+                    <><h2 className='welcome'> Welcome, {firstName} </h2><Button variant="outline-light" onClick={handleLogout} style={{
+                            margin: 10,
+                            alignItems: 'right'
+                        }}> Log Out </Button></>
+                    }
 
                 </Nav>
             </IconContext.Provider>

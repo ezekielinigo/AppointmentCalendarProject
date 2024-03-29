@@ -52,6 +52,7 @@ function App() {
     const [hospitalNumber, sethospitalNumber] = useState('');
     const [birthDate, setbirthDate] = useState('');
     const [isPatientLoggedIn, setIsPatientLoggedIn] = useState(false);
+    const [persistFirstName, setPersistFirstName] = useState(true); // for local storage
 
     // patient sign up
     const [sex, setSex] = useState('');
@@ -62,7 +63,10 @@ function App() {
     const [address, setAddress] = useState('');
 
     //special user and pass for patient login and sign up
-    const [userPass, setUserPass] = useState({ user: '', pass: '' });
+    //const [userPass, setUserPass] = useState({ user: '', pass: '' });
+
+    const [user, setUser] = useState('');
+    const [pass, setPass] = useState('');
 
     // variable declarations for context API End
 
@@ -140,7 +144,7 @@ function App() {
     // Router End
 
     return (
-    <UserPassContext.Provider value={{ userPass, setUserPass }}>
+    <UserPassContext.Provider value={{ user, pass, setUser, setPass }}>
     <isClinicLoggedInContext.Provider value={{ isClinicLoggedIn, setIsClinicLoggedIn }}>
         <isPatientLoggedInContext.Provider value={{ isPatientLoggedIn, setIsPatientLoggedIn }}>
             <ClinicContext.Provider value={{ clinicid, setClinicID, clinicpassword, setClinicPassword }}>
@@ -155,7 +159,8 @@ function App() {
       email, setEmail,
       facebookName, setFacebookName,
       contactNumber, setContactNumber,
-      address, setAddress
+      address, setAddress,
+      persistFirstName, setPersistFirstName
     }}>
                     <RouterProvider router={router}>
                     </RouterProvider>
