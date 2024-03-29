@@ -42,7 +42,7 @@ DATABASES = {
 python manage.py makemigrations
 python manage.py migrate --run-syncdb
 python manage.py shell
--- paste lines 47 to 49 on terminal then enter -- 
+-- paste lines 46 to 49 on terminal then enter -- 
 from django.contrib.contenttypes.models import ContentType
 ContentType.objects.all().delete()
 quit()
