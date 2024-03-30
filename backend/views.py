@@ -84,12 +84,6 @@ def login(request):
     else:
         return Response("Authentication failed", status=status.HTTP_401_UNAUTHORIZED)
 
-@api_view(['GET'])
-@authentication_classes([SessionAuthentication, TokenAuthentication])
-@permission_classes([IsAuthenticated])
-def test_token(request):
-    return Response("passed!")
-
 @api_view(['POST'])
 def logout(request):
     username = request.data.get('username')

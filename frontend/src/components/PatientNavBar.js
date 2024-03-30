@@ -29,24 +29,76 @@ const Nav = styled.div`
 `;
 
 const PatientNavBar = () => {
-	const { firstName, setFirstName } = useContext(PatientContext);
+	  const { firstName, setFirstName } = useContext(PatientContext);
+    const { middleName, setMiddleName } = useContext(PatientContext);
+    const { lastName, setLastName } = useContext(PatientContext);
+    const { birthDate, setbirthDate } = useContext(PatientContext);
+    const { sex, setSex } = useContext(PatientContext);
+    const { civilStatus, setCivilStatus } = useContext(PatientContext);
+    const { hospitalNumber, setHospitalNumber } = useContext(PatientContext);
+    const { email, setEmail } = useContext(PatientContext);
+    const { facebookName, setFacebookName } = useContext(PatientContext);
+    const { contactNumber, setContactNumber } = useContext(PatientContext);
+    const { address, setAddress } = useContext(PatientContext);
+    const { patientid, setPatientID } = useContext(PatientContext);
     const { isPatientLoggedIn, setIsPatientLoggedIn} = useContext(isPatientLoggedInContext);
     const { user, pass, setUser, setPass } = useContext(UserPassContext);
+
     const navigate = useNavigate();
 
     useEffect(() => {
-        // check if the data exists in sessionStorage
         if (sessionStorage.getItem('firstName')) {
-            // if the data exists, use it to set the state
             setFirstName(sessionStorage.getItem('firstName'));
+          }
+        if (sessionStorage.getItem('middleName')) {
+          setMiddleName(sessionStorage.getItem('middleName'));
         }
-    }, []);
-
-    useEffect(() => {
-        // whenever firstName changes, save it to sessionStorage
+        if (sessionStorage.getItem('lastName')) {
+          setLastName(sessionStorage.getItem('lastName'));
+        }
+        if (sessionStorage.getItem('birthDate')) {
+          setbirthDate(sessionStorage.getItem('birthDate'));
+        }
+        if (sessionStorage.getItem('sex')) {
+          setSex(sessionStorage.getItem('sex'));
+        }
+        if (sessionStorage.getItem('civilStatus')) {
+          setCivilStatus(sessionStorage.getItem('civilStatus'));
+        }
+        if (sessionStorage.getItem('hospitalNumber')) {
+          setHospitalNumber(sessionStorage.getItem('hospitalNumber'));
+        }
+        if (sessionStorage.getItem('email')) {
+          setEmail(sessionStorage.getItem('email'));
+        }
+        if (sessionStorage.getItem('facebookName')) {
+          setFacebookName(sessionStorage.getItem('facebookName'));
+        }
+        if (sessionStorage.getItem('contactNumber')) {
+          setContactNumber(sessionStorage.getItem('contactNumber'));
+        }
+        if (sessionStorage.getItem('address')) {
+          setAddress(sessionStorage.getItem('address'));
+        }
+        if (sessionStorage.getItem('patientid')) {
+          setPatientID(sessionStorage.getItem('patientid'));
+        }
+      }, []);
+    
+      useEffect(() => {
         sessionStorage.setItem('firstName', firstName);
-        //alert(firstName);
-    }, [firstName]);
+        sessionStorage.setItem('middleName', middleName);
+        sessionStorage.setItem('lastName', lastName);
+        sessionStorage.setItem('birthDate', birthDate);
+        sessionStorage.setItem('sex', sex);
+        sessionStorage.setItem('civilStatus', civilStatus);
+        sessionStorage.setItem('hospitalNumber', hospitalNumber);
+        sessionStorage.setItem('email', email);
+        sessionStorage.setItem('facebookName', facebookName);
+        sessionStorage.setItem('contactNumber', contactNumber);
+        sessionStorage.setItem('address', address);
+        sessionStorage.setItem('patientid', patientid);
+      }, [middleName, lastName, birthDate, sex, civilStatus, hospitalNumber, email, facebookName, contactNumber, address, patientid]);
 
     // retrieve user and pass from sessionStorage when the component mounts
     useEffect(() => {

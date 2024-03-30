@@ -48,7 +48,8 @@ function LoginPatient() {
         email, setEmail,
         facebookName, setFacebookName,
         contactNumber, setContactNumber,
-        address, setAddress
+        address, setAddress,
+        patientID, setPatientID,
     } = useContext(PatientContext);
 
     const { isPatientLoggedIn, setIsPatientLoggedIn } = useContext(isPatientLoggedInContext);
@@ -231,6 +232,15 @@ function LoginPatient() {
         try {
             const response = await axios.get('http://localhost:8000/api/patients/');
             const patients = response.data.map(patient => {
+
+                if (patient.nameFirst === firstName && 
+                        patient.nameLast === lastName && 
+                        patient.birthdate === birthDate && 
+                        patient.hospitalNumber === hospitalNumber) {
+                    setPatientID(patient.id);
+                    console.log(patient.id)
+                };
+
                 return {
                     title: patient.nameLast + ', ' + patient.nameFirst[0] + '.',
                     patientIdentifierFromAppointment: {

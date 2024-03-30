@@ -124,6 +124,7 @@ function App() {
     };
 
     // patient login
+    const [patientid, setPatientID] = useState(''); 
     const [firstName, setFirstName] = useState('');
     const [middleName, setMiddleName] = useState('');
     const [lastName, setLastName] = useState('');
@@ -236,6 +237,7 @@ function App() {
         <isPatientLoggedInContext.Provider value={{ isPatientLoggedIn, setIsPatientLoggedIn }}>
             <ClinicContext.Provider value={{ clinicid, setClinicID, clinicpassword, setClinicPassword }}>
             <PatientContext.Provider value={{
+      patientid, setPatientID,
       firstName, setFirstName,
       middleName, setMiddleName,
       lastName, setLastName,

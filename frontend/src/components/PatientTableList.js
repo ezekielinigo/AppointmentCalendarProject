@@ -8,7 +8,7 @@ import SaveIcon from '@mui/icons-material/Save';
 import CancelIcon from '@mui/icons-material/Close';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Typography } from '@mui/material';
+import { Typography, AppBar, Toolbar } from '@mui/material';
 import { SettingsContext } from '../App';
 import { useContext } from 'react';
 
@@ -67,7 +67,6 @@ function EditToolbar(props) {
       }); 
 
   };
-
 
   return (
     <GridToolbarContainer>
