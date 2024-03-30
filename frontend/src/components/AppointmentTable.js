@@ -43,9 +43,11 @@ function EditToolbar(props) {
 
   return (
     <GridToolbarContainer>
+      {/* 
       <Button color="primary" startIcon={<AddIcon />} onClick={handleClick}>
         Add record
       </Button>
+      */}
     </GridToolbarContainer>
   );
 }
@@ -243,7 +245,10 @@ export default function FullFeaturedCrudGrid() {
         editMode="row"
         rowModesModel={rowModesModel}
         isCellEditable={(params) => {
-          if (checkedAppointmentReschedule && (params.field === 'date' || params.field === 'time')) {
+          if (params.field === 'id' || params.field === 'appointmentNumber') {
+            return false;
+          }
+          if (!checkedAppointmentReschedule && (params.field === 'date' || params.field === 'time')) {
             return false;
           }
           return params.row.id !== 0;

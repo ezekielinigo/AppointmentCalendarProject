@@ -24,21 +24,50 @@ function EditToolbar(props) {
   const { setRows, setRowModesModel } = props;
 
   const handleClick = () => {
-    const newRecord = { name: '', age: '', hospitalNumber: '', isNew: true };
+    const newRecord = { 
+      nameFirst: 'First Name', 
+      nameMiddle: 'Middle Name', 
+      nameLast: 'Last Name', 
+      birthdate: new Date().toISOString().split('T')[0], 
+      sex: 'MALE', 
+      civilStatus: 'SINGLE', 
+      hospitalNumber: '', 
+      contact: '', 
+      email: 'tempmail@temp.com', 
+      facebookName: 'Facebook Name', 
+      address: 'Address'
+    };
 
+    /*console.log(
+      'First Name:', newRecord.nameFirst,
+      'Middle Name:', newRecord.nameMiddle,
+      'Last Name:', newRecord.nameLast,
+      'Birthdate:', newRecord.birthdate,
+      'Sex:', newRecord.sex,
+      'Civil Status:', newRecord.civilStatus,
+      'Hospital Number:', newRecord.hospitalNumber,
+      'Contact:', newRecord.contact,
+      'Email:', newRecord.email,
+      'Facebook Name:', newRecord.facebookName,
+      'Address:', newRecord.address
+    ); */ // used for debugging
+    
     axios.post('http://localhost:8000/api/patients/', newRecord)
       .then(response => {
         const newRecordWithId = response.data;
         setRows((oldRows) => [...oldRows, newRecordWithId]);
         setRowModesModel((oldModel) => ({
           ...oldModel,
-          [newRecordWithId.id]: { mode: GridRowModes.Edit, fieldToFocus: 'name' },
+          [newRecordWithId.id]: { mode: GridRowModes.Edit, fieldToFocus: 'nameFirst' },
         }));
       })
       .catch(error => {
+        console.error(error.response.data); 
         console.error('There was an error!', error);
-      });
+      }); 
+
   };
+
 
   return (
     <GridToolbarContainer>
@@ -182,7 +211,21 @@ export default function FullFeaturedCrudGrid() {
 
         if (isInEditMode) {
           return [
-            // ...
+            <GridActionsCellItem
+              icon={<SaveIcon />}
+              label="Save"
+              sx={{
+                color: 'primary.main',
+              }}
+              onClick={handleSaveClick(id)}
+            />,
+            <GridActionsCellItem
+              icon={<CancelIcon />}
+              label="Cancel"
+              className="textPrimary"
+              onClick={handleCancelClick(id)}
+              color="inherit"
+            />,
           ];
         }
 
@@ -196,7 +239,7 @@ export default function FullFeaturedCrudGrid() {
           />,
         ];
 
-        if (checkedPatientDeletion) { // tatanggalin yung delete funcs sa table when the switch is off
+        if (checkedPatientDeletion) {
           actions.push(
             <GridActionsCellItem
               icon={<DeleteIcon />}
@@ -217,9 +260,14 @@ export default function FullFeaturedCrudGrid() {
     { field: 'nameMiddle', headerName: 'Middle Name', width: 130, editable: true },
     { field: 'nameLast', headerName: 'Last Name', width: 130, editable: true },
     { field: 'birthdate', headerName: 'Birthdate', width: 130, editable: true },
-    { field: 'age', headerName: 'Age', width: 90, editable: true },
+    { field: 'age', headerName: 'Age', width: 90, editable: false },
     { field: 'sex', headerName: 'Sex', width: 90, editable: true },
-    { field: 'civilStatus', headerName: 'Civil Status', width: 130, editable: true },
+    {
+      field: 'civilStatus',
+      headerName: 'Civil Status',
+      width: 130,
+      editable: true,
+    },
     { field: 'hospitalNumber', headerName: 'Hospital Number', width: 180, editable: true },
     { field: 'contact', headerName: 'Contact', width: 130, editable: true },
     { field: 'email', headerName: 'Email', width: 200, editable: true },
