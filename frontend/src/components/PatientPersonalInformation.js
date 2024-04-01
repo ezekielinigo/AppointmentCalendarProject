@@ -138,8 +138,20 @@ const PatientPersonalInformation = () => {
 		axios.put(`http://localhost:8000/api/patients/${patientid}/`, patientData)
 			.then(response => {
 				console.log('Patient information updated successfully.');
+				alert("Your information has been updated successfully.")
 			})
 			.catch(error => {
+				// alert(error.request.response.substr(2,7));
+
+				if (error.request.response.substr(2,5) === 'email') {
+					alert("Invalid email format. Please try again.")
+				}
+				
+				if (error.request.response.substr(2,7) === 'contact') {
+					alert("Invalid contact number format. Please try again.")
+				}
+
+				
 				console.error('There was an error!', error);
 			});
 	};
