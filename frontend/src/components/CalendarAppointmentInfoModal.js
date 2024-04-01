@@ -4,7 +4,9 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
+import { SettingsContext } from '../App';
 import './Calendar.css';
+import { useContext } from "react";
 import { FiLock, FiUnlock, FiSave, FiTrash2 } from 'react-icons/fi';
 // icon library here -> https://circumicons.com/icons
 
@@ -16,6 +18,7 @@ const AppointmentInfoModal = ({show, handleClose, appointment, setAppointment, e
     const monthString = months[parseInt(date.substring(2,4), 10) - 1];
     const dateLabel = monthString + " " +  date.substring(4,6) + ", " + date.substring(9,13);
 
+    const { checkedAppointmentDeletion } = useContext(SettingsContext);
 
     return (
         <Modal className="AppointmentInfoModal" show={show} onHide={handleClose}>
@@ -28,11 +31,16 @@ const AppointmentInfoModal = ({show, handleClose, appointment, setAppointment, e
                 onClick={handleEditLock}>
                 {editLock ? <FiUnlock /> : <FiLock />}
             </Button>
+
+            {checkedAppointmentDeletion && 
             <Button
-                className="fc-button-primary"
-                onClick={handleDelete}>
-                <FiTrash2 />
-            </Button>
+                    className="fc-button-primary"
+                    onClick={handleDelete}>
+                    <FiTrash2 />
+                </Button>
+            }
+                
+            
             <Button
                 className="fc-button-primary"
                 onClick={handleSave}>

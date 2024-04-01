@@ -9,6 +9,7 @@ import './Calendar.css';
 import AppointmentInfoModal from './CalendarAppointmentInfoModal';
 import AppointmentNewModal from "./CalendarAppointmentNewModal";
 
+
 const Calendar = () => {
     // State to store the events
     const [events, setEvents] = useState([]);
@@ -366,6 +367,47 @@ const Calendar = () => {
         }
     };
 
+    const handleAppointmentDrag = async (info) => {
+        // first get date & time
+        // get appointment id
+        // use appointment id to find entry in database
+        // replace date & time with new date & time
+        // refresh calendar
+        const newStartTime = info.event.start;
+        const appointmentId = info.event.extendedProps.appointmentId;
+        const newAppointmentInfo = {
+            id: info.event.extendedProps.appointmentId,
+            appointmentNumber: info.event.extendedProps.appointmentNumber,
+            patient: {
+                id: info.event.extendedProps.patientId,
+                nameFirst: info.event.extendedProps.nameFirst,
+                nameMiddle: info.event.extendedProps.nameMiddle,
+                nameLast: info.event.extendedProps.nameLast,
+                birthdate: info.event.extendedProps.birthdate,
+                age: info.event.extendedProps.age,
+                sex: info.event.extendedProps.sex,
+                civilStatus: info.event.extendedProps.civilStatus,
+                hospitalNumber: info.event.extendedProps.hospitalNumber,
+                contact: info.event.extendedProps.contact,
+                email: info.event.extendedProps.email,
+                facebookName: info.event.extendedProps.facebookName,
+                address: info.event.extendedProps.address,
+            },
+            label: info.event.title.substring(9,),
+            date: info.event.startStr.substring(0,10),
+            time: info.event.startStr.substring(11,19),
+        };
+        try {
+    
+            await axios.put(`http://localhost:8000/api/appointments/${appointmentId}/`, newAppointmentInfo)
+            fetchEvents();
+            
+        }catch (e) {
+            console.error(e);
+        }
+
+    }
+
     // this fetches the capacity from the database
     const fetchCapacity = async () => {
         try {
@@ -546,6 +588,12 @@ const Calendar = () => {
                 eventClick={handleAppointmentClick}
                 selectable={false}
                 expandRows={true}
+                editable={true}      
+                eventDrop={handleAppointmentDrag}   
+                /*validRange={{
+                    start: // put here isvalidDate()???,
+                    end: 
+                }} */
                 />
             )}
             <AppointmentInfoModal
