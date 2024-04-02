@@ -24,6 +24,7 @@ black: #071108
 
 .fc-event{
     font-size: 10px;
+    cursor: pointer;
 }
 
 .fc-event-time {

@@ -2,6 +2,7 @@ from rest_framework import serializers
 from .models import *
 from django.contrib.auth.models import User
 
+
 class PatientSerializer(serializers.ModelSerializer):
     class Meta:
         model = Patient
@@ -20,6 +21,7 @@ class PatientSerializer(serializers.ModelSerializer):
             'facebookName',
             'address'
         )
+
 
 class AppointmentSerializer(serializers.ModelSerializer):
     patient = PatientSerializer()
@@ -42,10 +44,15 @@ class AppointmentSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         patient_data = validated_data.pop('patient')
-        patient_serializer = PatientSerializer(data=patient_data)
-        if patient_serializer.is_valid(raise_exception=True):
-            patient = patient_serializer.save()
-            return Appointment.objects.create(patient=patient, **validated_data)
+        # Check if the patient already exists
+        patient, created = Patient.objects.get_or_create(
+            nameFirst=patient_data.get('nameFirst'),
+            nameMiddle=patient_data.get('nameMiddle'),
+            nameLast=patient_data.get('nameLast'),
+            birthdate=patient_data.get('birthdate'),
+            defaults=patient_data,  # This will be used for creating a new Patient
+        )
+        return Appointment.objects.create(patient=patient, **validated_data)
 
     def update(self, instance, validated_data):
         # Update the Patient instance
@@ -67,6 +74,7 @@ class AppointmentSerializer(serializers.ModelSerializer):
 
         return instance
 
+
 class SettingSerializer(serializers.ModelSerializer):
     class Meta:
         model = Setting
@@ -77,19 +85,6 @@ class SettingSerializer(serializers.ModelSerializer):
             'capacity'
         )
 
-#class DoctorSerializer(serializers.ModelSerializer):
-#    class Meta:
-#        model = Doctor
-#        fields = (
-#            'id',
-#            'name',
-#            'specialization',
-#            'contact',
-#            'email',
-#            'facebookName',
-#            'address',
-#            'available'
-#        )
         
 class UserSerializer(serializers.ModelSerializer):
     class Meta:

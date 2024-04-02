@@ -4,9 +4,9 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
-import { SettingsContext } from '../App';
 import './Calendar.css';
 import { useContext } from "react";
+import { SettingsContext } from '../App';
 import { FiLock, FiUnlock, FiSave, FiTrash2 } from 'react-icons/fi';
 // icon library here -> https://circumicons.com/icons
 

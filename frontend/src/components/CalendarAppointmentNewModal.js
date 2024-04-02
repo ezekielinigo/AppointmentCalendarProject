@@ -70,17 +70,7 @@ const AppointmentNewModal = ({show, handleClose, appointment, setAppointment, ha
             </Modal.Title>
             <Button
                 className="fc-button-primary"
-                onClick={async () => {
-                    if (appointment.patient.hospitalNumber === '' && !isNewPatient) {
-                        alert('Please enter hospital number');
-                    } else if (!/^\d{6}$/.test(appointment.patient.hospitalNumber) && !isNewPatient) {
-                        alert('Hospital number must be 6 digits numeric only');
-                    }else {
-                        await handleSave();
-                        handleClose();
-                        setIsNewPatient(false);
-                    }
-                }}
+                onClick={handleSave}
             >
                 <FiSave />
             </Button>
@@ -96,7 +86,7 @@ const AppointmentNewModal = ({show, handleClose, appointment, setAppointment, ha
                                 required
                                 readOnly={!isNewPatient}
                                 defaultValue={appointment ? appointment.patient.nameFirst : ''}
-                                onChange={e => setAppointment({...appointment, patient: {...appointment.patient, nameFirst: e.target.value}})}
+                                onChange={e => setAppointment({...appointment, patient: {...appointment.patient, nameFirst: e.target.value.toUpperCase()}})}
                             />
 
                             <Form.Label>Middle Name</Form.Label>
@@ -105,7 +95,7 @@ const AppointmentNewModal = ({show, handleClose, appointment, setAppointment, ha
                                 type="text"
                                 readOnly={!isNewPatient}
                                 defaultValue={appointment ? appointment.patient.nameMiddle : ''}
-                                onChange={e => setAppointment({...appointment, patient: {...appointment.patient, nameMiddle: e.target.value}})}
+                                onChange={e => setAppointment({...appointment, patient: {...appointment.patient, nameMiddle: e.target.value.toUpperCase()}})}
                             />
                             <Form.Label>Last Name</Form.Label>
                             <Form.Control
@@ -114,7 +104,7 @@ const AppointmentNewModal = ({show, handleClose, appointment, setAppointment, ha
                                 required
                                 readOnly={!isNewPatient}
                                 defaultValue={appointment ? appointment.patient.nameLast : ''}
-                                onChange={e => setAppointment({...appointment, patient: {...appointment.patient, nameLast: e.target.value}})}
+                                onChange={e => setAppointment({...appointment, patient: {...appointment.patient, nameLast: e.target.value.toUpperCase()}})}
                             />
                             <Row>
                                 <Col md={9}>
