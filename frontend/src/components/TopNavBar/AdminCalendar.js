@@ -391,10 +391,12 @@ const AdminCalendar = () => {
         try {
             const response = await axios.get('http://localhost:8000/api/appointments/');
             const appointments = response.data.map(appointment => {
+                const date = new Date(`${appointment.date}T${appointment.time}`);
                 return {
                     title: appointment.appointmentNumber.substring(9,) + ' : ' + appointment.label,
-                    date: new Date(`${appointment.date}T${appointment.time}`),
+                    date: date,
                     allDay: false,
+                    editable: isDateAvailable(date),
                     extendedProps: {
                         appointmentId: appointment.id,
                         patientId: appointment.patient.id,
