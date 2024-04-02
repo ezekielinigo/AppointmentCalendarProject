@@ -19,13 +19,13 @@ import Modal from 'react-bootstrap/Modal';
 
 function LoginPatient() {
 
-    const [events, setEvents] = useState([]);
+    const [patients, setPatients] = useState([]);
     const [hospitalNumberInput, setHospitalNumberInput] = useState(false);
     const [checked, setChecked] = useState(false); // for switch
     const { setUser, setPass } = useContext(UserPassContext);
-    
+
     const csrftoken = getCookie('csrftoken');
-    
+
     /*
     
     const [firstName, setFirstName] = useState('');
@@ -37,11 +37,11 @@ function LoginPatient() {
     */
 
     // logged in checker
-    const { 
-        firstName, setFirstName, 
-        middleName, setMiddleName, 
-        lastName, setLastName, 
-        hospitalNumber, sethospitalNumber, 
+    const {
+        firstName, setFirstName,
+        middleName, setMiddleName,
+        lastName, setLastName,
+        hospitalNumber, sethospitalNumber,
         birthDate, setbirthDate,
         sex, setSex,
         civilStatus, setCivilStatus,
@@ -54,7 +54,7 @@ function LoginPatient() {
 
     const { isPatientLoggedIn, setIsPatientLoggedIn } = useContext(isPatientLoggedInContext);
     const navigate = useNavigate();
-    
+
     useEffect(() => {
         const isLoggedIn = sessionStorage.getItem('isPatientLoggedIn');
 
@@ -136,23 +136,23 @@ function LoginPatient() {
         //alert(patient.nameFirst + " " + patient.nameLast + " " + patient.birthdate + " " + patient.hospitalNumber)
 
         //alert(patient.birthdate + " " + patient.hospitalNumber + " " + patient.nameFirst + " " + patient.nameLast)
-        
-        try { 
+
+        try {
             // session auth/token mechanism to
 
             // basically pre-defined username for the user using some of the details
             const user = (patient.nameFirst.slice(0, 4) + patient.nameMiddle.slice(0, 2) + patient.nameLast.slice(0, 4) + patient.birthdate.replace(/-/g, '')).slice(0, 10);
             // password mula sa deets pero may shiftChar function para ma-encrypt
             const pass = (patient.nameLast.slice(-2) + patient.nameFirst.slice(0, 2) + patient.birthdate.replace(/-/g, '') + patient.nameLast + patient.nameFirst).split('').map(shiftChar).join('').slice(0, 10);
-            
+
             // setUserPass({ user, pass });
             setUser(user);
             setPass(pass);
-            
+
             //alert (pass);
             //alert (user + " " + pass) // pang-debug since ayaw gumana ng tokenizing mechanism kanina
 
-            const login = await axios.post('http://localhost:8000/login', 
+            const login = await axios.post('http://localhost:8000/login',
                 { username: user, password: pass },
                 {
                     headers: {
@@ -170,18 +170,18 @@ function LoginPatient() {
         // ito yung gumanang tokenizing mechanism (PRIOR NUNG PREDEFINED PA LANG UNG USER (OR ORIGINALLY GINAWA SA BACKEND))
         /*
         // 1. attempt sign-up
-        const response = await axios.post('http://localhost:8000/signup', 
+        const response = await axios.post('http://localhost:8000/signup',
             { username: user, password: pass, first_name: firstName, last_name: lastName },
             {
                 headers: {
                     'X-CSRFToken': csrftoken
                 }
             }
-        ); 
-        
-        // 2. basically status = 200 means na may existing username na sa database kaya login na  
+        );
+
+        // 2. basically status = 200 means na may existing username na sa database kaya login na
         if (response.status === 200) {
-            const login = await axios.post('http://localhost:8000/login', 
+            const login = await axios.post('http://localhost:8000/login',
                 { username: user, password: pass, first_name: patient.nameFirst, last_name: patient.nameLast },
                 {
                     headers: {
@@ -196,7 +196,7 @@ function LoginPatient() {
 
         // 3. other than 200, sign-up then login
         else {
-            const signup = await axios.post('http://localhost:8000/signup', 
+            const signup = await axios.post('http://localhost:8000/signup',
                 { username: user, password: pass, first_name: patient.nameFirst, last_name: patient.nameLast },
                 {
                     headers: {
@@ -206,7 +206,7 @@ function LoginPatient() {
             );
             console.log(signup);
 
-            const login = await axios.post('http://localhost:8000/login', 
+            const login = await axios.post('http://localhost:8000/login',
                 { username: user, password: pass, first_name: patient.nameFirst, last_name: patient.nameLast },
                 {
                     headers: {
@@ -217,7 +217,7 @@ function LoginPatient() {
             console.log(login);
             sessionStorage.setItem('isPatientLoggedIn', true);
             navigate(PathConstants.PATIENTCALENDAR);
-        } 
+        }
     } */
 
     catch (error) {
@@ -225,139 +225,92 @@ function LoginPatient() {
         //alert(error);
         alert('Login Failed! Please check your Patient ID and Password.');
     }
-        
+
     }
 
-    const fetchEvents = async () => {
+    const fetchPatients = async () => {
         try {
             const response = await axios.get('http://localhost:8000/api/patients/');
             const patients = response.data.map(patient => {
-
-                if (patient.nameFirst === firstName && 
-                        patient.nameLast === lastName && 
-                        patient.birthdate === birthDate && 
-                        patient.hospitalNumber === hospitalNumber) {
-                    setPatientID(patient.id);
-                    console.log(patient.id)
-                };
-
                 return {
-                    title: patient.nameLast + ', ' + patient.nameFirst[0] + '.',
-                    patientIdentifierFromAppointment: {
-                        nameFirst: patient.nameFirst,
-                        nameLast: patient.nameLast,
-                        birthdate: patient.birthdate,
-                        hospitalNumber: patient.hospitalNumber,
-                    }
+                    nameFirst: patient.nameFirst,
+                    nameMiddle: patient.nameMiddle,
+                    nameLast: patient.nameLast,
+                    birthdate: patient.birthdate,
+                    hospitalNumber: patient.hospitalNumber
                 };
             });
-            setEvents(patients);
+            setPatients(patients); // Assuming you still want to set the state with the fetched patients
         } catch (error) {
             console.error(error);
         }
     };
-    
+
     useEffect(() => {
-            fetchEvents();
+            fetchPatients();
         }, []);
 
-    const handleValidation= (event) => {
-        event.preventDefault(); // para 'di magshow 'yung mga ilalagay na information sa URL
-    
-    if (!hospitalNumberInput) {
-        if (firstName === '' || lastName === '' || birthDate === '') {
-            alert("Please fill out all the fields.");
-        } 
+    const handleValidation= (patient) => {
+        patient.preventDefault(); // para 'di magshow 'yung mga ilalagay na information sa URL
 
-        else {
-            for (let i = 0; i < events.length; i++) {
-                //alert(events[i].patientIdentifierFromAppointment.nameFirst + " " + events[i].patientIdentifierFromAppointment.nameLast + " " + events[i].patientIdentifierFromAppointment.birthdate + " " + events[i].patientIdentifierFromAppointment.hospitalNumber)
-                //alert(firstName + " " + lastName + " " + birthDate + " " + hospitalNumber)
+        if (!hospitalNumberInput) { // if new patient is not checked
 
+            if (firstName === '' || lastName === '' || birthDate === '' || hospitalNumber === '') {
+                alert("Please fill out all of the fields.");
+            } else {
 
-                //alert(events[i].patientIdentifierFromAppointment.hospitalNumber + "|" + "input hospital num:" + hospitalNumber + 'e');
+                // filter out patients with hospital numbers
+                const oldPatients = patients.filter(patient => patient.hospitalNumber !== '');
 
-                if (events[i].patientIdentifierFromAppointment.nameFirst === firstName && 
-                    events[i].patientIdentifierFromAppointment.nameLast === lastName && 
-                    events[i].patientIdentifierFromAppointment.birthdate === birthDate &&
-                    events[i].patientIdentifierFromAppointment.hospitalNumber === hospitalNumber) {
+                // find patient with matching hospital number
+                let patientMatch = oldPatients.find(patient => {
+                    return patient.nameFirst === firstName &&
+                        patient.nameMiddle === middleName &&
+                        patient.nameLast === lastName &&
+                        patient.birthdate === birthDate &&
+                        patient.hospitalNumber === hospitalNumber
+                });
 
-                        alert('Patient found! Redirecting to patient page...');
-                        validateEntry();
-                        return;
-                }
-
-                else if (events[i].patientIdentifierFromAppointment.nameFirst === firstName && 
-                    events[i].patientIdentifierFromAppointment.nameLast === lastName && 
-                    events[i].patientIdentifierFromAppointment.birthdate === birthDate && 
-                    events[i].patientIdentifierFromAppointment.hospitalNumber === '') {
-                    
-        
+                if (patientMatch) {
                     alert('Patient found! Redirecting to patient page...');
                     validateEntry();
                     return;
-                }
-
-                else if (events[i].patientIdentifierFromAppointment.nameFirst === firstName && 
-                    events[i].patientIdentifierFromAppointment.nameLast === lastName && 
-                    events[i].patientIdentifierFromAppointment.birthdate === birthDate && 
-                    events[i].patientIdentifierFromAppointment.hospitalNumber !== hospitalNumber) {
-                    alert('Patient found! Hospital number does not match. Please check your inputs.');
-                    return;
-                } 
-
-                else if (events[i].patientIdentifierFromAppointment.nameFirst === firstName && 
-                    events[i].patientIdentifierFromAppointment.nameLast === lastName && 
-                    events[i].patientIdentifierFromAppointment.birthdate !== birthDate) {
-                    alert('Patient found! Birthday does not match. Please check your inputs.');
+                }else {
+                    alert('Patient does not match the hospital number. Please check your inputs.\n' +
+                        'If you think this is an error, please contact the hospital by making an on-site appointment.');
                     return;
                 }
-
             }
+        } else { // for new patients
 
-                    if (window.confirm("Patient not found. Do you want to register as a new patient?")) {
-                        handleSignUpModal();
-                        return;
-                    }
+            // filter patients without hospital numbers
+            const newPatients = patients.filter(patient => patient.hospitalNumber === '');
 
-            
-        }
-    }
+            // find patient with matching details
+            let patientMatch = newPatients.find(patient => {
+                return patient.nameFirst === firstName &&
+                    patient.nameMiddle === middleName &&
+                    patient.nameLast === lastName &&
+                    patient.birthdate === birthDate
+            });
 
-    else if (hospitalNumberInput) {
-        if (firstName === '' || lastName === '' || birthDate === '') {
-            alert("Please fill out all the fields.");
-        } 
-
-        else {
-            for (let i = 0; i < events.length; i++) {
-
-                //alert(events[i].patientIdentifierFromAppointment.nameFirst + " " + events[i].patientIdentifierFromAppointment.nameLast + " " + events[i].patientIdentifierFromAppointment.birthdate + " " + events[i].patientIdentifierFromAppointment.hospitalNumber)
-                //alert(firstName + " " + lastName + " " + birthDate + " " + hospitalNumber)
-
-                if (events[i].patientIdentifierFromAppointment.nameFirst === firstName && 
-                    events[i].patientIdentifierFromAppointment.nameLast === lastName && 
-                    events[i].patientIdentifierFromAppointment.birthdate === birthDate) {
-                    alert('You already have a record on our database. Please input your hospital number.');
-                    setChecked(false); // pang uncheck
-                    setHospitalNumberInput(false); // pang enable ng text box
-                    return;
-                } 
-            }
-
-            if (window.confirm("You are registering as a new patient. Please fill in all the required details on the pop-up. Do you want to proceed?")) {
-                handleSignUpModal();
+            if (patientMatch) {
+                alert('Patient found! Redirecting to patient page...');
+                validateEntry();
                 return;
+            }else {
+                const newPatientConfirm = window.confirm("Patient not found. Do you want to register as a new patient?");
+                if (newPatientConfirm) {
+                    handleSignUpModal();
+                    return;
+                }
             }
-
         }
-    }
-        
     }
 
     const handleSignUpModal = async () => { // for new patient modal pop-up
         setShowModal(true);
-        
+
     }
 
     const handleProceedSignUp = async () => {
@@ -365,7 +318,7 @@ function LoginPatient() {
         const user = (firstName.slice(0, 4) + middleName.slice(0, 2) + lastName.slice(0, 4) + birthDate.replace(/-/g, '')).slice(0, 10);
             // password mula sa deets pero may shiftChar function para ma-encrypt
         const pass = (lastName.slice(-2) + firstName.slice(0, 2) + birthDate.replace(/-/g, '') + lastName + firstName).split('').map(shiftChar).join('').slice(0, 10);
-        
+
         //setUserPass({ user, pass });
 
         setUser(user);
@@ -374,20 +327,20 @@ function LoginPatient() {
         //alert(user + " " + pass);
         // alert(patient.nameFirst + " " + patient.nameMiddle + " " + patient.nameLast); ok hindi pala defined within the scope yung patient
 
-            const response = await axios.post('http://localhost:8000/signup', 
+            const response = await axios.post('http://localhost:8000/signup',
             { username: user, password: pass, first_name: firstName, last_name: lastName },
             {
                 headers: {
                     'X-CSRFToken': csrftoken
                 }
             }
-            
+
         );
 
         console.log(response);
 
         try {
-            
+
         if (response.status === 200) {
             const newPatientInformation = {
                 nameFirst: firstName,
@@ -401,8 +354,8 @@ function LoginPatient() {
                 facebook: facebookName,
                 homeAddress: address,
             }
-    
-            /*alert(newPatientInformation.nameFirst + " " + newPatientInformation.nameMiddle + " " + 
+
+            /*alert(newPatientInformation.nameFirst + " " + newPatientInformation.nameMiddle + " " +
             newPatientInformation.nameLast + " " + newPatientInformation.birthdate + " " + newPatientInformation.gender + " " + newPatientInformation.civilStats + " " +
             newPatientInformation.contact + " " + newPatientInformation.emailAddress + " " + newPatientInformation.facebook + " " + newPatientInformation.homeAddress);
             */
@@ -421,10 +374,10 @@ function LoginPatient() {
             address: newPatientInformation.homeAddress,
         });
             alert('Patient registered successfully! Redirecting to patient page...');
-            
+
             //alert(user + " " + pass);
-            
-            const login = await axios.post('http://localhost:8000/login', 
+
+            const login = await axios.post('http://localhost:8000/login',
                 { username: user, password: pass },
                 {
                     headers: {
@@ -439,7 +392,7 @@ function LoginPatient() {
             sessionStorage.setItem('isPatientLoggedIn', true);
             setIsPatientLoggedIn(true);
             navigate(PathConstants.PATIENTCALENDAR);
-        } 
+        }
         }
         catch (error) {
             console.error(error);
@@ -447,7 +400,7 @@ function LoginPatient() {
             alert('Something went wrong during sign-up. Please try again.');
 
         }
-            
+
 
     }
 
@@ -457,8 +410,8 @@ function LoginPatient() {
     useEffect(() => {
         if (initialRender) {
             setInitialRender(false);
-        } 
-        
+        }
+
         else if (!showModal) {
             navigate(PathConstants.PATIENTCALENDAR);
         }
@@ -467,6 +420,7 @@ function LoginPatient() {
     const handleHospitalBox = (event) => {
         setHospitalNumberInput(event.target.checked); // basically returns a boolean value to check kung nakacheck ba ung box.
         setChecked(event.target.checked); // for checkbox
+        sethospitalNumber(''); // para ma-clear 'yung hospital number
     };
 
     const [age, setAge] = useState(null);
@@ -485,7 +439,7 @@ function LoginPatient() {
     useEffect(() => {
         setAge(calculateAge(birthDate));
       }, [birthDate]);
-    
+
     return (
         <>
 
@@ -560,17 +514,18 @@ function LoginPatient() {
                             input::-webkit-inner-spin-button {
                                 -webkit-appearance: none;
                                 margin: 0;
+                            }
                         `}</style>
                         <FormLabel>Address</FormLabel>
                         <FormControl id='address' as='textarea' rows='3' onChange={(e) => setAddress(e.target.value)} />
                     </div>
                 </div>
             </FormGroup>
-            <Button 
-                        type="submit" 
+            <Button
+                        type="submit"
                         className="login-button"
                         onClick={handleProceedSignUp}
-                        variant="contained" 
+                        variant="contained"
                         color="success"
                         style={{marginTop: '2vh', marginBottom: '2vh'}}
                     >
@@ -593,23 +548,20 @@ function LoginPatient() {
                             <div className='name-div'>
                                 <FormControl
                                     type="text"
-                                    placeholder="First Name"
                                     value={firstName}
-                                    onChange={(e) => setFirstName(e.target.value)}
+                                    onChange={(e) => setFirstName(e.target.value.toUpperCase())}
                                 />
                                 <FormLabel class='label'>Middle Name</FormLabel>
                                 <FormControl
                                     type="text"
-                                    placeholder="Middle Name"
                                     value={middleName}
-                                    onChange={(e) => setMiddleName(e.target.value)}
+                                    onChange={(e) => setMiddleName(e.target.value.toUpperCase())}
                                 />
                                 <FormLabel class='label'>Last Name</FormLabel>
                                 <FormControl
                                     type="text"
-                                    placeholder="Last Name"
                                     value={lastName}
-                                    onChange={(e) => setLastName(e.target.value)}
+                                    onChange={(e) => setLastName(e.target.value.toUpperCase())}
                                 />
                             </div>
                         </FormGroup>
@@ -619,7 +571,6 @@ function LoginPatient() {
                                 <FormLabel class='label'>Birthday</FormLabel>
                                 <FormControl
                                     type="date"
-                                    placeholder="Birthday"
                                     value={birthDate}
                                     onChange={(e) => setbirthDate(e.target.value)}
                                 />
@@ -629,7 +580,6 @@ function LoginPatient() {
                                 <FormLabel class='label'>Hospital Number</FormLabel>
                                 <FormControl
                                     type="text"
-                                    placeholder="Hospital Number"
                                     value={hospitalNumber}
                                     onChange={(e) => sethospitalNumber(e.target.value)}
                                     disabled={hospitalNumberInput}
@@ -645,16 +595,16 @@ function LoginPatient() {
                                     />
                                 </div>
                             </FormGroup>
-                           
+
                         </div>
                     </div>
-                    
 
-                    <Button 
-                        type="submit" 
+
+                    <Button
+                        type="submit"
                         className="login-button"
                         onClick={handleValidation}
-                        variant="contained" 
+                        variant="contained"
                         color="success"
                         style={{marginTop: '2vh'}} // Adds a top margin of 5px
                     >
@@ -666,13 +616,13 @@ function LoginPatient() {
                             fontSize: '2vh',
                             marginTop: '1vh',
                             marginLeft: '1.2vh'
-                       
-                        }}> <MdKeyboardBackspace /> Go back  </p> </Link> 
+
+                        }}> <MdKeyboardBackspace /> Go back  </p> </Link>
             </div>
             </div>
             </div>
-            
-            
+
+
         </>
     );
 }

@@ -136,7 +136,7 @@ export default function FullFeaturedCrudGrid() {
   };
 
   const columns = [
-    { field: 'id', headerName: 'id', width: 180, editable: true },
+    // { field: 'id', headerName: 'id', width: 180, editable: true },
     { field: 'appointmentNumber', headerName: 'Appointment Number', width: 180, editable: true },
     { field: 'label', headerName: 'Patient Name', width: 130, editable: true },
     { field: 'hospitalNumber', headerName: 'Hospital Number', width: 180, editable: true },

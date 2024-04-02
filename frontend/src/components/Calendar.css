@@ -13,12 +13,12 @@ black: #071108
 }
 
 .fc {
-    max-width: 130vh;
+    max-width: 100vh;
     margin: auto;
 }
 
 .calendar {
-    max-width: 130vh;
+    max-width: 100vh;
     margin-top: 25px;
 }
 
