@@ -1,6 +1,6 @@
 /*global gettext, pgettext, get_format, quickElement, removeChildren*/
 /*
-calendar.js - Calendar functions by Adrian Holovaty
+calendar.js - AdminCalendar functions by Adrian Holovaty
 depends on core.js for utility functions like removeChildren or quickElement
 */
 'use strict';
@@ -175,7 +175,7 @@ depends on core.js for utility functions like removeChildren or quickElement
         }
     };
 
-    // Calendar -- A calendar instance
+    // AdminCalendar -- A calendar instance
     function Calendar(div_id, callback, selected) {
         // div_id (string) is the ID of the element in which the calendar will
         //     be displayed

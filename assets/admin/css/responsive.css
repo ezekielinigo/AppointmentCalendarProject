@@ -876,7 +876,7 @@ input[type="submit"], button {
         font-size: 0.8125rem;
     }
 
-    /* Calendar and clock */
+    /* AdminCalendar and clock */
 
     .calendarbox, .clockbox {
         position: fixed !important;

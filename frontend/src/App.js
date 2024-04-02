@@ -54,12 +54,12 @@ python manage.py runserver
 
 import './App.css';
 import React from 'react';
-import Calendar from './components/Calendar';
+import AdminCalendar from './components/TopNavBar/AdminCalendar';
 import { RouterProvider, createBrowserRouter } from 'react-router-dom';
 import LoginClinic from './components/LoginClinic';
 import LoginPatient from './components/LoginPatient';
 import LandingPage from './components/LandingPage';
-import { CalendarView } from "./components/TopNavBar/AdminCalendar";
+import { CalendarView } from "./components/TopNavBar/AdminCalendarView";
 import { AdminSettings } from "./components/TopNavBar/AdminSettings";
 import PatientList from "./components/TopNavBar/AdminPatientList";
 import AdminAppointmentList from "./components/TopNavBar/AdminAppointmentList";
@@ -168,7 +168,7 @@ function App() {
         },
         {
             path: '/calendar',
-            element: <Calendar />
+            element: <AdminCalendar />
         },
 
         // Start Receptionist Page Routes
