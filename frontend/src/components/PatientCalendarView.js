@@ -1,7 +1,7 @@
 import React from "react";
 import NavBar from "./PatientNavBar"
 import PatientNavs from "./PatientNavs";
-import Calendar from "./PatientCalendar";
+import PatientCalendar from "./PatientCalendar";
 
 const PatientCalendarView = () => {
     return (
@@ -9,7 +9,7 @@ const PatientCalendarView = () => {
         <NavBar/>
         <div>
             <PatientNavs/>
-            <Calendar /> 
+            <PatientCalendar />
         </div></>
     );
 }

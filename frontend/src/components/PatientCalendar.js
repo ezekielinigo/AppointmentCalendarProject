@@ -1,33 +1,32 @@
-import React, {useEffect, useRef, useState, useContext} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import axios from 'axios';
 import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import listPlugin from '@fullcalendar/list';
 import interactionPlugin from '@fullcalendar/interaction';
-import './Calendar.css';
+import './Calendar.css'
+import { useContext } from "react";
 import { SettingsContext, PatientContext } from '../App';
-import AppointmentInfoModal from './CalendarAppointmentInfoModal';
-import AppointmentNewModal from "./CalendarAppointmentNewModal";
+import AppointmentInfoModal from './PatientAppointmentInfoModal';
+import AppointmentNewModal from './PatientAppointmentNewModal';
 
-/* DIFFERENCES IN PATIENTCALENDAR.JS
-* - moreLinks containing a patient's appointment will be colored lime green
-* - moreLink will still show the number of appointments in a day/hour
-* - but the appointment list will be hidden
-* - a popover will only contain the add new appointment button + the patient's appointment, if available
-* - appointment modals will always lock patient info
-* - appointment modals will autofill the patient info
-* - appointment modals lock button is removed
+/* DIFFERENCES FROM AdminCalendar.js
+* - patient can only view / move / edit their own appointments
+* - other appointments are hidden
+* - moreLinks with their appointments are highlighted lime green
+* - appointment modals are autofilled with patient's info
+* - appointment modals' patient info are locked
  */
 
-const Calendar = () => {
+const PatientCalendar = () => {
     // State to store the events
     const [events, setEvents] = useState([]);
     const [showAppointmentInfoModal, setShowAppointmentInfoModal] = useState(false);
     const [showAppointmentNewModal, setShowAppointmentNewModal] = useState(false);
     const [selectedAppointment, setSelectedAppointment] = useState(null);
+    const [currentPatient, setCurrentPatient] = useState(null);
     const calendarRef = useRef(null);
-    const [editLock, setEditLock] = useState(false);
     const [monthlyCapacities, setMonthlyCapacities] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
     const [renderKey, setRenderKey] = useState(0);
@@ -38,24 +37,13 @@ const Calendar = () => {
         firstName,
         middleName,
         lastName,
-        hospitalNumber,
         birthDate,
-        sex,
-        civilStatus,
-        email,
-        facebookName,
-        contactNumber,
-        address,
-        patientid,
-    } = useContext(PatientContext);
-    const handleEditLock = () => {
-        setEditLock(!editLock);
-    }
+        hospitalNumber,
+    } = useContext(PatientContext)
 
     const handleClose = () => {
         setShowAppointmentNewModal(false);
         setShowAppointmentInfoModal(false);
-        setEditLock(false);
     }
 
     const handleDelete = async () => {
@@ -191,7 +179,6 @@ const Calendar = () => {
                                 referralDoctor: '',
                                 newPatient: false
                             })
-                            setEditLock(false);
                             // remove popover
                             setTimeout(() => {
                                 const popover = document.querySelector('.fc-more-popover');
@@ -207,8 +194,6 @@ const Calendar = () => {
             alert('This date is not available for new appointments.');
         }
     }
-
-
 
     const handleAppointmentClick = (info) => {
         // if the appointment clicked is "add new appointment", then redirect to use the handleDateClick function
@@ -405,13 +390,9 @@ const Calendar = () => {
             }
     };
 
-
-
     // This fetches events from the database and puts it in the state
     const fetchEvents = async () => {
         try {
-
-            // get all appointments from the database (hide all)
             const response = await axios.get('http://localhost:8000/api/appointments/');
             const appointments = response.data.map(appointment => {
                 const date = new Date(`${appointment.date}T${appointment.time}`);
@@ -419,8 +400,6 @@ const Calendar = () => {
                     title: appointment.appointmentNumber.substring(9,) + ' : ' + appointment.label,
                     date: date,
                     allDay: false,
-                    display: 'none',
-                    editable: isDateAvailable(date),
                     extendedProps: {
                         appointmentId: appointment.id,
                         patientId: appointment.patient.id,
@@ -444,49 +423,45 @@ const Calendar = () => {
                     }
                 };
             });
-
-            // for all dates+hours with appointments, if capacity is not full, add "add appointments button"
-            appointments.forEach(appointment => {
-                const date = appointment.date;
-                const year = date.getFullYear();
-                const month = date.getMonth() + 1;
-                const day = date.getDate();
-                const hour = date.getHours();
-                const capacity = monthlyCapacities.find(capacity => capacity.month === month && capacity.year === year);
-                const filledSlots = appointments.filter(event => {
-                    const eventDate = new Date(event.date);
-                    return eventDate.getFullYear() === year && eventDate.getMonth() + 1 === month && eventDate.getDate() === day && eventDate.getHours() === hour;
-                }).length;
-
-                if (filledSlots < capacity.capacity) {
-                    const newAppointmentButton = {
-                        title: '+ New Appointment',
-                        start: date,
-                        editable: false,
-                        addNewButton: true,
-                    };
-                    appointments.push(newAppointmentButton);
-                }
-            });
-
-            // unhide all appointments made by the patient
-            appointments.forEach(appointment => {
-                console.log(firstName)
-                if (appointment.extendedProps.patientId === patientid) {
-                    appointment.display = 'auto';
-                }
-            });
-
-
-
-
-
+            // remove "add appointments button"
             setEvents(appointments);
-            //setRenderKey(prevKey => prevKey + 1);
+            setRenderKey(prevKey => prevKey + 1);
         } catch (error) {
             console.error(error);
         }
     };
+
+    const fetchPatient = async () => {
+        try {
+            const response = await axios.get('http://localhost:8000/api/patients/');
+            if (hospitalNumber === "" || hospitalNumber === null) { // means new patient
+                const newPatientList = response.data.filter(patient => !patient.hospitalNumber);
+                const patientMatch = newPatientList.find(patient => {
+                    return patient.nameFirst === sessionStorage.getItem('firstName') &&
+                        patient.nameMiddle === sessionStorage.getItem('middleName') &&
+                        patient.nameLast === sessionStorage.getItem('lastName') &&
+                        patient.birthdate === sessionStorage.getItem('birthDate')
+                });
+                if (patientMatch) {
+                    setCurrentPatient(patientMatch)
+                }else {
+                    alert('not found')
+                }
+            }else { // means old patient
+                const oldPatientList = response.data.filter(patient => patient.hospitalNumber);
+                const patientMatch = oldPatientList.find(patient => patient.hospitalNumber === sessionStorage.getItem('hospitalNumber'));
+                if (patientMatch) {
+                    setCurrentPatient(patientMatch)
+                }else {
+                    alert('not found')
+                }
+            }
+            console.log(currentPatient)
+
+        }catch (error) {
+            console.error(error);
+        }
+    }
 
     const handleAppointmentDrag = async (info) => {
         // first get date & time
@@ -519,10 +494,10 @@ const Calendar = () => {
             time: info.event.startStr.substring(11,19),
         };
         try {
-    
+
             await axios.put(`http://localhost:8000/api/appointments/${appointmentId}/`, newAppointmentInfo)
             fetchEvents();
-            
+
         }catch (e) {
             console.error(e);
         }
@@ -551,8 +526,22 @@ const Calendar = () => {
     useEffect(() => {
         fetchEvents();
         fetchCapacity();
-        console.log('patient for this session: ', firstName)
     }, []);
+
+    useEffect(() => {
+        if (calendarRef.current) {
+            const calendarApi = calendarRef.current.getApi();
+            calendarApi.getEvents().forEach(function(event) {
+                // past appointments are not draggable
+                // "add appointment" buttons are not draggable
+                if (checkedAppointmentReschedule) {
+                    event.setProp('editable', (event.extendedProps.addNewButton ? false : new Date(event.start) > new Date()));
+                }else {
+                    event.setProp('editable', false);
+                }
+            });
+        }
+    }, [checkedAppointmentReschedule]);
 
     // FullCalendar component that displays the calendar
     return (
@@ -606,9 +595,16 @@ const Calendar = () => {
                                 minute: '2-digit'
                             });
                             // appointments can only be moved while in week view
-                            if (checkedAppointmentReschedule) {
-                              calendarApi.setOption('editable', true);
-                            }
+                            calendarApi.setOption('editable', true);
+                            calendarApi.getEvents().forEach(function(event) {
+                                // past appointments are not draggable
+                                // "add appointment" buttons are not draggable
+                                if (checkedAppointmentReschedule) {
+                                    event.setProp('editable', (event.extendedProps.addNewButton ? false : new Date(event.start) > new Date()));
+                                }else {
+                                    event.setProp('editable', false);
+                                }
+                            })
                         }
                     }
                 }}
@@ -649,6 +645,14 @@ const Calendar = () => {
                                 }
                             }
                         }
+
+                        events.forEach(event => {
+                            if (checkedAppointmentReschedule) {
+                                event.editable = (event.addNewButton ? false : new Date(event.date) > new Date());
+                            }else {
+                                event.editable = false;
+                            }
+                        });
                     }
                 }
                 moreLinkClick={
@@ -667,7 +671,7 @@ const Calendar = () => {
                         const date = `${year}-${month}-${day}T${time}:00:00+08:00`;
                         const newAppointmentButton = {
                             title: '+ New Appointment',
-                            start: date,
+                            date: date,
                             editable: false,
                             addNewButton: true,
                         };
@@ -708,7 +712,6 @@ const Calendar = () => {
                 eventAllow={(info) => {
                     return isHourAvailable(info.start);
                 }}
-
                 slotDuration='01:00:00'
                 slotMinTime='07:00:00'
                 slotMaxTime='17:00:00'
@@ -727,8 +730,6 @@ const Calendar = () => {
                 handleClose={handleClose}
                 appointment={selectedAppointment}
                 setAppointment={setSelectedAppointment}
-                editLock={editLock}
-                handleEditLock={handleEditLock}
                 handleSave={handleSave}
                 handleDelete={handleDelete}
             />
@@ -737,16 +738,12 @@ const Calendar = () => {
                 handleClose={handleClose}
                 appointment={selectedAppointment}
                 setAppointment={setSelectedAppointment}
-                editLock={editLock}
-                handleEditLock={handleEditLock}
                 handleSave={handleSave}
             />
         </div>
     );
 
-
-
 };
 
 
-export default Calendar;
+export default PatientCalendar;

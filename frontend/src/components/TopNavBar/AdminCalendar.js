@@ -8,8 +8,8 @@ import interactionPlugin from '@fullcalendar/interaction';
 import '../Calendar.css';
 import { useContext } from "react";
 import { SettingsContext } from '../../App';
-import AppointmentInfoModal from '../CalendarAppointmentInfoModal';
-import AppointmentNewModal from "../CalendarAppointmentNewModal";
+import AppointmentInfoModal from './AdminAppointmentInfoModal';
+import AppointmentNewModal from "./AdminAppointmentNewModal";
 
 
 const AdminCalendar = () => {
@@ -396,7 +396,6 @@ const AdminCalendar = () => {
                     title: appointment.appointmentNumber.substring(9,) + ' : ' + appointment.label,
                     date: date,
                     allDay: false,
-                    editable: isDateAvailable(date),
                     extendedProps: {
                         appointmentId: appointment.id,
                         patientId: appointment.patient.id,
@@ -493,6 +492,21 @@ const AdminCalendar = () => {
         fetchCapacity();
     }, []);
 
+    useEffect(() => {
+    if (calendarRef.current) {
+        const calendarApi = calendarRef.current.getApi();
+        calendarApi.getEvents().forEach(function(event) {
+            // past appointments are not draggable
+            // "add appointment" buttons are not draggable
+            if (checkedAppointmentReschedule) {
+                event.setProp('editable', (event.extendedProps.addNewButton ? false : new Date(event.start) > new Date()));
+            }else {
+                event.setProp('editable', false);
+            }
+        });
+    }
+}, [checkedAppointmentReschedule]);
+
     // FullCalendar component that displays the calendar
     return (
         <div className="calendar">
@@ -545,9 +559,16 @@ const AdminCalendar = () => {
                                 minute: '2-digit'
                             });
                             // appointments can only be moved while in week view
-                            if (checkedAppointmentReschedule) {
-                              calendarApi.setOption('editable', true);
-                            }
+                            calendarApi.setOption('editable', true);
+                            calendarApi.getEvents().forEach(function(event) {
+                                // past appointments are not draggable
+                                // "add appointment" buttons are not draggable
+                                if (checkedAppointmentReschedule) {
+                                    event.setProp('editable', (event.extendedProps.addNewButton ? false : new Date(event.start) > new Date()));
+                                }else {
+                                    event.setProp('editable', false);
+                                }
+                            })
                         }
                     }
                 }}
@@ -588,6 +609,14 @@ const AdminCalendar = () => {
                                 }
                             }
                         }
+
+                        events.forEach(event => {
+                            if (checkedAppointmentReschedule) {
+                                event.editable = (event.addNewButton ? false : new Date(event.date) > new Date());
+                            }else {
+                                event.editable = false;
+                            }
+                        });
                     }
                 }
                 moreLinkClick={
@@ -606,7 +635,7 @@ const AdminCalendar = () => {
                         const date = `${year}-${month}-${day}T${time}:00:00+08:00`;
                         const newAppointmentButton = {
                             title: '+ New Appointment',
-                            start: date,
+                            date: date,
                             editable: false,
                             addNewButton: true,
                         };
@@ -647,7 +676,6 @@ const AdminCalendar = () => {
                 eventAllow={(info) => {
                     return isHourAvailable(info.start);
                 }}
-
                 slotDuration='01:00:00'
                 slotMinTime='07:00:00'
                 slotMaxTime='17:00:00'

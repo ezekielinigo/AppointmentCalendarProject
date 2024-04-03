@@ -4,13 +4,12 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
-import './Calendar.css';
-import { useContext } from "react";
-import { SettingsContext } from '../App';
-import { FiLock, FiUnlock, FiSave, FiTrash2 } from 'react-icons/fi';
+import axios from 'axios';
+import '../Calendar.css';
+import { FiSearch, FiSave } from 'react-icons/fi';
 // icon library here -> https://circumicons.com/icons
 
-const AppointmentInfoModal = ({show, handleClose, appointment, setAppointment, editLock, handleEditLock, handleSave, handleDelete}) => {
+const AppointmentNewModal = ({show, handleClose, appointment, setAppointment, handleSave}) => {
 
     // creating the date label for the forms
     const date = appointment ? appointment.appointmentNumber : '';
@@ -18,32 +17,61 @@ const AppointmentInfoModal = ({show, handleClose, appointment, setAppointment, e
     const monthString = months[parseInt(date.substring(2,4), 10) - 1];
     const dateLabel = monthString + " " +  date.substring(4,6) + ", " + date.substring(9,13);
 
-    const { checkedAppointmentDeletion } = useContext(SettingsContext);
+    // handler if new patient
+    const [isNewPatient, setIsNewPatient] = React.useState(false);
+    const handlePatientSearch = async () => {
+        const hospitalNumber = appointment.patient.hospitalNumber;
+        if (hospitalNumber === '' && !isNewPatient) {
+            alert('Please enter hospital number');
+        } else if (!/^\d{6}$/.test(hospitalNumber) && !isNewPatient) {
+            alert('Hospital number must be 6 digits numeric only');
+        } else {
+            try {
+                const response = await axios.get(`http://localhost:8000/api/patients/`);
+                const patient = response.data.find(patient => patient.hospitalNumber === hospitalNumber);
+                if (!patient) {
+                    alert('Patient not found');
+                } else {
+                    setAppointment({
+                        ...appointment,
+                        patient: {
+                            id: patient.id,
+                            nameFirst: patient.nameFirst,
+                            nameMiddle: patient.nameMiddle,
+                            nameLast: patient.nameLast,
+                            birthdate: patient.birthdate,
+                            age: patient.age,
+                            sex: patient.sex,
+                            civilStatus: patient.civilStatus,
+                            hospitalNumber: patient.hospitalNumber,
+                            contact: patient.contact,
+                            email: patient.email,
+                            facebookName: patient.facebookName,
+                            address: patient.address,
+                        }
+                    });
+                }
+            }catch (error) {
+                console.error(error);
+                return false;
+            }
+        }
+    }
+
 
     return (
-        <Modal className="AppointmentInfoModal" show={show} onHide={handleClose}>
+        <Modal className="AppointmentNewModal" show={show} onHide={() => {
+            handleClose();
+            setIsNewPatient(false);
+        }}>
             <Modal.Header>
             <Modal.Title style={{fontSize: '22px'}}>
                 Appointment Form for {dateLabel}
             </Modal.Title>
             <Button
                 className="fc-button-primary"
-                onClick={handleEditLock}>
-                {editLock ? <FiUnlock /> : <FiLock />}
-            </Button>
-
-            {checkedAppointmentDeletion && 
-            <Button
-                    className="fc-button-primary"
-                    onClick={handleDelete}>
-                    <FiTrash2 />
-                </Button>
-            }
-                
-            
-            <Button
-                className="fc-button-primary"
-                onClick={handleSave}>
+                onClick={handleSave}
+            >
                 <FiSave />
             </Button>
             </Modal.Header>
@@ -56,27 +84,27 @@ const AppointmentInfoModal = ({show, handleClose, appointment, setAppointment, e
                                 className="form-control "
                                 type="text"
                                 required
-                                readOnly={!editLock}
+                                readOnly={!isNewPatient}
                                 defaultValue={appointment ? appointment.patient.nameFirst : ''}
-                                onChange={e => setAppointment({...appointment, patient: {...appointment.patient, nameFirst: e.target.value}})}
+                                onChange={e => setAppointment({...appointment, patient: {...appointment.patient, nameFirst: e.target.value.toUpperCase()}})}
                             />
-                            
+
                             <Form.Label>Middle Name</Form.Label>
                             <Form.Control
                                 className="form-control "
                                 type="text"
-                                readOnly={!editLock}
+                                readOnly={!isNewPatient}
                                 defaultValue={appointment ? appointment.patient.nameMiddle : ''}
-                                onChange={e => setAppointment({...appointment, patient: {...appointment.patient, nameMiddle: e.target.value}})}
+                                onChange={e => setAppointment({...appointment, patient: {...appointment.patient, nameMiddle: e.target.value.toUpperCase()}})}
                             />
                             <Form.Label>Last Name</Form.Label>
                             <Form.Control
                                 className="form-control "
                                 type="text"
                                 required
-                                readOnly={!editLock}
+                                readOnly={!isNewPatient}
                                 defaultValue={appointment ? appointment.patient.nameLast : ''}
-                                onChange={e => setAppointment({...appointment, patient: {...appointment.patient, nameLast: e.target.value}})}
+                                onChange={e => setAppointment({...appointment, patient: {...appointment.patient, nameLast: e.target.value.toUpperCase()}})}
                             />
                             <Row>
                                 <Col md={9}>
@@ -85,7 +113,7 @@ const AppointmentInfoModal = ({show, handleClose, appointment, setAppointment, e
                                         className="form-control "
                                         type="date"
                                         required
-                                        readOnly={!editLock}
+                                        readOnly={!isNewPatient}
                                         defaultValue={appointment ? appointment.patient.birthdate : ''}
                                         onChange={e => {
                                             const newAge = new Date().getFullYear() - new Date(e.target.value).getFullYear();
@@ -108,7 +136,7 @@ const AppointmentInfoModal = ({show, handleClose, appointment, setAppointment, e
                                     <Form.Label>Sex</Form.Label>
                                     <Form.Select
                                         className="form-control "
-                                        disabled={!editLock}
+                                        disabled={!isNewPatient}
                                         defaultValue={appointment ? appointment.patient.sex : ''}
                                         onChange={e => setAppointment({...appointment, patient: {...appointment.patient, sex: e.target.value}})}
                                     >
@@ -120,7 +148,7 @@ const AppointmentInfoModal = ({show, handleClose, appointment, setAppointment, e
                                     <Form.Label>Civil Status</Form.Label>
                                     <Form.Select
                                         className="form-control "
-                                        disabled={!editLock}
+                                        disabled={!isNewPatient}
                                         defaultValue={appointment ? appointment.patient.civilStatus : ''}
                                         onChange={e => setAppointment({...appointment, patient: {...appointment.patient, civilStatus: e.target.value}})}
                                     >
@@ -128,7 +156,7 @@ const AppointmentInfoModal = ({show, handleClose, appointment, setAppointment, e
                                         <option value="MARRIED">MARRIED</option>
                                         <option value="WIDOWED">WIDOWED</option>
                                         <option value="SEPARATED">SEPARATED</option>
-            
+
                                     </Form.Select>
                                 </Col>
                             </Row>
@@ -137,7 +165,7 @@ const AppointmentInfoModal = ({show, handleClose, appointment, setAppointment, e
                                 className="form-control "
                                 type="text"
                                 required
-                                readOnly={!editLock}
+                                readOnly={!isNewPatient}
                                 defaultValue={appointment ? appointment.patient.email : ''}
                                 onChange={e => setAppointment({...appointment, patient: {...appointment.patient, email: e.target.value}})}
                             />
@@ -146,7 +174,7 @@ const AppointmentInfoModal = ({show, handleClose, appointment, setAppointment, e
                                         className="form-control "
                                         type="text"
                                         required
-                                        readOnly={!editLock}
+                                        readOnly={!isNewPatient}
                                         defaultValue={appointment ? appointment.patient.facebookName : ''}
                                         onChange={e => setAppointment({...appointment, patient: {...appointment.patient, facebookName: e.target.value}})}
                                     />
@@ -154,7 +182,7 @@ const AppointmentInfoModal = ({show, handleClose, appointment, setAppointment, e
                                     <Form.Control
                                         className="form-control "
                                         type="text"
-                                        readOnly={!editLock}
+                                        readOnly={!isNewPatient}
                                         minLength={11}
                                         maxLength={11}
                                         defaultValue={appointment ? appointment.patient.contact : ''}
@@ -173,7 +201,7 @@ const AppointmentInfoModal = ({show, handleClose, appointment, setAppointment, e
                                 className="form-control"
                                 as="textarea"
                                 required
-                                readOnly={!editLock}
+                                readOnly={!isNewPatient}
                                 rows={2}
                                 defaultValue={appointment ? appointment.patient.address : ''}
                                 onChange={e => setAppointment({...appointment, patient: {...appointment.patient, address: e.target.value}})}
@@ -190,36 +218,80 @@ const AppointmentInfoModal = ({show, handleClose, appointment, setAppointment, e
                                         readOnly={true}
                                         defaultValue={appointment ? appointment.appointmentNumber : ''}
                                     />
-                                    <Form.Label>Hospital No.</Form.Label>
-                                    <Form.Control
-                                        className="form-control "
-                                        type="number"
-                                        readOnly={!editLock}
-                                        defaultValue={appointment ? appointment.patient.hospitalNumber : ''}
-                                        onChange={e => {
-                                            const isBlank = !e.target.value || e.target.value.trim() === '';
-                                            setAppointment({...appointment, newPatient: true, patient: {...appointment.patient, hospitalNumber: e.target.value, newPatient: isBlank}})
-                                        }}
-                                    />
+                                    <Col md={10}>
+                                        <Form.Label>Hospital No.</Form.Label>
+                                        <Form.Control
+                                            className="form-control"
+                                            type="number"
+                                            readOnly={isNewPatient}
+                                            value={isNewPatient ? '' : (appointment ? appointment.patient.hospitalNumber : '')}
+                                            onChange={e => {
+                                                const isValid = /^\d+$/.test(e.target.value) || e.target.value === '';
+                                                if (isValid) {
+                                                    setAppointment({
+                                                        ...appointment,
+                                                        patient: {...appointment.patient, hospitalNumber: e.target.value}
+                                                    })
+                                                }
+                                            }}
+                                        />
+                                    </Col>
+                                    <Col md={1}>
+                                        <Button
+                                            className="fc-button-primary"
+                                            onClick={handlePatientSearch}
+                                        >
+                                            <FiSearch />
+                                        </Button>
+                                    </Col>
                                 <Col md={8}>
                                     <Form.Check
                                         className="form-check form-check-inline"
                                         type="checkbox"
                                         label="New Patient"
-                                        disabled={!editLock}
+                                        disabled={false}
                                         defaultValue={appointment ? appointment.newPatient : ''}
+                                        onChange={e => {
+                                            if (e.target.checked) {
+                                                setAppointment({
+                                                    ...appointment,
+                                                    newPatient: true,
+                                                    patient: {
+                                                        id: 0,
+                                                        nameFirst: '',
+                                                        nameMiddle: '',
+                                                        nameLast: '',
+                                                        birthdate: '',
+                                                        age: '',
+                                                        sex: '',
+                                                        civilStatus: '',
+                                                        hospitalNumber: '',
+                                                        email: '',
+                                                        facebookName: '',
+                                                        contact: '',
+                                                        address: ''
+                                                    }
+                                                });
+                                            }else {
+                                                setAppointment({
+                                                    ...appointment,
+                                                    newPatient: false
+                                                })
+                                            }
+                                            setIsNewPatient(e.target.checked)
+                                        }}
                                     />
                                     <Form.Check
                                         className="form-check form-check-inline"
                                         type="checkbox"
                                         label="Follow-up"
-                                        disabled={!editLock}
+                                        disabled={false}
                                         checked={appointment ? appointment.followup : ''}
                                         onChange={e => setAppointment({...appointment, followup: e.target.checked})}
                                     />
                                 </Col>
                                 <Col md={4}>
-                                    
+
                                 </Col>
                             </Row>
                             <Form.Label>Referral Doctor</Form.Label>
@@ -227,7 +299,7 @@ const AppointmentInfoModal = ({show, handleClose, appointment, setAppointment, e
                                 className="form-control "
                                 type="text"
                                 maxLength={50}
-                                readOnly={!editLock}
+                                readOnly={false}
                                 defaultValue={appointment ? appointment.referralDoctor : ''}
                                 onChange={e => setAppointment({...appointment, referralDoctor: e.target.value, followup: true})}
                             ></Form.Control>
@@ -235,7 +307,7 @@ const AppointmentInfoModal = ({show, handleClose, appointment, setAppointment, e
                             <Form.Control
                                 className="form-control "
                                 as="textarea"
-                                readOnly={!editLock}
+                                readOnly={false}
                                 rows={14}
                                 defaultValue={appointment ? appointment.remarks : ''}
                                 onChange={e => setAppointment({...appointment, remarks: e.target.value})}
@@ -248,4 +320,4 @@ const AppointmentInfoModal = ({show, handleClose, appointment, setAppointment, e
     );
 };
 
-export default AppointmentInfoModal;
+export default AppointmentNewModal;
