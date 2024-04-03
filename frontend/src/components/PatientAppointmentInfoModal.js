@@ -18,8 +18,6 @@ const AppointmentInfoModal = ({show, handleClose, appointment, setAppointment, h
     const monthString = months[parseInt(date.substring(2,4), 10) - 1];
     const dateLabel = monthString + " " +  date.substring(4,6) + ", " + date.substring(9,13);
 
-    const { checkedAppointmentDeletion } = useContext(SettingsContext);
-
     return (
         <Modal className="AppointmentInfoModal" show={show} onHide={handleClose}>
             <Modal.Header>
@@ -48,7 +46,6 @@ const AppointmentInfoModal = ({show, handleClose, appointment, setAppointment, h
                                 required
                                 readOnly={true}
                                 defaultValue={appointment ? appointment.patient.nameFirst : ''}
-                                onChange={e => setAppointment({...appointment, patient: {...appointment.patient, nameFirst: e.target.value}})}
                             />
                             
                             <Form.Label>Middle Name</Form.Label>
@@ -57,7 +54,6 @@ const AppointmentInfoModal = ({show, handleClose, appointment, setAppointment, h
                                 type="text"
                                 readOnly={true}
                                 defaultValue={appointment ? appointment.patient.nameMiddle : ''}
-                                onChange={e => setAppointment({...appointment, patient: {...appointment.patient, nameMiddle: e.target.value}})}
                             />
                             <Form.Label>Last Name</Form.Label>
                             <Form.Control
@@ -66,7 +62,6 @@ const AppointmentInfoModal = ({show, handleClose, appointment, setAppointment, h
                                 required
                                 readOnly={true}
                                 defaultValue={appointment ? appointment.patient.nameLast : ''}
-                                onChange={e => setAppointment({...appointment, patient: {...appointment.patient, nameLast: e.target.value}})}
                             />
                             <Row>
                                 <Col md={9}>
@@ -77,10 +72,6 @@ const AppointmentInfoModal = ({show, handleClose, appointment, setAppointment, h
                                         required
                                         readOnly={true}
                                         defaultValue={appointment ? appointment.patient.birthdate : ''}
-                                        onChange={e => {
-                                            const newAge = new Date().getFullYear() - new Date(e.target.value).getFullYear();
-                                            setAppointment({...appointment, patient: {...appointment.patient, birthdate: e.target.value, age: newAge}});
-                                        }}
                                     />
                                 </Col>
                                 <Col md={3}>
@@ -100,7 +91,6 @@ const AppointmentInfoModal = ({show, handleClose, appointment, setAppointment, h
                                         className="form-control "
                                         disabled={true}
                                         defaultValue={appointment ? appointment.patient.sex : ''}
-                                        onChange={e => setAppointment({...appointment, patient: {...appointment.patient, sex: e.target.value}})}
                                     >
                                         <option value="MALE">MALE</option>
                                         <option value="FEMALE">FEMALE</option>
@@ -112,7 +102,6 @@ const AppointmentInfoModal = ({show, handleClose, appointment, setAppointment, h
                                         className="form-control "
                                         disabled={true}
                                         defaultValue={appointment ? appointment.patient.civilStatus : ''}
-                                        onChange={e => setAppointment({...appointment, patient: {...appointment.patient, civilStatus: e.target.value}})}
                                     >
                                         <option value="SINGLE">SINGLE</option>
                                         <option value="MARRIED">MARRIED</option>
@@ -129,7 +118,6 @@ const AppointmentInfoModal = ({show, handleClose, appointment, setAppointment, h
                                 required
                                 readOnly={true}
                                 defaultValue={appointment ? appointment.patient.email : ''}
-                                onChange={e => setAppointment({...appointment, patient: {...appointment.patient, email: e.target.value}})}
                             />
                             <Form.Label>Facebook Name</Form.Label>
                                     <Form.Control
@@ -138,7 +126,6 @@ const AppointmentInfoModal = ({show, handleClose, appointment, setAppointment, h
                                         required
                                         readOnly={true}
                                         defaultValue={appointment ? appointment.patient.facebookName : ''}
-                                        onChange={e => setAppointment({...appointment, patient: {...appointment.patient, facebookName: e.target.value}})}
                                     />
                                     <Form.Label>Contact No.</Form.Label>
                                     <Form.Control
@@ -148,15 +135,6 @@ const AppointmentInfoModal = ({show, handleClose, appointment, setAppointment, h
                                         minLength={11}
                                         maxLength={11}
                                         defaultValue={appointment ? appointment.patient.contact : ''}
-                                        onChange={e => {
-                                            const isValid = /^\d{11}$/.test(e.target.value) || e.target.value === '';
-                                            if (!isValid) {
-                                                setAppointment({
-                                                    ...appointment,
-                                                    patient: {...appointment.patient, contact: e.target.value}
-                                                })
-                                            }
-                                        }}
                                     />
                             <Form.Label>Address</Form.Label>
                             <Form.Control
@@ -166,7 +144,6 @@ const AppointmentInfoModal = ({show, handleClose, appointment, setAppointment, h
                                 readOnly={true}
                                 rows={2}
                                 defaultValue={appointment ? appointment.patient.address : ''}
-                                onChange={e => setAppointment({...appointment, patient: {...appointment.patient, address: e.target.value}})}
                             />
                         </Form.Group>
                     </Col>
@@ -186,10 +163,6 @@ const AppointmentInfoModal = ({show, handleClose, appointment, setAppointment, h
                                         type="number"
                                         readOnly={true}
                                         defaultValue={appointment ? appointment.patient.hospitalNumber : ''}
-                                        onChange={e => {
-                                            const isBlank = !e.target.value || e.target.value.trim() === '';
-                                            setAppointment({...appointment, newPatient: true, patient: {...appointment.patient, hospitalNumber: e.target.value, newPatient: isBlank}})
-                                        }}
                                     />
                                 <Col md={8}>
                                     <Form.Check
@@ -197,7 +170,7 @@ const AppointmentInfoModal = ({show, handleClose, appointment, setAppointment, h
                                         type="checkbox"
                                         label="New Patient"
                                         disabled={true}
-                                        defaultValue={appointment ? appointment.newPatient : ''}
+                                        checked={appointment ? !appointment.patient.hospitalNumber : ''}
                                     />
                                     <Form.Check
                                         className="form-check form-check-inline"

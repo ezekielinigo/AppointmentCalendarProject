@@ -108,7 +108,11 @@ const PatientCalendar = () => {
             if (capacity) {
                 const filledSlots = events.filter(event => {
                     const eventDate = new Date(event.date);
-                    return eventDate.getFullYear() === year && eventDate.getMonth() + 1 === month && eventDate.getDate() === day && eventDate.getHours() === hour;
+                    return event.addNewButton !== true &&
+                        eventDate.getFullYear() === year &&
+                        eventDate.getMonth() + 1 === month &&
+                        eventDate.getDate() === day &&
+                        eventDate.getHours() === hour;
                 }).length;
                 return filledSlots < capacity.capacity;
             }
@@ -389,6 +393,8 @@ const PatientCalendar = () => {
                     title: appointment.appointmentNumber.substring(9,) + ' : ' + ((currentPatient.id === appointment.patient.id) ? appointment.label : ""),
                     date: date,
                     allDay: false,
+                    backgroundColor: currentPatient.id === appointment.patient.id ? '#72b844' : '#108942',
+                    borderColor: currentPatient.id === appointment.patient.id ? '#72b844' : '#108942',
                     extendedProps: {
                         appointmentId: appointment.id,
                         patientId: appointment.patient.id,
@@ -480,6 +486,7 @@ const PatientCalendar = () => {
             label: info.event.title.substring(9,),
             date: info.event.startStr.substring(0,10),
             time: info.event.startStr.substring(11,19),
+            dragging: true,
         };
         try {
 
@@ -556,11 +563,6 @@ const PatientCalendar = () => {
                                 month: 'short',
                                 day: 'numeric'
                             });
-                            // appointments cannot be moved while in month view
-                            //calendarApi.setOption('editable', true);
-                            calendarApi.getEvents().forEach(function(event) {
-                                event.setProp('editable', false);
-                            });
                         }else {
                             // sets specific format for week view
                             calendarApi.setOption('dayHeaderFormat', {
@@ -572,14 +574,6 @@ const PatientCalendar = () => {
                                 day: 'numeric',
                                 hour: 'numeric',
                                 minute: '2-digit'
-                            });
-                            // appointments can only be moved while in week view
-                            //calendarApi.setOption('editable', true);
-                            const now = new Date();
-                            calendarApi.getEvents().forEach(event => {
-                                // Only allow dragging/moving if the patientId of the event matches the id of the currentPatient
-                                // and the event start time is after the current time
-                                event.setProp('editable', event.extendedProps.patientId === currentPatient.id && new Date(event.start) > now);
                             });
                         }
                     }
@@ -602,8 +596,7 @@ const PatientCalendar = () => {
                 moreLinkContent={''} // this handles the text that hides events in a given day/hour, we want this hidden
                 moreLinkDidMount={ // because this is used instead, as it is able to get the capacity of the day/hour
                     function (info) {
-                        const filledSlots = info.num;
-
+                        let filledSlots = info.num;
                         const date = new Date(info.el.closest('.fc-day').dataset.date);
                         const utcDate = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate())).toISOString().split('T')[0];
                         const year = parseInt(utcDate.split('-')[0]);
@@ -615,8 +608,9 @@ const PatientCalendar = () => {
                                 info.el.textContent = `${filledSlots}/${capacity.capacity*10} appointments`;
                             } else {
                                 info.el.textContent = `${filledSlots}/${capacity.capacity} appointments`;
+
                                 if (filledSlots === capacity.capacity) {
-                                    info.el.style.color = '#3ab149';
+                                    info.el.style.color = '#DBEA9A';
                                     info.el.style.backgroundColor = '#071108';
                                 }
                             }
@@ -630,40 +624,72 @@ const PatientCalendar = () => {
                             return prevEvents.filter(event => !event.addNewButton);
                         });
 
-                        // create a new appointment button that will show up on the popover of the link that was clicked
+                        // all that remains in events are the appointments
+                        // if in dayGridMonth view, disable event dragging
+                        if (info.view.type === 'dayGridMonth') {
+                            setEvents(prevEvents => {
+                                return prevEvents.map(event => {
+                                    return {
+                                        ...event,
+                                        editable: false
+                                    };
+                                });
+                            });
+                        } else {
+                            // only allow editable for all appointments set in the future
+                            // only allow editable for all appointments that match the current patient
+                                setEvents(prevEvents => {
+                                return prevEvents.map(event => {
+                                    const eventDate = new Date(event.date);
+                                    if (eventDate >= new Date() && event.extendedProps.patientId === currentPatient.id) {
+                                        return {
+                                            ...event,
+                                            editable: true
+                                        };
+                                    } else {
+                                        return {
+                                            ...event,
+                                            editable: false
+                                        };
+                                    }
+                                });
+                            });
+                        }
 
+                        // create a new appointment button that will show up on the popover of the link that was clicked
                         const year = info.date.getFullYear();
                         const month = (info.date.getMonth() + 1).toString().padStart(2, '0');
                         const day = info.date.getDate().toString().padStart(2, '0');
                         const time = info.date.getUTCHours().toString().padStart(2, '0');
                         const date = `${year}-${month}-${day}T${time}:00:00+08:00`;
-                        const newAppointmentButton = {
-                            title: '+ New Appointment',
-                            date: date,
-                            editable: false,
-                            addNewButton: true,
-                        };
+                            const newAppointmentButton = {
+                                title: '+ New Appointment',
+                                date: date,
+                                editable: false,
+                                addNewButton: true,
+                            };
 
-                        // if the date is in timegridweek view &&
-                        // date is available &&
-                        // hour is available
-                            // Add the new appointment button to the events state
+                            // if the date is in timegridweek view &&
+                            // date is available &&
+                            // hour is available
+                                // Add the new appointment button to the events state
 
-                        const capacity = monthlyCapacities.find(capacity => capacity.month === parseInt(month) && capacity.year === year).capacity;
-                        const filled = events.filter(event => {
-                            const eventDate = new Date(event.date);
-                            return eventDate.getHours() === new Date(date).getHours() &&
-                                   eventDate.getDate() === new Date(date).getDate() &&
-                                   eventDate.getMonth() === new Date(date).getMonth() &&
-                                   eventDate.getFullYear() === new Date(date).getFullYear();
-                        }).length;
+                            const capacity = monthlyCapacities.find(capacity => capacity.month === parseInt(month) && capacity.year === year).capacity;
+                            const filled = events.filter(event => {
+                                const eventDate = new Date(event.date);
+                                return event.addNewButton !== true &&
+                                    eventDate.getHours() === new Date(date).getHours() &&
+                                    eventDate.getDate() === new Date(date).getDate() &&
+                                    eventDate.getMonth() === new Date(date).getMonth() &&
+                                    eventDate.getFullYear() === new Date(date).getFullYear();
+                            }).length;
 
-                        if (info.view.type === 'timeGridWeek' &&
-                            isDateAvailable(new Date(date)) &&
-                            filled < capacity
-                        ) {
-                            setEvents(prevEvents => [...prevEvents, newAppointmentButton]);
-                        }
+                            if (info.view.type === 'timeGridWeek' &&
+                                isHourAvailable(new Date(date)) &&
+                                filled < capacity
+                            ) {
+                                setEvents(prevEvents => [...prevEvents, newAppointmentButton]);
+                            }
                     }
                 }
                 dayCellDidMount={(info) => {
@@ -671,15 +697,50 @@ const PatientCalendar = () => {
                     if (!isDateAvailable(info.date)) {
                         info.el.style.backgroundColor = '#ebebeb';
                     }
-                    // if date is today set bg to blue
+                    // if date is today set bg to lighter lime green #E8F2BB
                     if (info.date.toDateString() === new Date().toDateString()) {
-                        info.el.style.backgroundColor = '#DBEA9A';
+                        info.el.style.backgroundColor = '#E8F2BB';
+                    }
+                }}
+                // add a badge to the day cell if there are appointments made by the current patient
+                dayCellContent={(info) => {
+                    // Check if there are any appointments for the current patient on this date
+                    const hasAppointment = events.some(event => {
+                        const eventDate = new Date(event.date);
+                        return event.extendedProps && currentPatient && eventDate.toDateString() === info.date.toDateString() && event.extendedProps.patientId === currentPatient.id;
+                    });
+
+                    // If there is an appointment, return a custom HTML string with a badge
+                    if (hasAppointment) {
+                        if (info.view.type === 'dayGridMonth') {
+                            return {
+                                html:
+                                    `<div class="fc-daygrid-day-frame">
+                                <span class="appointment-badge-dayGridMonth">📌</span>${info.dayNumberText}
+                                </div>`
+                            };
+                        }
+                    } else {
+                        return {html: `<div class="fc-daygrid-day-frame">${info.dayNumberText}</div>`};
+                    }
+                }}
+
+                dayHeaderContent={(info) => {
+                    // Check if there are any appointments for the current patient on this date
+                    const hasAppointment = events.some(event => {
+                        const eventDate = new Date(event.date);
+                        return event.extendedProps && currentPatient && eventDate.toDateString() === info.date.toDateString() && event.extendedProps.patientId === currentPatient.id;
+                    });
+
+                    // If there is an appointment, return a custom HTML string with a badge
+                    if (hasAppointment) {
+                        return {html: `${info.text}<span class="appointment-badge-dayHeader">📌</span>`};
+                    } else {
+                        // Return default day header content
+                        return info.text;
                     }
                 }}
                 eventDrop={handleAppointmentDrag}
-                // eventAllow={(info) => {
-                //     return isHourAvailable(info.start);
-                // }}
                 slotDuration='01:00:00'
                 slotMinTime='07:00:00'
                 slotMaxTime='17:00:00'
@@ -688,9 +749,21 @@ const PatientCalendar = () => {
                 dayMaxEvents={0}
                 nowIndicator={true}
                 allDaySlot={false}
-                eventClick={handleAppointmentClick}
+                eventClick={info => {
+                    // disable clicking on appointments that are not the patient's
+                    if (info.event.extendedProps.patientId === currentPatient.id ||
+                        info.event.extendedProps.addNewButton
+                    ) {
+                        handleAppointmentClick(info);
+                    }
+                }}
+                eventAllow={(info) => {
+                    return isHourAvailable(info.start);
+                }}
                 selectable={false}
                 expandRows={true}
+                editable={true}
+                eventDisplay={'block'}
                 />
             )}
             <AppointmentInfoModal

@@ -624,7 +624,7 @@ const AdminCalendar = () => {
                             } else {
                                 info.el.textContent = `${filledSlots}/${capacity.capacity} appointments`;
                                 if (filledSlots === capacity.capacity) {
-                                    info.el.style.color = '#3ab149';
+                                    info.el.style.color = '#DBEA9A';
                                     info.el.style.backgroundColor = '#071108';
                                 }
                             }
@@ -687,9 +687,9 @@ const AdminCalendar = () => {
                     if (!isDateAvailable(info.date)) {
                         info.el.style.backgroundColor = '#ebebeb';
                     }
-                    // if date is today set bg to blue
+                    // if date is today set bg to lime green
                     if (info.date.toDateString() === new Date().toDateString()) {
-                        info.el.style.backgroundColor = '#DBEA9A';
+                        info.el.style.backgroundColor = '#E8F2BB';
                     }
                 }}
                 eventDrop={handleAppointmentDrag}

@@ -132,3 +132,19 @@ body {
     border-radius: 5px;
     border-color: black;
 }
+
+.appointment-badge-timeGridWeek {
+    position: relative;
+    top: -20px;
+    right: -40px;
+    font-size: 12px;
+    z-index: 100;
+}
+
+.appointment-badge-dayGridMonth {
+    position: absolute;
+    top: 5px;
+    right: 95px;
+    font-size: 12px;
+    z-index: 100;
+}
