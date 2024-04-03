@@ -253,11 +253,44 @@ function LoginPatient() {
     const handleValidation= (patient) => {
         patient.preventDefault(); // para 'di magshow 'yung mga ilalagay na information sa URL
 
-        if (!hospitalNumberInput) { // if new patient is not checked
+        // handle missing info
+        if (!firstName || !lastName) {
+            alert('First and last names are required.');
+            return;
+        }
+        if (/\d/.test(firstName) || /\d/.test(lastName)) {
+            alert('First and last names should not contain numbers.');
+            return;
+        }
+        if (!birthDate) {
+            alert('Birthdate is required.');
+            return;
+        }
 
-            if (firstName === '' || lastName === '' || birthDate === '' || hospitalNumber === '') {
-                alert("Please fill out all of the fields.");
-            } else {
+        if (isNewPatient) {
+
+                // email should be valid
+                if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+                    alert('Invalid email.');
+                    return;
+                }
+                // contact should be valid 11-digit number
+                if (contactNumber && !/^\d{11}$/.test(contactNumber)) {
+                    alert('Invalid contact number.');
+                    return;
+                }
+
+                handleProceedSignUp();
+                setIsNewPatient(false);
+
+        }else {
+            if (!hospitalNumberInput) { // if new patient is not checked
+
+                if (!hospitalNumber) {
+                    alert('Hospital number is required.\n' +
+                        'If you are a new patient, please check the box below.');
+                    return;
+                }
 
                 // filter out patients with hospital numbers
                 const oldPatients = patients.filter(patient => patient.hospitalNumber !== '');
@@ -275,34 +308,47 @@ function LoginPatient() {
                     alert('Patient found! Redirecting to patient page...');
                     validateEntry();
                     return;
-                }else {
+                } else {
                     alert('Patient does not match the hospital number. Please check your inputs.\n' +
                         'If you think this is an error, please contact the hospital by making an on-site appointment.');
                     return;
                 }
-            }
-        } else { // for new patients
+            } else { // for new patients
 
-            // filter patients without hospital numbers
-            const newPatients = patients.filter(patient => patient.hospitalNumber === '');
+                // filter patients without hospital numbers
+                const newPatients = patients.filter(patient => patient.hospitalNumber === '');
 
-            // find patient with matching details
-            let patientMatch = newPatients.find(patient => {
-                return patient.nameFirst === firstName &&
-                    patient.nameMiddle === middleName &&
-                    patient.nameLast === lastName &&
-                    patient.birthdate === birthDate
-            });
+                // find patient with matching details
+                let patientMatch = newPatients.find(patient => {
+                    return patient.nameFirst === firstName &&
+                        patient.nameMiddle === middleName &&
+                        patient.nameLast === lastName &&
+                        patient.birthdate === birthDate
+                });
 
-            if (patientMatch) {
-                alert('Patient found! Redirecting to patient page...');
-                validateEntry();
-                return;
-            }else {
-                const newPatientConfirm = window.confirm("Patient not found. Do you want to register as a new patient?");
-                if (newPatientConfirm) {
-                    handleSignUpModal();
+                if (patientMatch) {
+                    alert('Patient found! Redirecting to patient page...');
+                    validateEntry();
                     return;
+                } else {
+                    const oldPatients = patients.filter(patient => patient.hospitalNumber !== '');
+                    let patientMatch = oldPatients.find(patient => {
+                        return patient.nameFirst === firstName &&
+                            patient.nameMiddle === middleName &&
+                            patient.nameLast === lastName &&
+                            patient.birthdate === birthDate
+                    });
+                    if (patientMatch) {
+                        alert('This patient is already registered with an existing hospital number.\n' +
+                            'If you think this is an error, please contact the hospital by making an on-site appointment.');
+                        return;
+                    } else {
+                        const newPatientConfirm = window.confirm("Patient not found. Do you want to register as a new patient?");
+                        if (newPatientConfirm) {
+                            handleSignUpModal();
+                            return;
+                        }
+                    }
                 }
             }
         }
@@ -310,7 +356,7 @@ function LoginPatient() {
 
     const handleSignUpModal = async () => { // for new patient modal pop-up
         setShowModal(true);
-
+        setIsNewPatient(true);
     }
 
     const handleProceedSignUp = async () => {
@@ -387,6 +433,7 @@ function LoginPatient() {
             );
 
             setShowModal(false);
+            setIsNewPatient(false);
 
             console.log(login);
             sessionStorage.setItem('isPatientLoggedIn', true);
@@ -444,7 +491,10 @@ function LoginPatient() {
         <>
 
 <Modal class = 'newPatientModal' show = {showModal}
-    onHide = {() => setShowModal(false)}
+    onHide = {() => {
+        setShowModal(false)
+        setIsNewPatient(false)
+    }}
      >
         <div class='container'>
         <img class='patient-img3' src={patient} alt='patient clipart' />
@@ -524,7 +574,7 @@ function LoginPatient() {
             <Button
                         type="submit"
                         className="login-button"
-                        onClick={handleProceedSignUp}
+                        onClick={handleValidation}
                         variant="contained"
                         color="success"
                         style={{marginTop: '2vh', marginBottom: '2vh'}}
