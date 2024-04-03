@@ -156,21 +156,7 @@ const PatientCalendar = () => {
                    setSelectedAppointment({
                                 id: null,
                                 appointmentNumber: appointmentNumber,
-                                patient: {
-                                    id: null,
-                                    nameFirst: '',
-                                    nameMiddle: '',
-                                    nameLast: '',
-                                    birthdate: '',
-                                    age: '',
-                                    sex: '',
-                                    civilStatus: '',
-                                    hospitalNumber: '',
-                                    contact: '',
-                                    email: '',
-                                    facebookName: '',
-                                    address: '',
-                                },
+                                patient: currentPatient,
                                 label: '',
                                 date: info.dateStr.substring(0,10),
                                 time: info.dateStr.substring(11,19),
@@ -254,7 +240,9 @@ const PatientCalendar = () => {
 
     const handleSave = async () => {
             try {
+
                 const currentApp = selectedAppointment;
+                console.log(currentApp)
                 let currentDate = new Date();
                 const patientList = (await axios.get('http://localhost:8000/api/patients/')).data;
                 const appointmentList = (await axios.get('http://localhost:8000/api/appointments/')).data;
@@ -282,11 +270,12 @@ const PatientCalendar = () => {
                     return;
                 }
                 // contact should be valid 11-digit number
-                if (currentApp.patient.contact && !/^\d{10}$/.test(currentApp.patient.contact)) {
+                if (currentApp.patient.contact && !/^\d{11}$/.test(currentApp.patient.contact)) {
                     alert('Invalid contact number.');
                     return;
                 }
-
+                // mark as new patient if hospital number is not provided
+                currentApp.newPatient = !currentApp.patient.hospitalNumber;
 
                 // save appointment
                 if (currentApp.id === null) { // for new appointment
@@ -322,7 +311,7 @@ const PatientCalendar = () => {
                                 delete currentApp.id
                                 currentApp.patient = patientMatch;
                                 await axios.post('http://localhost:8000/api/appointments/', currentApp);
-                                alert('Successfully made a new appointment for an existing patient');
+                                alert('Successfully made a new appointment for an new patient');
                                 handleClose();
                             }
                         }else {
@@ -363,7 +352,7 @@ const PatientCalendar = () => {
                                 console.log(currentApp)
                                 currentApp.patient = hospitalNumberMatch;
                                 await axios.post('http://localhost:8000/api/appointments/', currentApp);
-                                alert('Successfully made a new appointment made for an existing patient.');
+                                alert('Successfully made a new appointment for an existing patient.');
                                 handleClose();
                             }
 
@@ -397,7 +386,7 @@ const PatientCalendar = () => {
             const appointments = response.data.map(appointment => {
                 const date = new Date(`${appointment.date}T${appointment.time}`);
                 return {
-                    title: appointment.appointmentNumber.substring(9,) + ' : ' + appointment.label,
+                    title: appointment.appointmentNumber.substring(9,) + ' : ' + ((currentPatient.id === appointment.patient.id) ? appointment.label : ""),
                     date: date,
                     allDay: false,
                     extendedProps: {
@@ -456,7 +445,6 @@ const PatientCalendar = () => {
                     alert('not found')
                 }
             }
-            console.log(currentPatient)
 
         }catch (error) {
             console.error(error);
@@ -524,24 +512,12 @@ const PatientCalendar = () => {
 
     // Fetch event happens when the component mounts
     useEffect(() => {
+        fetchPatient();
+    }, []);
+    useEffect(() => {
         fetchEvents();
         fetchCapacity();
-    }, []);
-
-    useEffect(() => {
-        if (calendarRef.current) {
-            const calendarApi = calendarRef.current.getApi();
-            calendarApi.getEvents().forEach(function(event) {
-                // past appointments are not draggable
-                // "add appointment" buttons are not draggable
-                if (checkedAppointmentReschedule) {
-                    event.setProp('editable', (event.extendedProps.addNewButton ? false : new Date(event.start) > new Date()));
-                }else {
-                    event.setProp('editable', false);
-                }
-            });
-        }
-    }, [checkedAppointmentReschedule]);
+    }, [currentPatient]);
 
     // FullCalendar component that displays the calendar
     return (
@@ -581,7 +557,10 @@ const PatientCalendar = () => {
                                 day: 'numeric'
                             });
                             // appointments cannot be moved while in month view
-                            calendarApi.setOption('editable', false);
+                            //calendarApi.setOption('editable', true);
+                            calendarApi.getEvents().forEach(function(event) {
+                                event.setProp('editable', false);
+                            });
                         }else {
                             // sets specific format for week view
                             calendarApi.setOption('dayHeaderFormat', {
@@ -595,16 +574,13 @@ const PatientCalendar = () => {
                                 minute: '2-digit'
                             });
                             // appointments can only be moved while in week view
-                            calendarApi.setOption('editable', true);
-                            calendarApi.getEvents().forEach(function(event) {
-                                // past appointments are not draggable
-                                // "add appointment" buttons are not draggable
-                                if (checkedAppointmentReschedule) {
-                                    event.setProp('editable', (event.extendedProps.addNewButton ? false : new Date(event.start) > new Date()));
-                                }else {
-                                    event.setProp('editable', false);
-                                }
-                            })
+                            //calendarApi.setOption('editable', true);
+                            const now = new Date();
+                            calendarApi.getEvents().forEach(event => {
+                                // Only allow dragging/moving if the patientId of the event matches the id of the currentPatient
+                                // and the event start time is after the current time
+                                event.setProp('editable', event.extendedProps.patientId === currentPatient.id && new Date(event.start) > now);
+                            });
                         }
                     }
                 }}
@@ -645,14 +621,6 @@ const PatientCalendar = () => {
                                 }
                             }
                         }
-
-                        events.forEach(event => {
-                            if (checkedAppointmentReschedule) {
-                                event.editable = (event.addNewButton ? false : new Date(event.date) > new Date());
-                            }else {
-                                event.editable = false;
-                            }
-                        });
                     }
                 }
                 moreLinkClick={
@@ -709,9 +677,9 @@ const PatientCalendar = () => {
                     }
                 }}
                 eventDrop={handleAppointmentDrag}
-                eventAllow={(info) => {
-                    return isHourAvailable(info.start);
-                }}
+                // eventAllow={(info) => {
+                //     return isHourAvailable(info.start);
+                // }}
                 slotDuration='01:00:00'
                 slotMinTime='07:00:00'
                 slotMaxTime='17:00:00'
@@ -738,6 +706,7 @@ const PatientCalendar = () => {
                 handleClose={handleClose}
                 appointment={selectedAppointment}
                 setAppointment={setSelectedAppointment}
+                patient={currentPatient}
                 handleSave={handleSave}
             />
         </div>

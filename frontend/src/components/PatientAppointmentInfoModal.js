@@ -10,7 +10,7 @@ import { SettingsContext } from '../App';
 import { FiLock, FiUnlock, FiSave, FiTrash2 } from 'react-icons/fi';
 // icon library here -> https://circumicons.com/icons
 
-const AppointmentInfoModal = ({show, handleClose, appointment, setAppointment, editLock, handleSave, handleDelete}) => {
+const AppointmentInfoModal = ({show, handleClose, appointment, setAppointment, handleSave, handleDelete}) => {
 
     // creating the date label for the forms
     const date = appointment ? appointment.appointmentNumber : '';

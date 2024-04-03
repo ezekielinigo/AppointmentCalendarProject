@@ -206,8 +206,8 @@ const AppointmentInfoModal = ({show, handleClose, appointment, setAppointment, e
                                         className="form-check form-check-inline"
                                         type="checkbox"
                                         label="New Patient"
-                                        disabled={!editLock}
-                                        defaultValue={appointment ? appointment.newPatient : ''}
+                                        disabled={true}
+                                        checked={appointment ? appointment.newPatient : ''}
                                     />
                                     <Form.Check
                                         className="form-check form-check-inline"

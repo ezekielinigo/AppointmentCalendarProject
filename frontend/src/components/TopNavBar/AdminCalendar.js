@@ -234,7 +234,7 @@ const AdminCalendar = () => {
             remarks: info.event.extendedProps.remarks,
             followup: info.event.extendedProps.followup,
             referralDoctor: info.event.extendedProps.referralDoctor,
-            newPatient: info.event.extendedProps.newPatient
+            newPatient: !info.event.extendedProps.hospitalNumber
         });
         // remove popover
         setTimeout(() => {
@@ -276,10 +276,27 @@ const AdminCalendar = () => {
                     return;
                 }
                 // contact should be valid 11-digit number
-                if (currentApp.patient.contact && !/^\d{10}$/.test(currentApp.patient.contact)) {
+                if (currentApp.patient.contact && !/^\d{11}$/.test(currentApp.patient.contact)) {
                     alert('Invalid contact number.');
                     return;
                 }
+                // hospital number should be valid 6-digit number
+                if (currentApp.patient.hospitalNumber && !/^\d{6}$/.test(currentApp.patient.hospitalNumber)) {
+                    alert('Invalid hospital number.\nHospital number should be a unique 6-digit number.');
+                    return;
+                }
+                // hospital number should be unique
+                if (
+                    currentApp.patient.hospitalNumber &&
+                    patientList.find(patient => {
+                        return patient.hospitalNumber === currentApp.patient.hospitalNumber &&
+                        patient.id !== currentApp.patient.id
+                    })) {
+                    alert('Hospital number already exists.');
+                    return;
+                }
+                // mark as new patient if hospital number is not provided
+                currentApp.newPatient = !currentApp.patient.hospitalNumber;
 
 
                 // save appointment
@@ -545,7 +562,10 @@ const AdminCalendar = () => {
                                 day: 'numeric'
                             });
                             // appointments cannot be moved while in month view
-                            calendarApi.setOption('editable', false);
+                            calendarApi.setOption('editable', true);
+                            calendarApi.getEvents().forEach(function(event) {
+                                event.setProp('editable', false);
+                            });
                         }else {
                             // sets specific format for week view
                             calendarApi.setOption('dayHeaderFormat', {
