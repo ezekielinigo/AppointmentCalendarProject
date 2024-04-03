@@ -35,7 +35,7 @@ const PatientNavBar = () => {
     const { birthDate, setbirthDate } = useContext(PatientContext);
     const { sex, setSex } = useContext(PatientContext);
     const { civilStatus, setCivilStatus } = useContext(PatientContext);
-    const { hospitalNumber, setHospitalNumber } = useContext(PatientContext);
+    const { hospitalNumber, sethospitalNumber } = useContext(PatientContext);
     const { email, setEmail } = useContext(PatientContext);
     const { facebookName, setFacebookName } = useContext(PatientContext);
     const { contactNumber, setContactNumber } = useContext(PatientContext);
@@ -66,7 +66,7 @@ const PatientNavBar = () => {
           setCivilStatus(sessionStorage.getItem('civilStatus'));
         }
         if (sessionStorage.getItem('hospitalNumber')) {
-          setHospitalNumber(sessionStorage.getItem('hospitalNumber'));
+          sethospitalNumber(sessionStorage.getItem('hospitalNumber'));
         }
         if (sessionStorage.getItem('email')) {
           setEmail(sessionStorage.getItem('email'));

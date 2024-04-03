@@ -152,6 +152,7 @@ function LoginPatient() {
             //alert (pass);
             //alert (user + " " + pass) // pang-debug since ayaw gumana ng tokenizing mechanism kanina
 
+            /*
             const login = await axios.post('http://localhost:8000/login',
                 { username: user, password: pass },
                 {
@@ -164,11 +165,11 @@ function LoginPatient() {
             console.log(login);
             sessionStorage.setItem('isPatientLoggedIn', true);
             setIsPatientLoggedIn(true);
-            navigate(PathConstants.PATIENTCALENDAR);
-        }
+            navigate(PathConstants.PATIENTCALENDAR); */ // UNCOMMENT IF DONE CHECKING
+        
 
         // ito yung gumanang tokenizing mechanism (PRIOR NUNG PREDEFINED PA LANG UNG USER (OR ORIGINALLY GINAWA SA BACKEND))
-        /*
+        
         // 1. attempt sign-up
         const response = await axios.post('http://localhost:8000/signup',
             { username: user, password: pass, first_name: firstName, last_name: lastName },
@@ -182,7 +183,7 @@ function LoginPatient() {
         // 2. basically status = 200 means na may existing username na sa database kaya login na
         if (response.status === 200) {
             const login = await axios.post('http://localhost:8000/login',
-                { username: user, password: pass, first_name: patient.nameFirst, last_name: patient.nameLast },
+                { username: user, password: pass },
                 {
                     headers: {
                         'X-CSRFToken': csrftoken
@@ -191,7 +192,8 @@ function LoginPatient() {
             );
             console.log(login);
             sessionStorage.setItem('isPatientLoggedIn', true);
-            navigate(PathConstants.PATIENTCALENDAR);
+            setIsPatientLoggedIn(true);
+            navigate(PathConstants.PATIENTCALENDAR)
         }
 
         // 3. other than 200, sign-up then login
@@ -207,7 +209,7 @@ function LoginPatient() {
             console.log(signup);
 
             const login = await axios.post('http://localhost:8000/login',
-                { username: user, password: pass, first_name: patient.nameFirst, last_name: patient.nameLast },
+                { username: user, password: pass},
                 {
                     headers: {
                         'X-CSRFToken': csrftoken
@@ -216,10 +218,11 @@ function LoginPatient() {
             );
             console.log(login);
             sessionStorage.setItem('isPatientLoggedIn', true);
-            navigate(PathConstants.PATIENTCALENDAR);
+            setIsPatientLoggedIn(true);
+            navigate(PathConstants.PATIENTCALENDAR)
         }
-    } */
-
+    
+    }
     catch (error) {
         console.error(error);
         //alert(error);
