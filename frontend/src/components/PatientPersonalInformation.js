@@ -124,36 +124,73 @@ const PatientPersonalInformation = () => {
     };
 
 	const handleSave = async () => {
-		const patientData = {
-			sex: formValues.sex,
-			civilStatus: formValues.civilStatus,
-			email: formValues.email,
-			facebookName: formValues.facebookName,
-			contact: formValues.contactNumber,
-			address: formValues.address
-		};
+		try {
+			// find patient from list
+			let patientMatch;
+			const patientList = (await axios.get('http://localhost:8000/api/patients/')).data;
+			if (hospitalNumber === '') { // new patient
+				const newPatientList = patientList.filter(patient => !patient.hospitalNumber);
+				patientMatch = newPatientList.find(patient => {
+					return patient.nameFirst === formValues.nameFirst &&
+						patient.nameMiddle === formValues.nameMiddle &&
+						patient.nameLast === formValues.nameLast &&
+						patient.birthdate === formValues.birthdate
+				});
+			}else {
+				const oldPatientList = patientList.filter(patient => patient.hospitalNumber);
+				patientMatch = oldPatientList.find(patient => patient.hospitalNumber === hospitalNumber);
+			}
 
-		console.log(formValues.sex + ' ' + formValues.civilStatus + ' ' + formValues.email + ' ' + formValues.facebookName + ' ' + formValues.contactNumber + ' ' + formValues.address)
-		console.log(patientid);
-		axios.put(`http://localhost:8000/api/patients/${patientid}/`, patientData)
-			.then(response => {
-				console.log('Patient information updated successfully.');
-				alert("Your information has been updated successfully.")
-			})
-			.catch(error => {
-				// alert(error.request.response.substr(2,7));
+			// update patient information
+			const newPatientData = {
+				...patientMatch,
+				sex: formValues.sex,
+				civilStatus: formValues.civilStatus,
+				email: formValues.email,
+				facebookName: formValues.facebookName,
+				contact: formValues.contactNumber,
+				address: formValues.address
+			}
 
-				if (error.request.response.substr(2,5) === 'email') {
-					alert("Invalid email format. Please try again.")
-				}
-				
-				if (error.request.response.substr(2,7) === 'contact') {
-					alert("Invalid contact number format. Please try again.")
-				}
+			// check for inconsistencies
+			if (!newPatientData.email.match(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/)) {
+				alert("Invalid email format. Please try again.");
+				return;
+			}
+			if (newPatientData.email === '') {
+				alert("Email is required. Please try again.");
+				return;
+			}
+			if (!newPatientData.contact.match(/^[0-9]{11}$/)) {
+				alert("Invalid contact number format. Please try again.");
+				return;
+			}
 
-				
-				console.error('There was an error!', error);
-			});
+			console.log(newPatientData);
+			await axios.put(`http://localhost:8000/api/patients/${patientMatch.id}/`, newPatientData)
+				.then(response => {
+					alert("Your information has been updated successfully.")
+				});
+
+			// axios.put(`http://localhost:8000/api/patients/${patientid}/`, patientData)
+			// 	.then(response => {
+			// 		console.log('Patient information updated successfully.');
+			// 		alert("Your information has been updated successfully.")
+			// 	})
+			// 	.catch(error => {
+			// 		// alert(error.request.response.substr(2,7));
+			//
+			// 		if (error.request.response.substr(2,5) === 'email') {
+			// 			alert("Invalid email format. Please try again.")
+			// 		}
+			//
+			// 		if (error.request.response.substr(2,7) === 'contact') {
+			// 			alert("Invalid contact number format. Please try again.")
+			// 		}
+
+		}catch (error) {
+			console.error('There was an error!', error);
+		}
 	};
 	
 	return (
