@@ -79,8 +79,8 @@ function LoginClinic() {
             <div class = 'login-wrapper'>
             <div class="login-pane">
             <img class='doctor-img2' src={doctor} alt='doctor image2' />
-                <h1 className="login-title">I am a</h1>
-                <h1 className="login-title3">PHYSICIAN</h1>
+                <h1 class="login-title">I am a</h1>
+                <h1 class="login-title3">PHYSICIAN</h1>
                 <form className="login-form">
                     
                         <FormGroup>

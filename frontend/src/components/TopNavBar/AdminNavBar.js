@@ -131,7 +131,7 @@ function AdminNavBar() {
 					
 					{isClinicLoggedIn &&
 					
-					<><h2 className='welcome'> Welcome, {clinicid} </h2><Button variant="outline-light" onClick={handleLogout} style={{
+					<><h2 class='welcome'> Welcome, {clinicid} </h2><Button variant="outline-light" onClick={handleLogout} style={{
 							margin: 10,
 							alignItems: 'right'
 						}}> Log Out </Button></>

@@ -80,8 +80,8 @@ function EditToolbar(props) {
 export default function FullFeaturedCrudGrid() {
   const [rows, setRows] = useState([]);
   const [rowModesModel, setRowModesModel] = React.useState({});
+  const [originalRows, setOriginalRows] = useState([]);
   const { checkedPatientDeletion } = useContext(SettingsContext);
-
 
   useEffect(() => {
     axios.get('http://localhost:8000/api/patients/')
@@ -101,8 +101,24 @@ export default function FullFeaturedCrudGrid() {
     };
 
   const handleEditClick = (id) => () => {
-      setRowModesModel({ ...rowModesModel, [id]: { mode: GridRowModes.Edit } });
-    };
+    setOriginalRows(prevRows => [...prevRows, rows.find((row) => row.id === id)]);
+    setRowModesModel({ ...rowModesModel, [id]: { mode: GridRowModes.Edit } });
+  };
+
+  const fetchPatients = () => {
+    axios.get('http://localhost:8000/api/patients/')
+      .then(response => {
+        setRows(response.data);
+        console.log(response.data);
+      })
+      .catch(error => {
+        console.error('There was an error!', error);
+      });
+  };
+  
+  useEffect(() => {
+    fetchPatients();
+  }, []);
 
   const handleSaveClick = (id) => () => {
     const row = rows.find((row) => row.id === id);
@@ -115,8 +131,26 @@ export default function FullFeaturedCrudGrid() {
         .then(response => {
           setRows(prevRows => prevRows.map((row) => row.id === id ? response.data : row));
           setRowModesModel(prevRowModesModel => ({ ...prevRowModesModel, [id]: { mode: GridRowModes.View } }));
+          fetchPatients();
         })
         .catch(error => {
+
+          console.error(error.request.response.substr(2, 8));
+
+          if (error.request.response.substr(2, 7) === 'contact') {
+            alert('Entry not edited. Contact number must be 11 digits long.');
+          }
+
+          else if (error.request.response.substr(2, 5) === 'email') {
+            alert('Entry not edited. Please ensure proper email format.');
+          }
+
+          else if (error.request.response.substr(2, 9) === 'birthdate') {
+            alert('Entry not edited. Please ensure proper birthdate format.');
+          }
+
+          setRowModesModel(prevRowModesModel => ({ ...prevRowModesModel, [id]: { mode: GridRowModes.View } }));
+          fetchPatients();
           console.error('There was an error!', error);
         });
     }
