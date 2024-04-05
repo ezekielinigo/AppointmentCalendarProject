@@ -1,0 +1,5 @@
+1. Please install https://nodejs.org/en/download first for the npm.
+2. If not yet installed, run install-react-scripts.bat and wait for installation.
+3. Once the window exits, run auto.bat by double clicking it to run the front-end server.
+4. After the front-end server has started, run the auto.bat again but this time, run it as an administrator, to open the back-end server.
+5. Navigate to localhost:3000 on your browser of choice.
