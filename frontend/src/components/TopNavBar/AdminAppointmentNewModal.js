@@ -180,22 +180,22 @@ const AppointmentNewModal = ({show, handleClose, appointment, setAppointment, ha
                                     />
                                     <Form.Label>Contact No.</Form.Label>
                                     <Form.Control
-                                        className="form-control "
-                                        type="text"
-                                        readOnly={!isNewPatient}
-                                        minLength={11}
-                                        maxLength={11}
-                                        defaultValue={appointment ? appointment.patient.contact : ''}
-                                        onChange={e => {
-                                            const isValid = /^\d{11}$/.test(e.target.value) || e.target.value === '';
-                                            if (!isValid) {
-                                                setAppointment({
-                                                    ...appointment,
-                                                    patient: {...appointment.patient, contact: e.target.value}
-                                                })
-                                            }
-                                        }}
-                                    />
+  className="form-control "
+  type="text"
+  readOnly={!isNewPatient}
+  minLength={11}
+  maxLength={11}
+  defaultValue={appointment ? appointment.patient.contact : ''}
+  onChange={e => {
+    const isValid = /^09\d{9}$/.test(e.target.value) || e.target.value === '';
+    if (isValid) {
+      setAppointment({
+        ...appointment,
+        patient: {...appointment.patient, contact: e.target.value}
+      })
+    }
+  }}
+/>
                             <Form.Label>Address</Form.Label>
                             <Form.Control
                                 className="form-control"

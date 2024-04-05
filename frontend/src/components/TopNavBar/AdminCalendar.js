@@ -252,7 +252,7 @@ const AdminCalendar = () => {
                 let currentDate = new Date();
                 const patientList = (await axios.get('http://localhost:8000/api/patients/')).data;
                 const appointmentList = (await axios.get('http://localhost:8000/api/appointments/')).data;
-
+            
                 // handle missing / incorrect appointment info according to model requirements
 
                 // first and last names are required
@@ -275,8 +275,10 @@ const AdminCalendar = () => {
                     alert('Invalid email.');
                     return;
                 }
+
+                console.log(currentApp.patient.contact)
                 // contact should be valid 11-digit number
-                if (currentApp.patient.contact && !/^\d{11}$/.test(currentApp.patient.contact)) {
+                if (currentApp.patient.contact && !/^09\d{9}$/.test(currentApp.patient.contact)) {
                     alert('Invalid contact number.');
                     return;
                 }
