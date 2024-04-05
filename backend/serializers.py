@@ -39,7 +39,8 @@ class AppointmentSerializer(serializers.ModelSerializer):
             'remarks',
             'followup',
             'referralDoctor',
-            'newPatient'
+            'newPatient',
+            'isPending' # comment if error
         )
 
     def create(self, validated_data):
@@ -69,7 +70,7 @@ class AppointmentSerializer(serializers.ModelSerializer):
         instance.remarks = validated_data.get('remarks', instance.remarks)
         instance.followup = validated_data.get('followup', instance.followup)
         instance.referralDoctor = validated_data.get('referralDoctor', instance.referralDoctor)
-        instance.newPatient = validated_data.get('newPatient', instance.newPatient)
+        instance.newPatient = validated_data.get('newPatient', instance.newPatient) # comment if error
         instance.save()
 
         return instance

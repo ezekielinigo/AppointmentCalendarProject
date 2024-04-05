@@ -5,8 +5,10 @@ from .models import *
 # Register your models here.
 
 class AppointmentAdmin(admin.ModelAdmin):
-    list_display = ('appointmentNumber', 'patient', 'date', 'time', 'followup', 'newPatient')
-    search_fields = ('appointmentNumber', 'patient', 'date', 'time', 'followup', 'newPatient')
+    #list_display = ('appointmentNumber', 'patient', 'date', 'time', 'followup', 'newPatient')
+    #search_fields = ('appointmentNumber', 'patient', 'date', 'time', 'followup', 'newPatient')
+    list_display = ('appointmentNumber', 'patient', 'date', 'time', 'followup', 'newPatient', 'isPending')
+    search_fields = ('appointmentNumber', 'patient', 'date', 'time', 'followup', 'newPatient', 'isPending')
     
 class PatientAdmin(admin.ModelAdmin):
     list_display = ('nameLast', 'nameFirst', 'hospitalNumber', 'birthdate', 'age', 'contact', 'email', 'facebookName')

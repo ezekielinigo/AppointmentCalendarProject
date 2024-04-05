@@ -32,14 +32,48 @@ const PatientCalendar = () => {
     const [renderKey, setRenderKey] = useState(0);
     const [currentView, setCurrentView] = useState('dayGridMonth');
     const [currentDate, setCurrentDate] = useState(new Date());
+
     const { checkedAppointmentReschedule } = useContext(SettingsContext);
+
     const {
         firstName,
         middleName,
         lastName,
         birthDate,
+        setFirstName,
+        setMiddleName,
+        setLastName,
+        setbirthDate,
         hospitalNumber,
+        sethospitalNumber,
     } = useContext(PatientContext)
+
+    useEffect(() => {
+        if (sessionStorage.getItem('firstName')) {
+            setFirstName(sessionStorage.getItem('firstName'));
+        }
+        if (sessionStorage.getItem('middleName')) {
+            setMiddleName(sessionStorage.getItem('middleName'));
+        }
+        if (sessionStorage.getItem('lastName')) {
+            setLastName(sessionStorage.getItem('lastName'));
+        }
+        if (sessionStorage.getItem('birthDate')) {
+            setbirthDate(sessionStorage.getItem('birthDate'));
+        }
+        if (sessionStorage.getItem('hospitalNumber')) {
+            sethospitalNumber(sessionStorage.getItem('hospitalNumber'));
+        }
+    }, []);
+
+    useEffect(() => {
+        sessionStorage.setItem('firstName', firstName);
+        sessionStorage.setItem('middleName', middleName);
+        sessionStorage.setItem('lastName', lastName);
+        sessionStorage.setItem('birthDate', birthDate);
+        sessionStorage.setItem('hospitalNumber', hospitalNumber);
+        console.log(firstName, middleName, lastName, birthDate, hospitalNumber)
+    }, [firstName, middleName, lastName, birthDate, hospitalNumber]);
 
     const handleClose = () => {
         setShowAppointmentNewModal(false);
@@ -126,7 +160,15 @@ const PatientCalendar = () => {
             if (info.view && info.view.type === 'dayGridMonth' && info.view.calendar) {
                 const calendarApi = info.view.calendar;
                 calendarApi.changeView('timeGridWeek', info.dateStr); // change view to week view and go to the date clicked
-            } else {
+            } 
+
+            else if (checkExistingAppointment(events, currentPatient, info)) { // refactored yung pangcheck ng existing appointment,
+                                                                              // para magamit dito sa handleDateClick
+            alert('You already have an existing appointment. You can only have one appointment at a time.')
+
+            }
+            
+            else {
                 // appointment number format: FMDDMMYY-TTTT-XX
                 // TTTT is the time in 12-hour format)
                 // XX is the number of the appointment in the day
@@ -179,7 +221,9 @@ const PatientCalendar = () => {
                             setShowAppointmentNewModal(true);
                 }
             }
-        } else {
+        } 
+
+        else {
             // show a message to the user that the date is not available for new appointments
             alert('This date is not available for new appointments.');
         }
@@ -383,6 +427,12 @@ const PatientCalendar = () => {
             }
     };
 
+    // Fetch event happens when the component mounts
+    useEffect(() => {
+        fetchPatient();
+    }, []);
+    
+
     // This fetches events from the database and puts it in the state
     const fetchEvents = async () => {
         try {
@@ -432,22 +482,37 @@ const PatientCalendar = () => {
             if (hospitalNumber === "" || hospitalNumber === null) { // means new patient
                 const newPatientList = response.data.filter(patient => !patient.hospitalNumber);
                 const patientMatch = newPatientList.find(patient => {
-                    return patient.nameFirst === sessionStorage.getItem('firstName') &&
+                    /*return patient.nameFirst === sessionStorage.getItem('firstName') &&
                         patient.nameMiddle === sessionStorage.getItem('middleName') &&
                         patient.nameLast === sessionStorage.getItem('lastName') &&
-                        patient.birthdate === sessionStorage.getItem('birthDate')
+                        patient.birthdate === sessionStorage.getItem('birthDate') */
+                        
+                        return patient.nameFirst === firstName &&
+                        patient.nameMiddle === middleName &&
+                        patient.nameLast === lastName &&
+                        patient.birthdate === birthDate
                 });
+                
                 if (patientMatch) {
+                    console.log(patientMatch)
+                    console.log('success')
+                    alert('success')
                     setCurrentPatient(patientMatch)
-                }else {
-                    alert('not found')
                 }
-            }else { // means old patient
+                
+                else {
+                    console.log(patientMatch)
+                    console.error('not found sa response block');
+                    alert('not found');
+                }
+            }
+            else { // means old patient
                 const oldPatientList = response.data.filter(patient => patient.hospitalNumber);
                 const patientMatch = oldPatientList.find(patient => patient.hospitalNumber === sessionStorage.getItem('hospitalNumber'));
                 if (patientMatch) {
                     setCurrentPatient(patientMatch)
                 }else {
+                    console.error('not found sa else block');
                     alert('not found')
                 }
             }
@@ -463,6 +528,8 @@ const PatientCalendar = () => {
         // use appointment id to find entry in database
         // replace date & time with new date & time
         // refresh calendar
+
+        info.revert();
         const newStartTime = info.event.start;
         const appointmentId = info.event.extendedProps.appointmentId;
         const newAppointmentInfo = {
@@ -487,13 +554,20 @@ const PatientCalendar = () => {
             date: info.event.startStr.substring(0,10),
             time: info.event.startStr.substring(11,19),
             dragging: true,
+            isPending: true,
         };
         try {
 
             await axios.put(`http://localhost:8000/api/appointments/${appointmentId}/`, newAppointmentInfo)
+            
+           // alert('Your change will be subject to approval.');
+
             fetchEvents();
 
-        }catch (e) {
+            alert('Your appointment has been moved successfully.\n'
+                + 'Please make sure to show up on the new right time and date.\n')
+
+        } catch (e) {
             console.error(e);
         }
 
@@ -517,10 +591,6 @@ const PatientCalendar = () => {
         }
     }
 
-    // Fetch event happens when the component mounts
-    useEffect(() => {
-        fetchPatient();
-    }, []);
     useEffect(() => {
         fetchEvents();
         fetchCapacity();
@@ -705,10 +775,7 @@ const PatientCalendar = () => {
                 // add a badge to the day cell if there are appointments made by the current patient
                 dayCellContent={(info) => {
                     // Check if there are any appointments for the current patient on this date
-                    const hasAppointment = events.some(event => {
-                        const eventDate = new Date(event.date);
-                        return event.extendedProps && currentPatient && eventDate.toDateString() === info.date.toDateString() && event.extendedProps.patientId === currentPatient.id;
-                    });
+                    const hasAppointment = checkExistingAppointment(events, currentPatient, info);
 
                     // If there is an appointment, return a custom HTML string with a badge
                     if (hasAppointment) {
@@ -789,3 +856,11 @@ const PatientCalendar = () => {
 
 
 export default PatientCalendar;
+
+function checkExistingAppointment(events, currentPatient, info) {
+    return events.some(event => {
+        const eventDate = new Date(event.date);
+        return event.extendedProps && currentPatient && eventDate.toDateString() === info.date.toDateString() && event.extendedProps.patientId === currentPatient.id;
+    });
+}
+

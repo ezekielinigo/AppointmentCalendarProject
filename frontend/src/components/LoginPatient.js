@@ -312,6 +312,7 @@ function LoginPatient() {
                     validateEntry();
                     return;
                 } else {
+                    console.log(patient.nameFirst + " " + patient.nameMiddle + " " + patient.nameLast + " " + patient.birthdate + " " + patient.hospitalNumber);
                     alert('Patient does not match the hospital number. Please check your inputs.\n' +
                         'If you think this is an error, please contact the hospital by making an on-site appointment.');
                     return;

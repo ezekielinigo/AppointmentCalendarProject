@@ -11,6 +11,7 @@ import axios from 'axios';
 import { Typography, AppBar, Toolbar } from '@mui/material';
 import { SettingsContext } from '../App';
 import { useContext } from 'react';
+import { Select, MenuItem } from '@mui/material';
 
 import {
   GridRowModes,
@@ -74,6 +75,42 @@ function EditToolbar(props) {
         Add record
       </Button>
     </GridToolbarContainer>
+  );
+}
+
+function SexDropdown(props) {
+  const [value, setValue] = useState(props.value);
+
+  const handleChange = (event) => {
+    setValue(event.target.value);
+  };
+
+  if (!props.isEditable) {
+    return value;
+  }
+
+  return (
+    <Select value={value} onChange={handleChange}>
+      <MenuItem value="MALE">MALE</MenuItem>
+      <MenuItem value="FEMALE">FEMALE</MenuItem>
+    </Select>
+  );
+}
+
+function CivilStatusDropdown(props) {
+  const [value, setValue] = useState(props.value);
+
+  const handleChange = (event) => {
+    setValue(event.target.value);
+  };
+
+  return (
+    <Select value={value} onChange={handleChange}>
+      <MenuItem value="SINGLE">SINGLE</MenuItem>
+      <MenuItem value="MARRIED">MARRIED</MenuItem>
+      <MenuItem value="WIDOWED">WIDOWED</MenuItem>
+      <MenuItem value="SEPARATED">SEPARATED</MenuItem>
+    </Select>
   );
 }
 
@@ -294,7 +331,26 @@ export default function FullFeaturedCrudGrid() {
     { field: 'nameLast', headerName: 'Last Name', width: 130, editable: true },
     { field: 'birthdate', headerName: 'Birthdate', width: 130, editable: true },
     { field: 'age', headerName: 'Age', width: 90, editable: false },
-    { field: 'sex', headerName: 'Sex', width: 90, editable: true },
+    /*{
+      field: 'sex',
+      headerName: 'Sex',
+      width: 90,
+      editable: true,
+      renderCell: (params) => <SexDropdown value={params.value} isEditable={params.isEditable} />,
+    },
+    {
+      field: 'civilStatus',
+      headerName: 'Civil Status',
+      width: 130,
+      editable: true,
+      renderCell: (params) => <CivilStatusDropdown value={params.value} />,
+    }, */
+    {
+      field: 'sex',
+      headerName: 'Sex',
+      width: 90,
+      editable: true,
+    },
     {
       field: 'civilStatus',
       headerName: 'Civil Status',

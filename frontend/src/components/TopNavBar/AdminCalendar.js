@@ -477,9 +477,12 @@ const AdminCalendar = () => {
         try {
     
             await axios.put(`http://localhost:8000/api/appointments/${appointmentId}/`, newAppointmentInfo)
-            fetchEvents();
             
-        }catch (e) {
+            fetchEvents();
+
+            alert('Successfully moved appointment of' + info.event.title.substring(9,) + ' to ' + newStartTime.toLocaleString());
+            
+        } catch (e) {
             console.error(e);
         }
 
